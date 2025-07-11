@@ -1,13 +1,18 @@
-import { AuthLayout } from "./auth.layout";
-import { LoginForm } from "./login.form";
+import { ROUTES } from "@/router/router";
+import { Link } from "react-router";
+import { AuthLayout } from "./ui/auth.layout";
+import { LoginForm } from "./ui/login.form";
 
-export const login = () => {
+export const Login = () => {
   return (
     <AuthLayout
       form={<LoginForm />}
-      title={"Вход"}
-      description={"Логин"}
-      footerText={"переход"}
+      title={"Login"}
+      footerText={
+        <>
+          Еще нет аккаунта? <Link to={ROUTES.REGISTER}>Зарегистрироваться</Link>
+        </>
+      }
     />
   );
 };
