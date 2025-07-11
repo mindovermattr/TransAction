@@ -1,18 +1,23 @@
-import App from "@/App";
+import { App } from "@/App";
+import { login } from "@/pages/auth/login";
 import { createBrowserRouter } from "react-router";
 
 export const ROUTES = {
   HOME: "/",
   LOGIN: "/login",
   REGISTER: "/register",
-  BOARDS: "/boards",
-  BOARD: "/boards/:boardId",
 } as const;
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: ROUTES.HOME,
     Component: App,
+    children: [
+      {
+        path: ROUTES.LOGIN,
+        Component: login,
+      },
+    ],
   },
 ]);
 

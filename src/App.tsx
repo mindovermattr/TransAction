@@ -1,13 +1,9 @@
 import { Outlet } from "react-router";
-import { Button } from "./components/ui/button";
 
-function App() {
+export const App = () => {
   return (
-    <div className="">
+    <div className="flex min-h-screen flex-col">
       <Outlet />
-      <Button className="font-inter">Inter</Button>
     </div>
   );
-}
-
-export default App;
+};
