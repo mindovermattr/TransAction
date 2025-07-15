@@ -1,10 +1,12 @@
 import express from "express";
 import passport from "passport";
+import authRouter from "./controllers/auth.controller";
 import userRouter from "./controllers/user.contoller";
 import { jwtAuthMiddleware } from "./middleware/auth.middleware";
 import { jwtStrategy } from "./strategies/jwt.strategy";
 
 const app = express();
+const jwtMiddleware = jwtAuthMiddleware();
 
 passport.use(jwtStrategy);
 
@@ -13,8 +15,8 @@ app.use(passport.initialize());
 app.use(express.json());
 
 //routes
-app.use("/users", userRouter);
-app.use("/userss", jwtAuthMiddleware(), userRouter);
+app.use("/", authRouter);
+app.use("/users", jwtMiddleware, userRouter);
 
 const server = app.listen(3000, () =>
   console.log(`

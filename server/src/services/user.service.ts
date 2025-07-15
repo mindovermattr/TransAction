@@ -25,6 +25,9 @@ const createUser = async (user: CreateUserDTO) => {
       name: user.name,
       password: hashPassword,
     },
+    omit: {
+      password: true,
+    },
   });
 
   return createdUser;
