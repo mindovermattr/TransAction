@@ -33,4 +33,16 @@ const createUser = async (user: CreateUserDTO) => {
   return createdUser;
 };
 
+const getUserByEmail = async (email: string) => {
+  const user = await prisma.user.findFirst({
+    where: {
+      email,
+    },
+  });
+  if(!user)
+    throw new HttpException(403, 'Пользователь с таким email не найден')
+
+  
+};
+
 export { createUser, getUsers };

@@ -3,6 +3,7 @@ import passport from "passport";
 import authRouter from "./controllers/auth.controller";
 import userRouter from "./controllers/user.contoller";
 import { jwtAuthMiddleware } from "./middleware/auth.middleware";
+import { errorHandler } from "./middleware/errorHandler.middleware";
 import { jwtStrategy } from "./strategies/jwt.strategy";
 
 const app = express();
@@ -18,8 +19,10 @@ app.use(express.json());
 app.use("/", authRouter);
 app.use("/users", jwtMiddleware, userRouter);
 
-const server = app.listen(3000, () =>
+app.use(errorHandler);
+
+app.listen(+process.env.PORT!, () =>
   console.log(`
-🚀 Server ready at: http://localhost:3000
-⭐️ See sample requests: https://github.com/prisma/prisma-examples/blob/latest/orm/express/README.md#using-the-rest-api`)
+🚀 Server ready at: http://localhost:${process.env.PORT}
+`)
 );

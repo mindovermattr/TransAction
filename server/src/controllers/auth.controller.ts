@@ -1,37 +1,33 @@
 import express from "express";
-import jwt from "jsonwebtoken";
-import { isHttpException } from "../helpers/typeguards/isHttpException";
 import {
   dtoValidation,
   emptyBodyValidation,
 } from "../middleware/validation.middleware";
+import { LoginDTO } from "../models/login/login.dto";
 import { CreateUserDTO } from "../models/user/user.dto";
-import { createUser, getUsers } from "../services/user.service";
+import { register } from "../services/auth.service";
 
 const router = express.Router();
 
-router.get("/login", emptyBodyValidation(), (req, res) => {
-  const users = getUsers();
-  res.json(users);
-});
+router.get(
+  "/login",
+  emptyBodyValidation(),
+  dtoValidation(LoginDTO),
+  (req, res) => {
+    const body = req.validatedBody as LoginDTO;
+  }
+);
 
 router.post(
   "/register",
   emptyBodyValidation(),
   dtoValidation(CreateUserDTO),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
-      const user = await createUser(req.validatedBody as CreateUserDTO);
-      const token = jwt.sign(user, process.env.JWT_SECRET as string);
-      res.json({
-        ...user,
-        token,
-      });
-    } catch (error: unknown) {
-      if (isHttpException(error))
-        res.status(error.status).json({
-          message: error.message,
-        });
+      const user = await register(req.validatedBody as CreateUserDTO);
+      res.json(user);
+    } catch (error) {
+      next(error);
     }
   }
 );
