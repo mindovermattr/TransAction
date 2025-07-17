@@ -1,4 +1,5 @@
 import { $Enums } from "@prisma/client";
+import { Transform } from "class-transformer";
 import {
   IsDate,
   IsEnum,
@@ -15,14 +16,12 @@ export class TransactionDTO {
 
   @IsDate()
   @MinDate(new Date())
+  @Transform(() => new Date())
   date!: Date;
-
-  @IsNumber()
-  userId!: number;
 
   @IsEnum($Enums.TransactionTag)
   tag!: $Enums.TransactionTag;
 
   @IsNumber()
-  price!:number
+  price!: number;
 }
