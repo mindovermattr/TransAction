@@ -1,5 +1,4 @@
 import express from "express";
-import HttpException from "../exceptions/Http.exception";
 import {
   dtoValidation,
   emptyBodyValidation,
@@ -18,13 +17,12 @@ router.post(
   "/",
   emptyBodyValidation(),
   dtoValidation(CreateUserDTO),
-  async (req, res) => {
-    if (!req.validatedBody) return;
+  async (req, res, next) => {
     try {
       const user = await createUser(req.validatedBody as CreateUserDTO);
       res.json(user);
     } catch (error: unknown) {
-      res.json(error as HttpException);
+      next(error);
     }
   }
 );

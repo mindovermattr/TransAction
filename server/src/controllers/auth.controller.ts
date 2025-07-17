@@ -5,7 +5,7 @@ import {
 } from "../middleware/validation.middleware";
 import { LoginDTO } from "../models/login/login.dto";
 import { CreateUserDTO } from "../models/user/user.dto";
-import { register } from "../services/auth.service";
+import { login, register } from "../services/auth.service";
 
 const router = express.Router();
 
@@ -13,8 +13,13 @@ router.get(
   "/login",
   emptyBodyValidation(),
   dtoValidation(LoginDTO),
-  (req, res) => {
-    const body = req.validatedBody as LoginDTO;
+  async (req, res, next) => {
+    try {
+      const user = await login(req.validatedBody as LoginDTO);
+      res.json(user);
+    } catch (error: unknown) {
+      next(error);
+    }
   }
 );
 

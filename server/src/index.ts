@@ -1,6 +1,7 @@
 import express from "express";
 import passport from "passport";
 import authRouter from "./controllers/auth.controller";
+import transactionRouter from "./controllers/transactions.controller";
 import userRouter from "./controllers/user.contoller";
 import { jwtAuthMiddleware } from "./middleware/auth.middleware";
 import { errorHandler } from "./middleware/errorHandler.middleware";
@@ -18,7 +19,9 @@ app.use(express.json());
 //routes
 app.use("/", authRouter);
 app.use("/users", jwtMiddleware, userRouter);
+app.use("/transactions", jwtMiddleware, transactionRouter);
 
+//error handler middleware
 app.use(errorHandler);
 
 app.listen(+process.env.PORT!, () =>
