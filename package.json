@@ -1,4 +1,8 @@
 {
+  "prepare": "husky install",
+  "scripts": {
+    "prepare": "husky"
+  },
   "devDependencies": {
     "husky": "^9.1.7"
   }

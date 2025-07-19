@@ -24,7 +24,6 @@ export default tseslint.config([
       globals: globals.browser,
     },
     rules: {
-      "arrow-body-style": ["error", "always"],
       "func-style": ["error", "expression"],
       "prefer-arrow-callback": "error",
       "react/jsx-pascal-case": [

@@ -1,4 +1,4 @@
-import { ROUTES } from "@/router/router";
+import { ROUTES } from "@/router/routes";
 import { Link } from "react-router";
 import { AuthLayout } from "./ui/auth.layout";
 import { RegistrationForm } from "./ui/registration.form";
@@ -7,7 +7,7 @@ export const Registration = () => {
   return (
     <AuthLayout
       form={<RegistrationForm />}
-      title={"Register"}
+      title={"Регистрация"}
       footerText={
         <>
           Уже есть аккаунт?{" "}
