@@ -9,7 +9,7 @@ import { login, register } from "../services/auth.service";
 
 const router = express.Router();
 
-router.get(
+router.post(
   "/login",
   emptyBodyValidation(),
   dtoValidation(LoginDTO),

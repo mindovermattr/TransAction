@@ -6,6 +6,7 @@ import userRouter from "./controllers/user.contoller";
 import { jwtAuthMiddleware } from "./middleware/auth.middleware";
 import { errorHandler } from "./middleware/errorHandler.middleware";
 import { jwtStrategy } from "./strategies/jwt.strategy";
+import cors from "cors"
 
 const app = express();
 const jwtMiddleware = jwtAuthMiddleware();
@@ -15,9 +16,10 @@ passport.use(jwtStrategy);
 //middlewares
 app.use(passport.initialize());
 app.use(express.json());
+app.use(cors())
 
 //routes
-app.use("/", authRouter);
+app.use("/auth", authRouter);
 app.use("/users", jwtMiddleware, userRouter);
 app.use("/transactions", jwtMiddleware, transactionRouter);
 

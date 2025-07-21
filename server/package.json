@@ -11,6 +11,7 @@
     "argon2": "^0.43.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "cors": "^2.8.5",
     "express": "5.1.0",
     "jsonwebtoken": "^9.0.2",
     "passport": "^0.7.0",
@@ -18,8 +19,9 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.10",
+    "@types/cors": "^2.8.19",
     "@types/express": "5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "22.15.32",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
