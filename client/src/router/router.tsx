@@ -1,9 +1,10 @@
 import { App } from "@/App";
 import { Login } from "@/pages/auth/login";
 import { Registration } from "@/pages/auth/registration";
-import { Transactions } from "@/pages/transactions";
+import { Transactions } from "@/pages/transactions/transactions";
 import { Providers } from "@/providers";
 import { createBrowserRouter } from "react-router";
+import { protectedLoader } from "./protected-loader";
 import { ROUTES } from "./routes";
 
 const router = createBrowserRouter([
@@ -23,9 +24,10 @@ const router = createBrowserRouter([
         path: ROUTES.REGISTER,
         Component: Registration,
       },
+
       {
-        path: ROUTES.TRANSACTIONS,
-        Component: Transactions,
+        loader: protectedLoader,
+        children: [{ path: ROUTES.TRANSACTIONS, Component: Transactions }],
       },
     ],
   },

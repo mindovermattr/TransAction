@@ -1,7 +1,6 @@
-import { getUserFromLS } from "@/lib/localstorage";
-import { ROUTES } from "@/router/routes";
-import { ofetch, type FetchContext } from "ofetch";
-import { redirect } from "react-router";
+import { getUserFromLS, removeUserFromLS } from "@/lib/localstorage";
+import type { FetchContext } from "ofetch";
+import { ofetch } from "ofetch";
 
 const HOST_URL = "http://localhost:3000";
 
@@ -14,12 +13,12 @@ const protectedInstance = ofetch.create({
   onRequest: ({ options }: FetchContext) => {
     const user = getUserFromLS();
     if (!user) return;
-    options.headers.set("Bearer", user.token);
+    options.headers.set("Authorization", `Bearer ${user.token}`);
   },
 
   async onResponseError({ response }) {
     if (response.status === 401) {
-      redirect(ROUTES.LOGIN);
+      removeUserFromLS();
     }
   },
 });

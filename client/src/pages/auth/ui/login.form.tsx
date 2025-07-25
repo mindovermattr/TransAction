@@ -1,3 +1,4 @@
+import { login } from "@/api/requests";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -8,8 +9,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { setUserLS } from "@/lib/localstorage";
+import { isOfetchError } from "@/lib/typeguards";
+import { ROUTES } from "@/router/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -26,8 +31,18 @@ export const LoginForm = () => {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof loginSchema>) => {
-    console.log(data);
+  const navigate = useNavigate();
+
+  const onSubmit = async (data: z.infer<typeof loginSchema>) => {
+    try {
+      const response = await login({ params: data });
+      setUserLS(response);
+      navigate(ROUTES.TRANSACTIONS);
+    } catch (error) {
+      if (!isOfetchError(error)) return;
+      const errorData = error.data as { message: string };
+      form.setError("root", errorData);
+    }
   };
   return (
     <Form {...form}>
@@ -70,6 +85,14 @@ export const LoginForm = () => {
           }}
         />
         <Button>Отправить</Button>
+        {form.formState.errors.root && (
+          <p
+            data-slot="form-message"
+            className="text-destructive text-center text-sm"
+          >
+            {form.formState.errors.root.message}
+          </p>
+        )}
       </form>
     </Form>
   );

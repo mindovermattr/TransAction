@@ -1,5 +1,3 @@
-import type { User } from "@/@types/user";
-
 interface UserLS extends User {
   token: string;
 }
@@ -9,8 +7,10 @@ const LOCAL_STORAGE_KEYS = {
 } as const;
 
 const getUserFromLS = () => {
-  const user = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.USER) ?? "");
-  if (!user) return null;
+  const data = localStorage.getItem(LOCAL_STORAGE_KEYS.USER) ?? "";
+  if (!data) return null;
+  const user = JSON.parse(data);
+
   return user as UserLS;
 };
 
@@ -18,4 +18,8 @@ const setUserLS = (user: UserLS) => {
   localStorage.setItem(LOCAL_STORAGE_KEYS.USER, JSON.stringify(user));
 };
 
-export { getUserFromLS, setUserLS };
+const removeUserFromLS = () => {
+  localStorage.removeItem(LOCAL_STORAGE_KEYS.USER);
+};
+
+export { getUserFromLS, LOCAL_STORAGE_KEYS, removeUserFromLS, setUserLS };

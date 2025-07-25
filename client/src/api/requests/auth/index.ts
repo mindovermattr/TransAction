@@ -1,15 +1,26 @@
 import { instance } from "@/api/instance";
 
-export type LoginConfig = OfetchRequestConfig;
+export type LoginResponse = User & {
+  token: string;
+};
+export type LoginParams = Omit<User, "id" | "name"> & { password: string };
+export type LoginConfig = OfetchRequestConfig<LoginParams>;
 
-export const login = async (requestConfig?: LoginConfig) =>
-  instance<LoginResponse>("users", requestConfig?.config);
+export const login = async ({ params, config }: LoginConfig) =>
+  instance<LoginResponse>("auth/login", {
+    method: "POST",
+    body: params,
+    ...config,
+  });
 
-export type PostUserParams = Omit<User, "id">;
-export type PostUserConfig = OfetchRequestConfig<PostUserParams>;
+export type RegisterParams = Omit<User, "id"> & {
+  password: string;
+  confirmPassword: string;
+};
+export type RegisterConfig = OfetchRequestConfig<RegisterParams>;
 
-export const register = async ({ params, config }: PostUserConfig) =>
-  instance("users", {
+export const register = async ({ params, config }: RegisterConfig) =>
+  instance("auth/register", {
     method: "POST",
     body: params,
     ...config,

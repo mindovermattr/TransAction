@@ -4,6 +4,13 @@ interface User {
   name: string;
 }
 
-type LoginResponse = User & {
-  token: string;
-};
+interface Transaction {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  tag: string;
+  price: number;
+  date: Date;
+  userId: number;
+}
