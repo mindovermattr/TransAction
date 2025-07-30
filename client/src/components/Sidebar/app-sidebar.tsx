@@ -1,6 +1,6 @@
 import { BadgeDollarSignIcon, TrendingUpIcon, UserIcon } from "lucide-react";
 
-import { SidebarNav } from "@/components/nav";
+import { SidebarNav } from "@/components/Sidebar/sidebar-nav";
 import { Button } from "@/components/ui/button";
 import {
   Sidebar,
@@ -15,7 +15,7 @@ import {
 import { getUserFromLS } from "@/lib/localstorage";
 import { ROUTES } from "@/router/routes";
 import type { ComponentProps } from "react";
-import { Typography } from "./ui/typography";
+import { Typography } from "../ui/typography";
 
 const data = {
   projects: [
@@ -38,24 +38,22 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <UserIcon className="size-4" />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <Typography
-                    tag="span"
-                    variant="subtitle"
-                    className="text-sm leading-none font-medium"
-                  >
-                    {user?.email}
-                  </Typography>
-                  <Typography tag="span" className="leading-none capitalize">
-                    {user?.name}
-                  </Typography>
-                </div>
-              </a>
+            <SidebarMenuButton size="lg">
+              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <UserIcon className="size-4" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <Typography
+                  tag="span"
+                  variant="subtitle"
+                  className="text-sm leading-none font-medium"
+                >
+                  {user?.email}
+                </Typography>
+                <Typography tag="span" className="leading-none capitalize">
+                  {user?.name}
+                </Typography>
+              </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

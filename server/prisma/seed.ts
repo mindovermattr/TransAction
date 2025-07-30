@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import * as argon2 from 'argon2'
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
@@ -15,19 +16,64 @@ const userData: Prisma.UserCreateInput[] = [
     password: "123154215",
   },
   {
-    name: "Mahmoud",
-    email: "mahmoud@prisma.io",
-    password: "123154215",
+    name: "dmitriy",
+    email: "test@test.com",
+    password: "123456",
   },
+];
+
+const transactionData: Prisma.TransactionCreateInput[] = [
+  ...Array.from({ length: 30 }, (_, i) => ({
+    name: `Transaction June ${i + 1}`,
+    tag: ["JOY", "TRANSPORT", "FOOD", "EDUCATION", "HOUSING", "OTHER"][
+      Math.floor(Math.random() * 6)
+    ] as any,
+    price: Math.floor(Math.random() * 1000) + 100,
+    date: new Date(2025, 5, i + 1),
+    user: { connect: { email: "test@test.com" } },
+  })),
+
+  ...Array.from({ length: 30 }, (_, i) => ({
+    name: `Transaction July ${i + 1}`,
+    tag: ["JOY", "TRANSPORT", "FOOD", "EDUCATION", "HOUSING", "OTHER"][
+      Math.floor(Math.random() * 6)
+    ] as any,
+    price: Math.floor(Math.random() * 1000) + 100,
+    date: new Date(2025, 6, i + 1),
+    user: { connect: { email: "test@test.com" } },
+  })),
 ];
 
 async function main() {
   console.log(`Start seeding ...`);
   for (const u of userData) {
-    const user = await prisma.user.create({
-      data: u,
+    const hashPassword = await argon2.hash(u.password)
+    const user = await prisma.user.upsert({
+      create: {
+        ...u,
+        password: hashPassword,
+      },
+      where: {
+        email: u.email,
+      },
+      update: {
+        ...u,
+        password: hashPassword,
+      },
     });
     console.log(`Created user with id: ${user.id}`);
+  }
+
+  for (let i = 0; i < transactionData.length; i++) {
+    const t = transactionData[i];
+    const transaction = await prisma.transaction.upsert({
+      create: t,
+      where: {
+        id: i,
+      },
+      update: t,
+    });
+    console.log(`Created transaction with id: ${transaction.id}`);
   }
   console.log(`Seeding finished.`);
 }

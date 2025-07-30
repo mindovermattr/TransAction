@@ -1,10 +1,15 @@
 import { protectedInstance } from "@/api/instance";
 
 export type GetTransactionsConfig = OfetchRequestConfig;
-export type TransactionResponse = Transaction[];
+export type TransactionResponse = Omit<Transaction, "date"> & {
+  date: string;
+};
 
 export const getTransactions = async (requestConfig?: GetTransactionsConfig) =>
-  protectedInstance<TransactionResponse>("transactions", requestConfig?.config);
+  protectedInstance<TransactionResponse[]>(
+    "transactions",
+    requestConfig?.config,
+  );
 
 export type PostTransactionsParams = Omit<Transaction, "userId">;
 export type PostTransactionsConfig =

@@ -13,49 +13,25 @@ import {
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
-import { columns } from "@/pages/transactions/transaction-column";
 import { TransactionTable } from "@/pages/transactions/transaction-table";
+import { transactionSchema } from "@/schemas/transaction.schema";
 import { useQuery } from "@tanstack/react-query";
-import { BanknoteArrowDownIcon, Wallet2Icon } from "lucide-react";
-import { AppSidebar } from "../../components/app-sidebar";
-
-const columnsData = [
-  {
-    id: 1,
-    createdAt: new Date("2025-07-17T03:21:28.224Z"),
-    updatedAt: new Date("2025-07-17T03:21:28.224Z"),
-    name: "Сделать",
-    tag: "TRANSPORT",
-    price: 40000,
-    date: new Date("2023-07-17T03:21:28.218Z"),
-    userId: 3,
-  },
-  {
-    id: 2,
-    createdAt: new Date("2025-07-17T03:21:28.224Z"),
-    updatedAt: new Date("2025-07-17T03:21:28.224Z"),
-    name: "Сделать",
-    tag: "TRANSPORT",
-    price: 5000,
-    date: new Date("2025-07-17T03:21:28.218Z"),
-    userId: 3,
-  },
-  {
-    id: 3,
-    createdAt: new Date("2025-07-17T03:21:28.224Z"),
-    updatedAt: new Date("2025-07-17T03:21:28.224Z"),
-    name: "Сделать",
-    tag: "qwe",
-    price: 25000,
-    date: new Date("2024-07-17T03:21:28.218Z"),
-    userId: 3,
-  },
-];
+import {
+  BanknoteArrowDownIcon,
+  CirclePlusIcon,
+  Wallet2Icon,
+} from "lucide-react";
+import { AppSidebar } from "../../components/Sidebar/app-sidebar";
+import { columns } from "./transaction-column";
 
 const Transactions = () => {
-  const { isPending } = useQuery({
+  const { data, isPending } = useQuery({
     queryKey: ["transactions"],
-    queryFn: () => getTransactions(),
+    queryFn: async () => {
+      const transactions = await getTransactions();
+      const body = transactions.map((el) => transactionSchema.parse(el));
+      return body;
+    },
   });
 
   return (
@@ -133,7 +109,7 @@ const Transactions = () => {
               <CardHeader className="flex items-center">
                 <Wallet2Icon size={18} />
                 <Typography tag="h3" variant="title" className="font-medium">
-                  Ваша прибыль
+                  Бублик
                 </Typography>
               </CardHeader>
               <CardContent>
@@ -157,11 +133,19 @@ const Transactions = () => {
             </Card>
           </div>
         </div>
-        <div className="flex justify-between">
-          <h3 className="font-medium">Таблица расходов</h3>
-          <Button>+</Button>
-        </div>
-        <TransactionTable columns={columns} data={columnsData} />
+        <Card>
+          <CardHeader className="flex justify-between">
+            <Typography tag="h3" variant="title" className="font-medium">
+              Таблица расходов
+            </Typography>
+            <Button className="self-center p-0">
+              <CirclePlusIcon />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {!isPending && <TransactionTable columns={columns} data={data!} />}
+          </CardContent>
+        </Card>
       </SidebarInset>
     </SidebarProvider>
   );

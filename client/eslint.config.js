@@ -33,6 +33,7 @@ export default tseslint.config([
           ignore: [],
         },
       ],
+      "no-console": "error",
       "no-restricted-syntax": [
         "error",
         {

@@ -8,7 +8,7 @@ const typographyVariants = cva("", {
   variants: {
     variant: {
       default: "text-foreground text-base",
-      title: "text-foreground text-xl font-bold tracking-tight ",
+      title: "text-foreground text-2xl font-medium tracking-tight ",
       subtitle: "text-muted-foreground text-base",
       heading: "text-foreground font-semibold text-lg",
       lead: "text-muted-foreground text-lg",

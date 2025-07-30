@@ -12,31 +12,11 @@ import { Input } from "@/components/ui/input";
 import { setUserLS } from "@/lib/localstorage";
 import { isOfetchError } from "@/lib/typeguards";
 import { ROUTES } from "@/router/routes";
+import { registrationSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
-
-const registrationSchema = z
-  .object({
-    name: z.string("Имя обязательно"),
-    email: z.email("Неверный email"),
-    password: z
-      .string("Пароль обязателен")
-      .min(6, "Пароль должен быть не менее 6 символов"),
-    confirmPassword: z
-      .string("Пароль обязателен")
-      .min(6, "Пароль должен быть не менее 6 символов"),
-  })
-  .refine(
-    (data) => {
-      return data.confirmPassword === data.password;
-    },
-    {
-      path: ["confirmPassword"],
-      message: "Пароли не совпадают",
-    },
-  );
 
 export const RegistrationForm = () => {
   const form = useForm({

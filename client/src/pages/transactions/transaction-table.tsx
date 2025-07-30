@@ -31,8 +31,6 @@ const TransactionTable = <TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     enableSorting: true,
-    enableMultiSort: false,
-    maxMultiSortColCount: 1,
   });
 
   return (
@@ -42,25 +40,25 @@ const TransactionTable = <TData, TValue>({
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                const isSorted = header.column.getIsSorted();
+                const isSorted = header.column.getIsSorted() as "asc" | "desc"; // TODO
                 const canSort = header.column.getCanSort();
+                const ICONS_MAP = {
+                  asc: <ArrowDownIcon className="h-4 w-4" />,
+                  desc: <ArrowUpIcon className="h-4 w-4" />,
+                } as const;
                 return (
                   <TableHead
                     key={header.id}
                     onClick={() => header.column.toggleSorting()}
                   >
-                    <div className="flex gap-1">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                    <div className="flex cursor-pointer items-center gap-1">
+                      {!header.isPlaceholder &&
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                       {canSort &&
-                        ({
-                          asc: <ArrowDownIcon className="h-4 w-4" />,
-                          desc: <ArrowUpIcon className="h-4 w-4" />,
-                        }[isSorted as string] ?? (
+                        (ICONS_MAP[isSorted] ?? (
                           <ArrowUpDownIcon className="h-4 w-4" />
                         ))}
                     </div>

@@ -21,7 +21,7 @@ const login = async (loginDto: LoginDTO) => {
       email: loginDto.email,
     },
   });
-
+ 
   if (!user) throw new HttpException(400, "Пользователя не существует");
 
   const isPasswordMatch = await argon2.verify(user.password, loginDto.password);

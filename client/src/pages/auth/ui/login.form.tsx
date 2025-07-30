@@ -12,19 +12,11 @@ import { Input } from "@/components/ui/input";
 import { setUserLS } from "@/lib/localstorage";
 import { isOfetchError } from "@/lib/typeguards";
 import { ROUTES } from "@/router/routes";
+import { loginSchema } from "@/schemas/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { z } from "zod";
-
-const loginSchema = z.object({
-  email: z.email("Неверный email"),
-  password: z
-    .string({
-      error: "Пароль обязателен",
-    })
-    .min(6, "Пароль должен быть не менее 6 символов"),
-});
 
 export const LoginForm = () => {
   const form = useForm({

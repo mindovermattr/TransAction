@@ -1,3 +1,5 @@
+import { Badge } from "@/components/ui/badge";
+import { TRANSACTION_TYPES_ICONS } from "@/constants/transaction-types-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Transaction>[] = [
@@ -5,7 +7,7 @@ export const columns: ColumnDef<Transaction>[] = [
     id: "name",
     accessorKey: "name",
     header: "Имя",
-    enableSorting: false, // Сортировка отключена
+    enableSorting: false,
   },
   {
     id: "price",
@@ -37,6 +39,17 @@ export const columns: ColumnDef<Transaction>[] = [
     id: "tag",
     accessorKey: "tag",
     header: "Тэг",
-    sortingFn: "alphanumeric", // Явно указываем тип сортировки
+    sortingFn: "alphanumeric",
+    cell: ({ row }) => {
+      const value = row.original.tag as keyof typeof TRANSACTION_TYPES_ICONS;
+      const IconComponent =
+        TRANSACTION_TYPES_ICONS[value] ?? TRANSACTION_TYPES_ICONS.OTHER;
+      return (
+        <Badge>
+          <IconComponent />
+          {value}
+        </Badge>
+      );
+    },
   },
 ];
