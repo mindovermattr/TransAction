@@ -8,7 +8,7 @@ import {
   UtensilsIcon,
 } from "lucide-react";
 
-export const TRANSACTION_TYPES_ICONS: Record<TransactionTags, LucideIcon> = {
+export const TRANSACTION_TAGS_ICONS: Record<TransactionTags, LucideIcon> = {
   JOY: DramaIcon,
   TRANSPORT: CarFrontIcon,
   FOOD: UtensilsIcon,

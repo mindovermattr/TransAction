@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { TRANSACTION_TYPES_ICONS } from "@/constants/transaction-types-icons";
+import { TRANSACTION_TAGS_ICONS } from "@/constants/transaction-tags-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export const columns: ColumnDef<Transaction>[] = [
@@ -41,9 +41,9 @@ export const columns: ColumnDef<Transaction>[] = [
     header: "Тэг",
     sortingFn: "alphanumeric",
     cell: ({ row }) => {
-      const value = row.original.tag as keyof typeof TRANSACTION_TYPES_ICONS;
+      const value = row.original.tag as keyof typeof TRANSACTION_TAGS_ICONS;
       const IconComponent =
-        TRANSACTION_TYPES_ICONS[value] ?? TRANSACTION_TYPES_ICONS.OTHER;
+        TRANSACTION_TAGS_ICONS[value] ?? TRANSACTION_TAGS_ICONS.OTHER;
       return (
         <Badge>
           <IconComponent />

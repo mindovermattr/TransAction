@@ -24,7 +24,7 @@ export default tseslint.config([
       globals: globals.browser,
     },
     rules: {
-      "func-style": ["error", "expression"],
+      // "func-style": ["error", "expression"],
       "prefer-arrow-callback": "error",
       "react/jsx-pascal-case": [
         "error",
@@ -34,14 +34,14 @@ export default tseslint.config([
         },
       ],
       "no-console": "error",
-      "no-restricted-syntax": [
-        "error",
-        {
-          selector: "FunctionDeclaration",
-          message:
-            "Use `const fn = () => {}` or `export const fn = () => {}` instead.",
-        },
-      ],
+      // "no-restricted-syntax": [
+      //   "error",
+      //   {
+      //     selector: "FunctionDeclaration",
+      //     message:
+      //       "Use `const fn = () => {}` or `export const fn = () => {}` instead.",
+      //   },
+      // ],
     },
   },
 ]);
