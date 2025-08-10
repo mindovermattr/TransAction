@@ -8,6 +8,7 @@ import { User } from "../models/user/user.entity";
 import {
   createTransaction,
   getTransactions,
+  getTransactionsSummary,
 } from "../services/transaction.service";
 
 const router = express.Router();
@@ -30,12 +31,22 @@ router.post(
     try {
       const user = req.user as User;
       const body = req.validatedBody as TransactionDTO;
-      const transaction = await createTransaction(user, body);
-      res.json(transaction);
+      const summary = await createTransaction(user, body);
+      res.json(summary);
     } catch (error: unknown) {
       next(error);
     }
-  }
+  },
 );
+
+router.get("/summary", async (req, res, next) => {
+  try {
+    const user = req.user as User;
+    const summary = await getTransactionsSummary(user);
+    res.json(summary);
+  } catch (error: unknown) {
+    next(error);
+  }
+});
 
 export default router;

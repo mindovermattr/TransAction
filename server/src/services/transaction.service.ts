@@ -20,7 +20,7 @@ const getTransactions = async (user: Omit<User, "password">) => {
 
 const createTransaction = async (
   user: User,
-  transactionDTO: TransactionDTO
+  transactionDTO: TransactionDTO,
 ) => {
   const createdTranscation = await prisma.transaction.create({
     data: {
@@ -38,4 +38,25 @@ const createTransaction = async (
   return createdTranscation;
 };
 
-export { getTransactions, createTransaction };
+const getTransactionsSummary = async (user: Omit<User, "password">) => {
+  const date = new Date();
+  date.setDate(date.getDate() - 60);
+
+  const transactions = await prisma.transaction.findMany({
+    where: {
+      user: {
+        id: user.id,
+      },
+      date: {
+        gte: date,
+      },
+    },
+  });
+
+  if (!transactions)
+    throw new HttpException(400, "У пользователя нет транзакций");
+
+  return transactions;
+};
+
+export { getTransactions, createTransaction, getTransactionsSummary };
