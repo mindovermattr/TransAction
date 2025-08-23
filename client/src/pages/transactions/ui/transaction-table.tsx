@@ -16,15 +16,15 @@ import {
 } from "@/components/ui/table";
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from "lucide-react";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface TransactionTableProps<TData> {
+  columns: ColumnDef<TData>[];
   data: TData[];
 }
 
-const TransactionTable = <TData, TValue>({
+const TransactionTable = <TData,>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) => {
+}: TransactionTableProps<TData>) => {
   const table = useReactTable({
     data,
     columns,
