@@ -5,7 +5,7 @@ import { Login } from "@/pages/auth/login";
 import { Registration } from "@/pages/auth/registration";
 import { Transactions } from "@/pages/transactions/transactions";
 import { Providers } from "@/providers";
-import { createBrowserRouter, Outlet } from "react-router";
+import { createBrowserRouter, Outlet, redirect } from "react-router";
 import { protectedLoader } from "./protected-loader";
 import { ROUTES } from "./routes";
 
@@ -38,6 +38,12 @@ const router = createBrowserRouter([
           </SidebarProvider>
         ),
         children: [{ path: ROUTES.TRANSACTIONS, Component: Transactions }],
+      },
+      //other routes
+      {
+        path: "*",
+        element: null,
+        loader: () => redirect(ROUTES.TRANSACTIONS),
       },
     ],
   },

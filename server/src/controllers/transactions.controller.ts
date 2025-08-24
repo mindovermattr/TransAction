@@ -16,7 +16,18 @@ const router = express.Router();
 router.get("/", async (req, res, next) => {
   try {
     const user = req.user as User;
-    const transactions = await getTransactions(user);
+    const { limit, page } = req.query as {
+      limit?: string;
+      page?: string;
+    };
+    const isPaginationUsed = limit && page;
+    const paginationOptions = isPaginationUsed
+      ? {
+          limit: +limit,
+          page: +page,
+        }
+      : false;
+    const transactions = await getTransactions(user, paginationOptions);
     res.json(transactions);
   } catch (error: unknown) {
     next(error);
@@ -36,7 +47,7 @@ router.post(
     } catch (error: unknown) {
       next(error);
     }
-  },
+  }
 );
 
 router.get("/summary", async (req, res, next) => {

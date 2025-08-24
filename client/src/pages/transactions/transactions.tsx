@@ -19,6 +19,7 @@ const Transactions = () => {
       );
       return parsedBody;
     },
+    initialData: [],
   });
 
   return (
@@ -38,9 +39,7 @@ const Transactions = () => {
           <TransactionAddModal />
         </CardHeader>
         <CardContent>
-          {!isFetching && (
-            <TransactionTable columns={columns} data={data ?? []} /> //TODO: refactoring
-          )}
+          {!isFetching && <TransactionTable columns={columns} data={data} />}
         </CardContent>
       </Card>
     </>

@@ -3,24 +3,74 @@ import type { TransactionDTO } from "../models/transaction/transaction.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
 
-const getTransactions = async (user: Omit<User, "password">) => {
-  const transactions = await prisma.transaction.findMany({
-    where: {
-      user: {
+type PaginationOptions = {
+  page: number;
+  limit: number;
+};
+
+//TODO: Refactor condition
+const getTransactions = async (
+  user: Omit<User, "password">,
+  paginationOptions: PaginationOptions | false = false
+) => {
+  if (!paginationOptions) {
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+    });
+
+    if (!transactions.length)
+      throw new HttpException(400, "У пользователя нет транзакций");
+
+    return transactions;
+  }
+
+  const { limit, page } = paginationOptions;
+
+  if (limit <= 0 || page <= 0)
+    throw new HttpException(400, "Неверно указаны query параметры");
+
+  const [transactions, transactionCount] = await Promise.all([
+    prisma.transaction.findMany({
+      where: {
+        user: {
+          id: user.id,
+        },
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    }),
+    prisma.transaction.count({
+      where: {
         id: user.id,
       },
-    },
-  });
+    }),
+  ]);
 
-  if (!transactions)
+  if (!transactions.length)
     throw new HttpException(400, "У пользователя нет транзакций");
 
-  return transactions;
+  const totalPages = Math.ceil(transactionCount / limit);
+
+  return {
+    data: transactions,
+    pagination: {
+      currentPage: page,
+      pageSize: limit,
+      totalItems: transactionCount,
+      totalPages: totalPages,
+      hasNext: page < totalPages,
+      hasPrev: page > 1,
+    },
+  };
 };
 
 const createTransaction = async (
   user: User,
-  transactionDTO: TransactionDTO,
+  transactionDTO: TransactionDTO
 ) => {
   const createdTranscation = await prisma.transaction.create({
     data: {
@@ -59,4 +109,4 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
   return transactions;
 };
 
-export { getTransactions, createTransaction, getTransactionsSummary };
+export { createTransaction, getTransactions, getTransactionsSummary };
