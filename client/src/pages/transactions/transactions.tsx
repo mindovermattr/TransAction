@@ -1,26 +1,27 @@
-import { getTransactions } from "@/api/requests";
+import { useGetTransactionsQuery } from "@/api/hooks";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import { TransactionTable } from "@/pages/transactions/ui/transaction-table";
 import { transactionGetSchema } from "@/schemas/transaction.schema";
-import { useQuery } from "@tanstack/react-query";
-import { columns } from "./transaction-column";
+import { useMemo } from "react";
+import { columns } from "./transaction-columns";
 import { TransactionAddModal } from "./ui/transaction-add-modal";
 import { TransactionWidgets } from "./ui/transaction-widgets";
 
 const Transactions = () => {
-  const { data, isFetching } = useQuery({
-    queryKey: ["transactions"],
-    queryFn: async () => {
-      const transactions = await getTransactions();
-      const parsedBody = transactions.map((el) =>
-        transactionGetSchema.parse(el),
-      );
-      return parsedBody;
+  const { data, isFetching } = useGetTransactionsQuery({
+    options: {
+      initialData: [],
     },
-    initialData: [],
   });
+
+  ///TODO:STORE
+  const transactions = useMemo(() => {
+    if (!data) return;
+    const parsedBody = data.map((el) => transactionGetSchema.parse(el));
+    return parsedBody;
+  }, [data]);
 
   return (
     <>
@@ -39,7 +40,9 @@ const Transactions = () => {
           <TransactionAddModal />
         </CardHeader>
         <CardContent>
-          {!isFetching && <TransactionTable columns={columns} data={data} />}
+          {!isFetching && (
+            <TransactionTable columns={columns} data={transactions} />
+          )}
         </CardContent>
       </Card>
     </>

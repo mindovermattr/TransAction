@@ -22,3 +22,12 @@ interface Transaction {
   date: Date;
   userId: number;
 }
+
+interface PaginationMeta {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}

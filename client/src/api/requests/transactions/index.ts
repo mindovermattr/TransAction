@@ -1,6 +1,8 @@
 import { protectedInstance } from "@/api/instance";
 
-export type GetTransactionsConfig = OfetchRequestConfig;
+export type GetTransactionsConfig = OfetchRequestConfig<
+  { page: number; limit: number } | undefined
+>;
 export type TransactionResponse = Omit<Transaction, "date"> & {
   date: string;
 };

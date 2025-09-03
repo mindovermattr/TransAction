@@ -10,12 +10,18 @@ export const TransactionTags = [
 ] as const;
 
 export const transactionSchema = z.object({
+  id: z.number(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
   name: z.string(),
   tag: z.enum(TransactionTags),
   price: z.number().positive(),
   date: z.string(),
+  userId: z.number(),
 });
 
 export const transactionGetSchema = transactionSchema.extend({
-  date: z.string().transform((str) => new Date(str)),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  date: z.coerce.date(),
 });

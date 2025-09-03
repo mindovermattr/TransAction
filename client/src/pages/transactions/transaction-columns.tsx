@@ -2,12 +2,12 @@ import { Badge } from "@/components/ui/badge";
 import { TRANSACTION_TAGS_ICONS } from "@/constants/transaction-tags-icons";
 import type { ColumnDef } from "@tanstack/react-table";
 
-type TransactionView = Omit<
+type TransactionColumnView = Omit<
   Transaction,
   "id" | "createdAt" | "updatedAt" | "userId"
 >;
 
-export const columns: ColumnDef<TransactionView>[] = [
+export const columns: ColumnDef<TransactionColumnView>[] = [
   {
     id: "name",
     accessorKey: "name",

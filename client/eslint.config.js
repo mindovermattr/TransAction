@@ -10,6 +10,7 @@ export default tseslint.config([
   globalIgnores(["dist"]),
   {
     files: ["**/*.{ts,tsx}"],
+    ignores: ["**/*.d.ts"],
     plugins: {
       react: reactPlugin,
     },
@@ -24,7 +25,6 @@ export default tseslint.config([
       globals: globals.browser,
     },
     rules: {
-      // "func-style": ["error", "expression"],
       "prefer-arrow-callback": "error",
       "react/jsx-pascal-case": [
         "error",
@@ -34,14 +34,15 @@ export default tseslint.config([
         },
       ],
       "no-console": "error",
-      // "no-restricted-syntax": [
-      //   "error",
-      //   {
-      //     selector: "FunctionDeclaration",
-      //     message:
-      //       "Use `const fn = () => {}` or `export const fn = () => {}` instead.",
-      //   },
-      // ],
+    },
+  },
+  //.d.ts
+  {
+    files: ["**/*.d.ts"],
+    extends: [tseslint.configs.recommended],
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
     },
   },
 ]);
