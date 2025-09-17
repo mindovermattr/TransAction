@@ -1,11 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { TRANSACTION_TAGS_ICONS } from "@/constants/transaction-tags-icons";
+import type { transactionGetSchema } from "@/schemas/transaction.schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import type z from "zod";
 
-type TransactionColumnView = Omit<
-  Transaction,
-  "id" | "createdAt" | "updatedAt" | "userId"
->;
+type TransactionColumnView = z.infer<typeof transactionGetSchema>;
 
 export const columns: ColumnDef<TransactionColumnView>[] = [
   {

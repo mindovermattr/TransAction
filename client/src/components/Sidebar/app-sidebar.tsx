@@ -7,14 +7,12 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { getUserFromLS } from "@/lib/localstorage";
 import { ROUTES } from "@/router/routes";
 import type { ComponentProps } from "react";
+import { AnimatedThemeToggler } from "../ui/animated-theme-toggler";
 import { Typography } from "../ui/typography";
 
 const data = {
@@ -35,28 +33,23 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
   const user = getUserFromLS();
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg">
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <UserIcon className="size-4" />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Typography
-                  tag="span"
-                  variant="subtitle"
-                  className="text-sm leading-none font-medium"
-                >
-                  {user?.email}
-                </Typography>
-                <Typography tag="span" className="leading-none capitalize">
-                  {user?.name}
-                </Typography>
-              </div>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      <SidebarHeader className="flex-row items-center pt-3 pl-3">
+        <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 h-full items-center justify-center rounded-lg">
+          <UserIcon className="size-4" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Typography
+            tag="span"
+            variant="subtitle"
+            className="text-sm leading-none font-medium"
+          >
+            {user?.email}
+          </Typography>
+          <Typography tag="span" className="leading-none capitalize">
+            {user?.name}
+          </Typography>
+        </div>
+        <AnimatedThemeToggler className="ml-auto h-full" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarNav projects={data.projects} />
@@ -64,6 +57,7 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
       <SidebarFooter>
         <Button variant={"destructive"}>Logout</Button>
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   );

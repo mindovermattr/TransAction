@@ -13,12 +13,13 @@ const Transactions = () => {
   const { data, isFetching } = useGetTransactionsQuery({
     options: {
       initialData: [],
+      placeholderData: (previous) => previous,
     },
   });
 
   ///TODO:STORE
   const transactions = useMemo(() => {
-    if (!data) return;
+    if (!data) return [];
     const parsedBody = data.map((el) => transactionGetSchema.parse(el));
     return parsedBody;
   }, [data]);
