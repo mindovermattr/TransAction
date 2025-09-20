@@ -45,7 +45,7 @@ const getTransactions = async (
     }),
     prisma.transaction.count({
       where: {
-        id: user.id,
+        userId: user.id,
       },
     }),
   ]);
@@ -56,14 +56,14 @@ const getTransactions = async (
   const totalPages = Math.ceil(transactionCount / limit);
 
   return {
-    data: transactions,
+    transactions: transactions,
     pagination: {
       currentPage: page,
       pageSize: limit,
       totalItems: transactionCount,
       totalPages: totalPages,
       hasNext: page < totalPages,
-      hasPrev: page > 1,
+      hasPrev: page >= 1,
     },
   };
 };
