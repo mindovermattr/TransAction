@@ -9,7 +9,7 @@ export const useGetPaginatedTransactionsQuery = (
   settings?: QuerySettings<typeof getTransactionsWithPagination>,
 ) =>
   useQuery({
-    queryKey: ["transactions"],
+    queryKey: ["transactions", params.page],
     queryFn: () =>
       getTransactionsWithPagination(params, { config: settings?.config }),
     ...settings?.options,

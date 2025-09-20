@@ -21,6 +21,19 @@ interface QuerySettings<Func = unknown> {
   >;
 }
 
+interface InfiniteQuerySettings<Func = unknown> {
+  config?: ApiRequestConfig;
+  options?: Omit<
+    import("@tanstack/react-query").UseInfiniteQueryOptions<
+      Awaited<ReturnType<Func>>,
+      any,
+      Awaited<ReturnType<Func>>,
+      any
+    >,
+    "queryKey" | "initialData"
+  >;
+}
+
 type ApiRequestConfig<ResponseType = "json"> =
   import("ofetch").FetchOptions<ResponseType>;
 

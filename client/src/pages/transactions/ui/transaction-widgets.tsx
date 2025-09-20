@@ -17,7 +17,7 @@ const TransactionWidgets = ({ isFetching }: TransactionWidgetsProps) => {
     return (
       <div className="grid grid-cols-2 gap-4">
         {Array.from({ length: 2 }).map((_, index) => (
-          <Skeleton key={index} className="min-h-40" />
+          <Skeleton key={index} className="min-h-42.5" />
         ))}
       </div>
     );
@@ -25,7 +25,7 @@ const TransactionWidgets = ({ isFetching }: TransactionWidgetsProps) => {
 
   return (
     <div className="flex gap-4">
-      <Card className="grow">
+      <Card className="grow gap-4">
         <CardHeader className="flex items-center">
           <Wallet2Icon size={18} />
           <Typography tag="h3" variant="title" className="font-medium">
@@ -46,7 +46,7 @@ const TransactionWidgets = ({ isFetching }: TransactionWidgetsProps) => {
           </Typography>
         </CardFooter>
       </Card>
-      <Card className="grow">
+      <Card className="grow gap-4">
         <CardHeader className="flex items-center">
           <BanknoteArrowDownIcon size={22} />
           <Typography tag="h3" variant="title" className="font-medium">

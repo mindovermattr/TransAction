@@ -1,4 +1,9 @@
-import { BadgeDollarSignIcon, TrendingUpIcon, UserIcon } from "lucide-react";
+import {
+  BadgeDollarSignIcon,
+  DoorOpenIcon,
+  TrendingUpIcon,
+  UserIcon,
+} from "lucide-react";
 
 import { SidebarNav } from "@/components/Sidebar/sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -80,7 +85,9 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
         <SidebarNav projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <Button variant={"destructive"}>Logout</Button>
+        <Button variant={"outline"}>
+          <DoorOpenIcon />
+        </Button>
       </SidebarFooter>
 
       <SidebarRail />
