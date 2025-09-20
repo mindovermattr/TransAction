@@ -9,15 +9,19 @@ type props = {
   className?: string;
 };
 
+const rootElement = document.documentElement;
+
 export const AnimatedThemeToggler = ({ className }: props) => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(
+    rootElement.classList.contains("dark"),
+  );
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const changeTheme = async () => {
     if (!buttonRef.current) return;
 
     await document.startViewTransition(() => {
       flushSync(() => {
-        const dark = document.documentElement.classList.toggle("dark");
+        const dark = rootElement.classList.toggle("dark");
         setIsDarkMode(dark);
       });
     }).ready;
@@ -51,7 +55,7 @@ export const AnimatedThemeToggler = ({ className }: props) => {
       onClick={changeTheme}
       className={cn(className, "cursor-pointer")}
     >
-      {isDarkMode ? <SunDim className="size-6" /> : <Moon className="size-6" />}
+      {isDarkMode ? <SunDim className="size-5" /> : <Moon className="size-5" />}
     </button>
   );
 };

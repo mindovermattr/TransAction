@@ -1,28 +1,60 @@
-import { useGetTransactionsQuery } from "@/api/hooks";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { useGetPaginatedTransactionsQuery } from "@/api/hooks";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import { TransactionTable } from "@/pages/transactions/ui/transaction-table";
 import { transactionGetSchema } from "@/schemas/transaction.schema";
-import { useMemo } from "react";
+import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import { columns } from "./transaction-columns";
 import { TransactionAddModal } from "./ui/transaction-add-modal";
 import { TransactionWidgets } from "./ui/transaction-widgets";
 
+const TRANSACTIONS_LIMIT = 12;
+
 const Transactions = () => {
-  const { data, isFetching } = useGetTransactionsQuery({
-    options: {
-      initialData: [],
-      placeholderData: (previous) => previous,
+  const [page, setPage] = useState(1);
+  const { data, isFetching, refetch } = useGetPaginatedTransactionsQuery(
+    {
+      limit: TRANSACTIONS_LIMIT,
+      page: page,
     },
-  });
+    {
+      options: {
+        placeholderData: (previous) => previous,
+      },
+    },
+  );
 
   ///TODO:STORE
   const transactions = useMemo(() => {
     if (!data) return [];
-    const parsedBody = data.map((el) => transactionGetSchema.parse(el));
+
+    const parsedBody = data.transactions.map((el) =>
+      transactionGetSchema.parse(el),
+    );
     return parsedBody;
   }, [data]);
+
+  const isPrevPageEnabled = data?.pagination.hasPrev ?? false;
+  const isNextPageEnabled = data?.pagination.hasNext ?? false;
+
+  const prevPageHandler = () => {
+    if (!isPrevPageEnabled) return;
+    setPage((prev) => prev - 1);
+    refetch();
+  };
+  const nextPageHandler = () => {
+    if (!isNextPageEnabled) return;
+    setPage((prev) => prev + 1);
+    refetch();
+  };
 
   return (
     <>
@@ -33,7 +65,7 @@ const Transactions = () => {
         </Typography>
       </header>
       <TransactionWidgets isFetching={isFetching} />
-      <Card>
+      <Card className="relative">
         <CardHeader className="flex justify-between">
           <Typography tag="h3" variant="title" className="font-medium">
             Таблица расходов
@@ -41,10 +73,27 @@ const Transactions = () => {
           <TransactionAddModal />
         </CardHeader>
         <CardContent>
-          {!isFetching && (
-            <TransactionTable columns={columns} data={transactions} />
+          {isFetching && (
+            <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center">
+              <Typography tag="span">Загрузка...</Typography>
+            </div>
           )}
+
+          <TransactionTable columns={columns} data={transactions} />
         </CardContent>
+        <CardFooter>
+          <div className="flex items-center gap-2">
+            <Button disabled={!isPrevPageEnabled} onClick={prevPageHandler}>
+              <ArrowLeftIcon />
+            </Button>
+            <Typography tag="p" variant={"default"}>
+              {page}
+            </Typography>
+            <Button disabled={!isNextPageEnabled} onClick={nextPageHandler}>
+              <ArrowRightIcon />
+            </Button>
+          </div>
+        </CardFooter>
       </Card>
     </>
   );

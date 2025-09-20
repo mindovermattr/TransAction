@@ -31,3 +31,12 @@ interface PaginationMeta {
   hasNext: boolean;
   hasPrev: boolean;
 }
+
+interface PaginationMeta {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}

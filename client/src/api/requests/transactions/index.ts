@@ -13,6 +13,25 @@ export const getTransactions = async (requestConfig?: GetTransactionsConfig) =>
     requestConfig?.config,
   );
 
+export type TransactionPaginationParams = {
+  page: number;
+  limit: number;
+};
+
+export type PaginatedTransactionResponse = {
+  transactions: TransactionResponse[];
+  pagination: PaginationMeta;
+};
+
+export const getTransactionsWithPagination = async (
+  params: TransactionPaginationParams,
+  requestConfig?: GetTransactionsConfig,
+) =>
+  protectedInstance<PaginatedTransactionResponse>(
+    `transactions?page=${params.page}&limit=${params.limit}`,
+    requestConfig?.config,
+  );
+
 export type PostTransactionsParams = Omit<Transaction, "userId">;
 export type PostTransactionsConfig =
   OfetchRequestConfig<PostTransactionsParams>;
