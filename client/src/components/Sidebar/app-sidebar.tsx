@@ -89,7 +89,6 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
           <DoorOpenIcon />
         </Button>
       </SidebarFooter>
-
       <SidebarRail />
     </Sidebar>
   );

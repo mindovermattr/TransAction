@@ -88,7 +88,7 @@ const Transactions = () => {
             <ArrowLeftIcon />
           </Button>
           <Typography tag="p" variant={"default"}>
-            {page} из {data?.pagination.totalPages}
+            {page} / {data?.pagination.totalPages}
           </Typography>
           <Button disabled={!isNextPageEnabled} onClick={nextPageHandler}>
             <ArrowRightIcon />

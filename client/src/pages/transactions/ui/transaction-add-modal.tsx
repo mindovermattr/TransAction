@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  transactionSchema,
+  transactionPostSchema,
   TransactionTags,
 } from "@/schemas/transaction.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,7 +34,7 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 type FormField = {
-  name: keyof z.infer<typeof transactionSchema>;
+  name: keyof z.infer<typeof transactionPostSchema>;
   label: string;
 } & (
   | {
@@ -71,10 +71,14 @@ const formFields = [
 
 const TransactionAddModal = () => {
   const form = useForm({
-    resolver: zodResolver(transactionSchema),
+    resolver: zodResolver(transactionPostSchema),
   });
 
-  const submitHandler = () => {};
+  const submitHandler = () =>
+    // data: z.infer<typeof transactionPostSchema>
+    {
+      //console.log(data);
+    };
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -103,9 +107,12 @@ const TransactionAddModal = () => {
                       <FormLabel>{formField.label}</FormLabel>
                       <FormControl>
                         {formField.type === "select" ? (
-                          <Select>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a fruit" />
+                              <SelectValue placeholder="Выберите тег" />
                             </SelectTrigger>
                             <SelectContent>
                               {formField.options?.map((option) => (

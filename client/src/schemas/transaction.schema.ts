@@ -15,7 +15,7 @@ export const transactionSchema = z.object({
   updatedAt: z.string(),
   name: z.string(),
   tag: z.enum(TransactionTags),
-  price: z.number().positive(),
+  price: z.number().positive("Цена должна быть положительной"),
   date: z.string(),
   userId: z.number(),
 });
@@ -25,3 +25,17 @@ export const transactionGetSchema = transactionSchema.extend({
   updatedAt: z.coerce.date(),
   date: z.coerce.date(),
 });
+
+export const transactionPostSchema = transactionSchema
+  .omit({
+    createdAt: true,
+    id: true,
+    updatedAt: true,
+    userId: true,
+  })
+  .extend({
+    price: z.preprocess(
+      (val) => (val === "" ? undefined : Number(val)),
+      z.number().positive("Цена должна быть положительной"),
+    ),
+  });

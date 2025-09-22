@@ -1,4 +1,5 @@
 import HttpException from "../exceptions/Http.exception";
+import { getMonthRange } from "../helpers/getDateRange";
 import type { TransactionDTO } from "../models/transaction/transaction.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
@@ -90,7 +91,11 @@ const createTransaction = async (
 
 const getTransactionsSummary = async (user: Omit<User, "password">) => {
   const date = new Date();
-  date.setDate(date.getDate() - 60);
+
+  const { startDate, endDate } = getMonthRange(
+    date.getUTCFullYear(),
+    date.getUTCMonth()
+  );
 
   const transactions = await prisma.transaction.findMany({
     where: {
@@ -98,7 +103,8 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
         id: user.id,
       },
       date: {
-        gte: date,
+        gt: startDate,
+        lt: endDate,
       },
     },
   });
