@@ -32,7 +32,12 @@ export const getTransactionsWithPagination = async (
     requestConfig?.config,
   );
 
-export type PostTransactionsParams = Omit<Transaction, "userId">;
+export type PostTransactionsParams = Omit<
+  Transaction,
+  "userId" | "createdAt" | "updatedAt" | "id" | "date"
+> & {
+  date: string;
+};
 export type PostTransactionsConfig =
   OfetchRequestConfig<PostTransactionsParams>;
 
@@ -40,7 +45,7 @@ export const postTransaction = async ({
   params,
   config,
 }: PostTransactionsConfig) =>
-  protectedInstance("transactions", {
+  protectedInstance<TransactionResponse>("transactions", {
     method: "POST",
     body: params,
     ...config,

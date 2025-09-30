@@ -1,3 +1,4 @@
+import { usePostTransactionsMutation } from "@/api/hooks/usePostTransaction";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,6 +31,7 @@ import {
 } from "@/schemas/transaction.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CirclePlusIcon } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -70,17 +72,21 @@ const formFields = [
 /* TODO: Change component name */
 
 const TransactionAddModal = () => {
+  const [open, setIsOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(transactionPostSchema),
   });
 
-  const submitHandler = () =>
-    // data: z.infer<typeof transactionPostSchema>
-    {
-      //console.log(data);
-    };
+  const postTransactionMutation = usePostTransactionsMutation();
+
+  const submitHandler = async (data: z.infer<typeof transactionPostSchema>) => {
+    await postTransactionMutation.mutateAsync({
+      params: data,
+    });
+    setIsOpen(false);
+  };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button className="self-center p-0">
           <CirclePlusIcon />

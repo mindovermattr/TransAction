@@ -38,4 +38,5 @@ export const transactionPostSchema = transactionSchema
       (val) => (val === "" ? undefined : Number(val)),
       z.number().positive("Цена должна быть положительной"),
     ),
+    name: z.string().min(4, "Минимум 4 символа"),
   });
