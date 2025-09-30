@@ -1,4 +1,8 @@
-import { getUserFromLS, removeUserFromLS } from "@/lib/localstorage";
+import {
+  getDataFromLocalStorage,
+  LOCAL_STORAGE_KEYS,
+  removeDataFromLocalStorage,
+} from "@/lib/localstorage";
 import type { FetchContext } from "ofetch";
 import { ofetch } from "ofetch";
 
@@ -11,14 +15,14 @@ const instance = ofetch.create({
 const protectedInstance = ofetch.create({
   baseURL: HOST_URL,
   onRequest: ({ options }: FetchContext) => {
-    const user = getUserFromLS();
+    const user = getDataFromLocalStorage(LOCAL_STORAGE_KEYS.USER);
     if (!user) return;
     options.headers.set("Authorization", `Bearer ${user.token}`);
   },
 
   async onResponseError({ response }) {
     if (response.status === 401) {
-      removeUserFromLS();
+      removeDataFromLocalStorage(LOCAL_STORAGE_KEYS.USER);
     }
   },
 });

@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { setUserLS } from "@/lib/localstorage";
+import { LOCAL_STORAGE_KEYS, setDataLocalStorage } from "@/lib/localstorage";
 import { isOfetchError } from "@/lib/typeguards";
 import { ROUTES } from "@/router/routes";
 import { loginSchema } from "@/schemas/auth.schema";
@@ -28,7 +28,7 @@ export const LoginForm = () => {
   const onSubmit = async (data: z.infer<typeof loginSchema>) => {
     try {
       const response = await login({ params: data });
-      setUserLS(response);
+      setDataLocalStorage(LOCAL_STORAGE_KEYS.USER, response);
       navigate(ROUTES.TRANSACTIONS);
     } catch (error) {
       if (!isOfetchError(error)) return;

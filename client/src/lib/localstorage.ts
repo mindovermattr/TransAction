@@ -14,8 +14,8 @@ type LocalStorageData = {
 
 type LSkey = keyof LocalStorageData;
 
-const getDataFromLocalStorage = <T extends LSkey>() => {
-  const data = localStorage.getItem(LOCAL_STORAGE_KEYS.USER) ?? "";
+const getDataFromLocalStorage = <T extends LSkey>(key: T) => {
+  const data = localStorage.getItem(key) ?? "";
   if (!data) return null;
   const user = JSON.parse(data);
 
