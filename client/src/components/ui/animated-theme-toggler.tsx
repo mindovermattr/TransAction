@@ -16,14 +16,13 @@ type props = {
 
 const rootElement = document.documentElement;
 
-const initialTheme = getDataFromLocalStorage(LOCAL_STORAGE_KEYS.THEME) ?? false;
-
-if (initialTheme) document.documentElement.classList.add("dark");
-
 export const AnimatedThemeToggler = ({ className }: props) => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(initialTheme);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(
+    getDataFromLocalStorage(LOCAL_STORAGE_KEYS.THEME) ?? false,
+  );
 
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+
   const changeTheme = async () => {
     if (!buttonRef.current) return;
 

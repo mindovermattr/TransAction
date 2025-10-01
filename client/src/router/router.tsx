@@ -11,7 +11,7 @@ import { ROUTES } from "./routes";
 
 const router = createBrowserRouter([
   {
-    path: ROUTES.HOME,
+    path: ROUTES.ROOT,
     element: (
       <Providers>
         <App />

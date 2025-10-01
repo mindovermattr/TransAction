@@ -6,7 +6,7 @@ export type LoginResponse = User & {
 export type LoginParams = Omit<User, "id" | "name"> & { password: string };
 export type LoginConfig = OfetchRequestConfig<LoginParams>;
 
-export const login = async ({ params, config }: LoginConfig) =>
+export const login = ({ params, config }: LoginConfig) =>
   instance<LoginResponse>("auth/login", {
     method: "POST",
     body: params,
@@ -19,7 +19,7 @@ export type RegisterParams = Omit<User, "id"> & {
 };
 export type RegisterConfig = OfetchRequestConfig<RegisterParams>;
 
-export const register = async ({ params, config }: RegisterConfig) =>
+export const register = ({ params, config }: RegisterConfig) =>
   instance("auth/register", {
     method: "POST",
     body: params,

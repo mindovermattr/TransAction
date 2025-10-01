@@ -21,18 +21,17 @@ const TRANSACTIONS_LIMIT = 12;
 
 const Transactions = () => {
   const [page, setPage] = useState(1);
-  const { data, isFetching, refetch, isLoading } =
-    useGetPaginatedTransactionsQuery(
-      {
-        limit: TRANSACTIONS_LIMIT,
-        page: page,
+  const { data, isFetching, refetch } = useGetPaginatedTransactionsQuery(
+    {
+      limit: TRANSACTIONS_LIMIT,
+      page: page,
+    },
+    {
+      options: {
+        placeholderData: keepPreviousData,
       },
-      {
-        options: {
-          placeholderData: keepPreviousData,
-        },
-      },
-    );
+    },
+  );
 
   ///TODO:STORE
   const transactions = useMemo(() => {
@@ -66,8 +65,8 @@ const Transactions = () => {
           Транзакции
         </Typography>
       </header>
-      {/* TODO: Перенести стейт внутрь виджетов */}
-      <TransactionWidgets isFetching={isLoading} />
+
+      <TransactionWidgets />
       <Card className="relative">
         <CardHeader className="flex justify-between">
           <Typography tag="h3" variant="title" className="font-medium">

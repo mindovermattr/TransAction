@@ -1,3 +1,4 @@
+import { useGetTransactionsSummaryQuery } from "@/api/hooks";
 import {
   Card,
   CardContent,
@@ -8,12 +9,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
 import { BanknoteArrowDownIcon, Wallet2Icon } from "lucide-react";
 
-interface TransactionWidgetsProps {
-  isFetching: boolean;
-}
+const TransactionWidgets = () => {
+  const { data, isLoading } = useGetTransactionsSummaryQuery();
 
-const TransactionWidgets = ({ isFetching }: TransactionWidgetsProps) => {
-  if (isFetching) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-4">
         {Array.from({ length: 2 }).map((_, index) => (
@@ -55,7 +54,7 @@ const TransactionWidgets = ({ isFetching }: TransactionWidgetsProps) => {
         </CardHeader>
         <CardContent>
           <Typography tag="h3" variant="title" className="text-3xl font-medium">
-            123 000 руб
+            {data?._sum.price ?? 0} ₽
           </Typography>
         </CardContent>
         <CardFooter>
