@@ -9,7 +9,7 @@ const LOCAL_STORAGE_KEYS = {
 
 type LocalStorageData = {
   [LOCAL_STORAGE_KEYS.USER]: UserWithToken;
-  [LOCAL_STORAGE_KEYS.THEME]: { theme: "dark" | "light" };
+  [LOCAL_STORAGE_KEYS.THEME]: boolean;
 };
 
 type LSkey = keyof LocalStorageData;

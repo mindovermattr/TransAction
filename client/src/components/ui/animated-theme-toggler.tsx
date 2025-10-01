@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  getDataFromLocalStorage,
+  LOCAL_STORAGE_KEYS,
+  setDataLocalStorage,
+} from "@/lib/localstorage";
 import { cn } from "@/lib/utils";
 import { Moon, SunDim } from "lucide-react";
 import { useRef, useState } from "react";
@@ -11,10 +16,13 @@ type props = {
 
 const rootElement = document.documentElement;
 
+const initialTheme = getDataFromLocalStorage(LOCAL_STORAGE_KEYS.THEME) ?? false;
+
+if (initialTheme) document.documentElement.classList.add("dark");
+
 export const AnimatedThemeToggler = ({ className }: props) => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(
-    rootElement.classList.contains("dark"),
-  );
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(initialTheme);
+
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const changeTheme = async () => {
     if (!buttonRef.current) return;
@@ -23,6 +31,7 @@ export const AnimatedThemeToggler = ({ className }: props) => {
       flushSync(() => {
         const dark = rootElement.classList.toggle("dark");
         setIsDarkMode(dark);
+        setDataLocalStorage(LOCAL_STORAGE_KEYS.THEME, dark);
       });
     }).ready;
 

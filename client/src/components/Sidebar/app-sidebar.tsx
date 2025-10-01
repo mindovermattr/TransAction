@@ -18,10 +18,15 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { getUserFromLS } from "@/lib/localstorage";
+import {
+  getDataFromLocalStorage,
+  LOCAL_STORAGE_KEYS,
+  removeDataFromLocalStorage,
+} from "@/lib/localstorage";
 import { ROUTES } from "@/router/routes";
 import { Separator } from "@radix-ui/react-separator";
 import type { ComponentProps } from "react";
+import { useNavigate } from "react-router";
 import { AnimatedThemeToggler } from "../ui/animated-theme-toggler";
 import { Typography } from "../ui/typography";
 
@@ -40,8 +45,13 @@ const data = {
   ],
 };
 const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
-  const user = getUserFromLS();
+  const user = getDataFromLocalStorage(LOCAL_STORAGE_KEYS.USER);
+  const navigate = useNavigate();
   const sidebar = useSidebar();
+  const onLogout = () => {
+    removeDataFromLocalStorage(LOCAL_STORAGE_KEYS.USER);
+    navigate(ROUTES.LOGIN);
+  };
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="">
@@ -85,7 +95,7 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
         <SidebarNav projects={data.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <Button variant={"outline"}>
+        <Button onClick={onLogout} variant={"outline"}>
           <DoorOpenIcon />
         </Button>
       </SidebarFooter>

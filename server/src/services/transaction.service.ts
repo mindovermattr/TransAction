@@ -97,7 +97,7 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
     date.getUTCMonth()
   );
 
-  const transactions = await prisma.transaction.findMany({
+  const transactions = await prisma.transaction.aggregate({
     where: {
       user: {
         id: user.id,
@@ -106,6 +106,9 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
         gt: startDate,
         lt: endDate,
       },
+    },
+    _sum: {
+      price: true,
     },
   });
 

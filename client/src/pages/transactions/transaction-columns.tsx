@@ -37,13 +37,14 @@ export const columns: ColumnDef<TransactionColumnView>[] = [
       return date.toLocaleDateString("ru-RU");
     },
     sortingFn: "datetime",
+
     enableMultiSort: false,
   },
   {
     id: "tag",
     accessorKey: "tag",
     header: "Тэг",
-    sortingFn: "alphanumeric",
+    enableSorting: false,
     cell: ({ row }) => {
       const value = row.original.tag as keyof typeof TRANSACTION_TAGS_ICONS;
       const IconComponent =
