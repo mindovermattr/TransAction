@@ -15,11 +15,11 @@ type LocalStorageData = {
 type LSkey = keyof LocalStorageData;
 
 const getDataFromLocalStorage = <T extends LSkey>(key: T) => {
-  const data = localStorage.getItem(key) ?? "";
-  if (!data) return null;
-  const user = JSON.parse(data);
+  const item = localStorage.getItem(key);
+  if (!item) return null;
+  const data = JSON.parse(item);
 
-  return user as LocalStorageData[T];
+  return data as LocalStorageData[T];
 };
 
 const setDataLocalStorage = <T extends LSkey>(
