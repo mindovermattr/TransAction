@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const TransactionTags = [
+export const TRANSACTION_TAGS = [
   "JOY",
   "TRANSPORT",
   "FOOD",
@@ -14,7 +14,7 @@ export const transactionSchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   name: z.string(),
-  tag: z.enum(TransactionTags),
+  tag: z.enum(TRANSACTION_TAGS),
   price: z.number().positive("Цена должна быть положительной"),
   date: z.string(),
   userId: z.number(),

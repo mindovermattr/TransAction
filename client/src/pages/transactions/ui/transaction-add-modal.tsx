@@ -26,8 +26,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  TRANSACTION_TAGS,
   transactionPostSchema,
-  TransactionTags,
 } from "@/schemas/transaction.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CirclePlusIcon } from "lucide-react";
@@ -48,7 +48,7 @@ type FormField = {
     }
   | {
       type: "select";
-      options: typeof TransactionTags;
+      options: typeof TRANSACTION_TAGS;
     }
 );
 
@@ -65,7 +65,7 @@ const formFields = [
     name: "tag",
     label: "Тег",
     type: "select",
-    options: TransactionTags,
+    options: TRANSACTION_TAGS,
   },
 ] satisfies readonly FormField[];
 

@@ -26,7 +26,6 @@ export const columns: ColumnDef<TransactionColumnView>[] = [
       return <div>{formatted}</div>;
     },
     sortingFn: "basic",
-    enableMultiSort: false,
   },
   {
     id: "date",
@@ -37,8 +36,6 @@ export const columns: ColumnDef<TransactionColumnView>[] = [
       return date.toLocaleDateString("ru-RU");
     },
     sortingFn: "datetime",
-
-    enableMultiSort: false,
   },
   {
     id: "tag",
@@ -55,6 +52,9 @@ export const columns: ColumnDef<TransactionColumnView>[] = [
           {value}
         </Badge>
       );
+    },
+    meta: {
+      filterVariant: "select",
     },
   },
 ];
