@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
+import { cn } from "@/lib/utils";
 import { BanknoteArrowDownIcon, Wallet2Icon } from "lucide-react";
 
 const TransactionWidgets = () => {
@@ -21,6 +22,22 @@ const TransactionWidgets = () => {
       </div>
     );
   }
+
+  if (!data) return;
+
+  const prevMonthSum = data.prevMonthSum ?? 1;
+  const currentMonthSum = data.currentMonthSum ?? 0;
+
+  const diff = Math.round(
+    ((currentMonthSum - prevMonthSum) / prevMonthSum) * 100,
+  );
+  const isDifferencePositive = diff >= 100;
+
+  const formattedCurrentMonthSum = Intl.NumberFormat("ru-RU", {
+    style: "currency",
+    currency: "RUB",
+    maximumFractionDigits: 0,
+  }).format(currentMonthSum);
 
   return (
     <div className="flex gap-4">
@@ -54,16 +71,27 @@ const TransactionWidgets = () => {
         </CardHeader>
         <CardContent>
           <Typography tag="h3" variant="title" className="text-3xl font-medium">
-            {data?._sum.price ?? 0} ₽
+            {formattedCurrentMonthSum}
           </Typography>
         </CardContent>
         <CardFooter>
           <Typography tag="p" className="text-sm">
-            На{" "}
-            <Typography tag="span" className="text-sm text-rose-500">
-              12% больше{" "}
-            </Typography>
-            чем в предыдущем месяце
+            {data.prevMonthSum ? (
+              <>
+                На{" "}
+                <Typography
+                  tag="span"
+                  className={cn("text-sm text-rose-500", {
+                    "text-emerald-300": isDifferencePositive,
+                  })}
+                >
+                  {diff}% {isDifferencePositive ? "меньше " : "больше "}
+                </Typography>
+                чем в предыдущем месяце
+              </>
+            ) : (
+              "В системе не обнаружено расходов за прошлый месяц"
+            )}
           </Typography>
         </CardFooter>
       </Card>

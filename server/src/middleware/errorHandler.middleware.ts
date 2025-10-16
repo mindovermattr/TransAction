@@ -14,6 +14,7 @@ const errorHandler = (
   }
   res.status(500).json({
     message: "undefined error",
+    error,
   });
 };
 

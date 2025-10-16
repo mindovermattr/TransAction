@@ -92,30 +92,53 @@ const createTransaction = async (
 const getTransactionsSummary = async (user: Omit<User, "password">) => {
   const date = new Date();
 
-  const { startDate, endDate } = getMonthRange(
-    date.getUTCFullYear(),
-    date.getUTCMonth()
-  );
+  const month = date.getUTCMonth();
+  const year = date.getUTCFullYear();
 
-  const transactions = await prisma.transaction.aggregate({
-    where: {
-      user: {
-        id: user.id,
-      },
-      date: {
-        gt: startDate,
-        lt: endDate,
-      },
-    },
-    _sum: {
-      price: true,
-    },
-  });
+  const currentMonth = getMonthRange(year, month);
+  const prevMonth = getMonthRange(year, month - 1 < 0 ? 12 : month - 1);
 
-  if (!transactions)
+  const [currentMonthTransactions, prevMonthTransactions] = await Promise.all([
+    prisma.transaction.aggregate({
+      where: {
+        user: {
+          id: user.id,
+        },
+        date: {
+          gt: currentMonth.startDate,
+          lt: currentMonth.endDate,
+        },
+      },
+      _sum: {
+        price: true,
+      },
+    }),
+    prisma.transaction.aggregate({
+      where: {
+        user: {
+          id: user.id,
+        },
+        date: {
+          gt: prevMonth.startDate,
+          lt: prevMonth.endDate,
+        },
+      },
+      _sum: {
+        price: true,
+      },
+    }),
+  ]);
+
+  if (!currentMonthTransactions)
     throw new HttpException(400, "У пользователя нет транзакций");
 
-  return transactions;
+  // TODO: Обработать случай, когда у пользователя
+  // 1) Нет транзакций вообще
+  // 2) Нет транзакций за предыдущий месяц
+  return {
+    currentMonthSum: currentMonthTransactions._sum.price ?? 0,
+    prevMonthSum: prevMonthTransactions._sum.price ?? 0,
+  };
 };
 
 export { createTransaction, getTransactions, getTransactionsSummary };

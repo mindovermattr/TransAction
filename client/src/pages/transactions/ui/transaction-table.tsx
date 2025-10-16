@@ -225,7 +225,7 @@ const TransactionTable = () => {
           <ArrowLeftIcon />
         </Button>
         <Typography tag="p" variant={"default"}>
-          {table.getState().pagination.pageIndex + 1} of{" "}
+          {table.getState().pagination.pageIndex + 1} /{" "}
           {table.getPageCount().toLocaleString()}
         </Typography>
         <Button

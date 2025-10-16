@@ -3,9 +3,8 @@ import { protectedInstance } from "@/api/instance";
 export type GetTransactionsSummaryConfig = OfetchRequestConfig;
 
 export type TransactionSummaryResponse = {
-  _sum: {
-    price: number;
-  };
+  currentMonthSum: number | null;
+  prevMonthSum: number | null;
 };
 
 export const getTransactionsSummary = (
