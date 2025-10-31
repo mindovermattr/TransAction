@@ -1,69 +1,40 @@
-# React + TypeScript + Vite
+# 💻 Transaction Tracker - Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend часть приложения для учета личных финансов с современным UI и полным функционалом управления транзакциями.
 
-Currently, two official plugins are available:
+![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-7.0-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.1-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Технологии
 
-## Expanding the ESLint configuration
+- **React 19** - UI библиотека
+- **TypeScript** - типизированный JavaScript
+- **Vite** - быстрый сборщик и dev-сервер
+- **React Router 7** - маршрутизация
+- **TanStack Query** - управление серверным состоянием
+- **TanStack Table** - мощные таблицы данных
+- **React Hook Form + Zod** - валидация форм
+- **Radix UI** - доступные UI компоненты
+- **Tailwind CSS** - utility-first CSS
+- **Recharts** - графики и диаграммы
+- **Lucide React** - иконки
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Быстрый старт
 
-```js
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+```bash
+# Установка зависимостей
+pnpm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+# Запуск dev-сервера
+pnpm dev
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+# Сборка для продакшена
+pnpm build
+
+# Предпросмотр продакшен сборки
+pnpm preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+💡 **Примечание:** Для работы приложения необходим запущенный backend сервер (см. `/server/README.md`)
