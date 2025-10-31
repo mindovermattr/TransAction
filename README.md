@@ -42,6 +42,7 @@ todoist/
 - **TanStack Query** - управление серверным состоянием и кэшированием
 - **TanStack Table** - мощные таблицы для данных
 - **React Hook Form + Zod** - валидация форм
+- **ShadcnUI** - дизайн система
 - **Radix UI** - доступные UI компоненты
 - **Tailwind CSS** - utility-first CSS фреймворк
 - **Recharts** - библиотека для графиков и диаграмм
@@ -50,7 +51,7 @@ todoist/
 ### Backend (Server)
 
 - **Node.js + Express 5** - веб-сервер
-- **TypeScript** - типизация
+- **TypeScript** - типизированный JavaScript
 - **PostgreSQL** - реляционная база данных
 - **Prisma** - современный ORM
 - **Passport.js + JWT** - аутентификация

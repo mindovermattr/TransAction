@@ -105,8 +105,8 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
           id: user.id,
         },
         date: {
-          gt: currentMonth.startDate,
-          lt: currentMonth.endDate,
+          gte: currentMonth.startDate,
+          lte: currentMonth.endDate,
         },
       },
       _sum: {
