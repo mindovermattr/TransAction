@@ -69,7 +69,6 @@ const TransactionTable = () => {
   const [filterState, setFilterState] = useState<ColumnFiltersState>([]);
   const [selectedTag, setSelectedTag] = useState("");
 
-  ///TODO:STORE
   const transactions = useMemo(() => {
     if (!data) return [];
 
@@ -218,19 +217,21 @@ const TransactionTable = () => {
         </div>
       </CardContent>
       <CardFooter className="justify-end gap-2">
+        {/* TODO: Кнопки "прыгают" при неполном количестве транзакций на странице */}
         <Button
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
+          size="sm"
         >
           <ArrowLeftIcon />
         </Button>
         <Typography tag="p" variant={"default"}>
-          {table.getState().pagination.pageIndex + 1} /{" "}
-          {table.getPageCount().toLocaleString()}
+          {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
         </Typography>
         <Button
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
+          size="sm"
         >
           <ArrowRightIcon />
         </Button>
