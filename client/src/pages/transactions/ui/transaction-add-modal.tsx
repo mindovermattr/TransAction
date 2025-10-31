@@ -1,4 +1,5 @@
 import { usePostTransactionsMutation } from "@/api/hooks/usePostTransactionMutation";
+import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -42,9 +43,11 @@ type FormField = {
   | {
       type: "text" | "number";
       placeholder?: string;
+      value?: string | number;
     }
   | {
       type: "date";
+      value?: string;
     }
   | {
       type: "select";
@@ -77,14 +80,23 @@ const TransactionAddModal = () => {
     resolver: zodResolver(transactionPostSchema),
   });
 
-  const postTransactionMutation = usePostTransactionsMutation();
+  const postTransactionMutation = usePostTransactionsMutation({
+    options: {
+      onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["transactions"] }),
+          queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
+        ]);
+        setIsOpen(false);
+      },
+    },
+  });
 
-  const submitHandler = async (data: z.infer<typeof transactionPostSchema>) => {
+  const submitHandler = async (data: z.infer<typeof transactionPostSchema>) =>
     await postTransactionMutation.mutateAsync({
       params: data,
     });
-    setIsOpen(false);
-  };
+
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -113,10 +125,7 @@ const TransactionAddModal = () => {
                       <FormLabel>{formField.label}</FormLabel>
                       <FormControl>
                         {formField.type === "select" ? (
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
+                          <Select onValueChange={field.onChange}>
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Выберите тег" />
                             </SelectTrigger>
@@ -133,6 +142,7 @@ const TransactionAddModal = () => {
                             type={formField.type}
                             placeholder={formField.placeholder ?? ""}
                             {...field}
+                            value={field.value as string | number | undefined}
                           />
                         )}
                       </FormControl>

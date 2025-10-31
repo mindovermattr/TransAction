@@ -1,6 +1,7 @@
 import { App } from "@/App";
 import { AppSidebar } from "@/components/Sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Analytic } from "@/pages/analytic/analytic";
 import { Login } from "@/pages/auth/login";
 import { Registration } from "@/pages/auth/registration";
 import { Transactions } from "@/pages/transactions/transactions";
@@ -37,7 +38,10 @@ const router = createBrowserRouter([
             </SidebarInset>
           </SidebarProvider>
         ),
-        children: [{ path: ROUTES.TRANSACTIONS, Component: Transactions }],
+        children: [
+          { path: ROUTES.TRANSACTIONS, Component: Transactions },
+          { path: ROUTES.ANALYTICS, Component: Analytic },
+        ],
       },
       //other routes
       {
