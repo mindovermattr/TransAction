@@ -1,5 +1,5 @@
 import HttpException from "../exceptions/Http.exception";
-import { getMonthRange } from "../helpers/getDateRange";
+import { getDateRange } from "../helpers/getDateRange";
 import type { TransactionDTO } from "../models/transaction/transaction.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
@@ -95,8 +95,8 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
   const month = date.getUTCMonth();
   const year = date.getUTCFullYear();
 
-  const currentMonth = getMonthRange(year, month);
-  const prevMonth = getMonthRange(year, month - 1 < 0 ? 12 : month - 1);
+  const currentMonth = getDateRange(year, month);
+  const prevMonth = getDateRange(year, month - 1 < 0 ? 12 : month - 1);
 
   const [currentMonthTransactions, prevMonthTransactions] = await Promise.all([
     prisma.transaction.aggregate({
