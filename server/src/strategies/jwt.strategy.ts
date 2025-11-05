@@ -13,9 +13,11 @@ const jwtStrategy = new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
     },
   });
 
-  if (!user) done({ message: "Пользователя не существует" });
+  if (!user) return done({ message: "Пользователя не существует" });
 
-  return done(null, user);
+  const { password, ...userWithoutPassword } = user;
+
+  return done(null, userWithoutPassword);
 });
 
 export { jwtStrategy };

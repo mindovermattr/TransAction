@@ -5,7 +5,11 @@ import {
 } from "../middleware/validation.middleware";
 import { IncomeDTO } from "../models/income/income.dto";
 import { User } from "../models/user/user.entity";
-import { createIncome, getIncomes } from "../services/income.service";
+import {
+  createIncome,
+  getIncomes,
+  getIncomeSummary,
+} from "../services/income.service";
 
 const router = express.Router();
 
@@ -15,6 +19,16 @@ router.get("/", async (req, res, next) => {
 
     const transactions = await getIncomes(user);
     res.json(transactions);
+  } catch (error: unknown) {
+    next(error);
+  }
+});
+
+router.get("/summary", async (req, res, next) => {
+  try {
+    const user = req.user as User;
+    const summary = await getIncomeSummary(user);
+    res.json(summary);
   } catch (error: unknown) {
     next(error);
   }

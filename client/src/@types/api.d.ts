@@ -23,6 +23,16 @@ interface Transaction {
   userId: number;
 }
 
+interface Income {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  price: number;
+  date: Date;
+  userId: number;
+}
+
 interface PaginationMeta {
   currentPage: number;
   pageSize: number;

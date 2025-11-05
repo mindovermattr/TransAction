@@ -88,6 +88,7 @@ const TransactionAddModal = () => {
           queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
         ]);
         setIsOpen(false);
+        form.reset();
       },
     },
   });

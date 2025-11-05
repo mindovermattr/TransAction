@@ -1,4 +1,5 @@
 import HttpException from "../exceptions/Http.exception";
+import { getMonthRange } from "../helpers/getDateRange";
 import { IncomeDTO } from "../models/income/income.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
@@ -17,6 +18,51 @@ const getIncomes = async (user: Omit<User, "password">) => {
   return incomes;
 };
 
+const getIncomeSummary = async (user: Omit<User, "password">) => {
+  const date = new Date();
+  const month = date.getUTCMonth();
+  const year = date.getUTCFullYear();
+
+  const currentMonth = getMonthRange(year, month);
+  const prevMonth = getMonthRange(year, month - 1 < 0 ? 12 : month - 1);
+
+  const [currentMonthIncomes, prevMonthIncomes] = await Promise.all([
+    prisma.income.aggregate({
+      where: {
+        user: {
+          id: user.id,
+        },
+        date: {
+          gte: currentMonth.startDate,
+          lte: currentMonth.endDate,
+        },
+      },
+      _sum: {
+        price: true,
+      },
+    }),
+    prisma.income.aggregate({
+      where: {
+        user: {
+          id: user.id,
+        },
+        date: {
+          gte: prevMonth.startDate,
+          lte: prevMonth.endDate,
+        },
+      },
+      _sum: {
+        price: true,
+      },
+    }),
+  ]);
+
+  return {
+    currentMonthSum: currentMonthIncomes._sum.price ?? 0,
+    prevMonthSum: prevMonthIncomes._sum.price ?? 0,
+  };
+};
+
 const createIncome = async (user: User, incomeDTO: IncomeDTO) => {
   const createdIncome = await prisma.income.create({
     data: {
@@ -33,4 +79,4 @@ const createIncome = async (user: User, incomeDTO: IncomeDTO) => {
   return createdIncome;
 };
 
-export { createIncome, getIncomes };
+export { createIncome, getIncomes, getIncomeSummary };
