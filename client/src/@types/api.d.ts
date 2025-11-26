@@ -33,14 +33,7 @@ interface Income {
   userId: number;
 }
 
-interface PaginationMeta {
-  currentPage: number;
-  pageSize: number;
-  totalItems: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-}
+type AnalyticsPeriod = "month" | "quarter" | "year";
 
 interface PaginationMeta {
   currentPage: number;

@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import passport from "passport";
+import analyticsRouter from "./controllers/analytics.controller";
 import authRouter from "./controllers/auth.controller";
 import incomeRouter from "./controllers/income.controller";
 import transactionRouter from "./controllers/transactions.controller";
@@ -24,6 +25,7 @@ app.use("/auth", authRouter);
 app.use("/users", jwtMiddleware, userRouter);
 app.use("/transactions", jwtMiddleware, transactionRouter);
 app.use("/income", jwtMiddleware, incomeRouter);
+app.use("/analytics", jwtMiddleware, analyticsRouter);
 
 //error handler middleware
 app.use(errorHandler);
