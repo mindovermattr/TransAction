@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getExpensesByWeekdayAnalytics } from "../requests";
+import { getExpensesByWeekdayAnalytics } from "../../requests";
 
 export const useGetExpensesByWeekdayQuery = (
   period: AnalyticsPeriod,

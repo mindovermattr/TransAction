@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getTransactionsWithPagination,
   type TransactionPaginationParams,
-} from "../requests";
+} from "../../requests";
 
 export const useGetPaginatedTransactionsQuery = (
   params: TransactionPaginationParams,

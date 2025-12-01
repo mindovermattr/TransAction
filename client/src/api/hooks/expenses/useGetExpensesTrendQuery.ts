@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getExpensesTrendAnalytics } from "../requests";
+import { getExpensesTrendAnalytics } from "../../requests";
 
 export const useGetExpensesTrendQuery = (
   period: AnalyticsPeriod,

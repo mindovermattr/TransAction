@@ -61,16 +61,6 @@ export type BalanceOverviewResponse = AnalyticsPeriodMetadata & {
   };
 };
 
-export const getBalanceOverviewAnalytics = ({
-  params,
-  config,
-}: AnalyticsRequestConfig) =>
-  protectedInstance<BalanceOverviewResponse>("analytics/balance/overview", {
-    method: "POST",
-    body: params,
-    ...config,
-  });
-
 export type ExpensesByWeekdayResponse = AnalyticsPeriodMetadata & {
   data: {
     weekday: number;
