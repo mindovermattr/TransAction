@@ -10,7 +10,10 @@ import {
 } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useMemo } from "react";
 import { Cell, Pie, PieChart } from "recharts";
+import { EmptyState } from "./empty-state";
 import type { ChartProps } from "./types";
 
 const CATEGORY_LABELS: Record<TransactionTags, string> = {
@@ -34,6 +37,16 @@ const COLORS = [
 type CategoryPieCardProps = ChartProps<ExpensesByCategoryResponse>;
 
 const CategoryPieCard = ({ data, isLoading }: CategoryPieCardProps) => {
+  const { data: categoryData } = data || {};
+  const isMobile = useIsMobile();
+
+  const { innerRadius, outerRadius } = useMemo(() => {
+    if (isMobile) {
+      return { innerRadius: 30, outerRadius: 70 };
+    }
+    return { innerRadius: 50, outerRadius: 110 };
+  }, [isMobile]);
+
   if (isLoading) {
     return <Skeleton className="h-[360px] w-full" />;
   }
@@ -50,22 +63,24 @@ const CategoryPieCard = ({ data, isLoading }: CategoryPieCardProps) => {
   );
 
   return (
-    <Card className="">
+    <Card className="flex h-full flex-col">
       <CardHeader className="space-y-1">
         <CardTitle>Расходы по категориям</CardTitle>
         <Typography tag="p" className="text-muted-foreground text-sm">
           Показывает распределение расходов за выбранный период.
         </Typography>
       </CardHeader>
-      <CardContent className="h-full">
-        {!data || data.data.length === 0 ? (
-          <Typography tag="p" className="text-muted-foreground text-sm">
-            За выбранный период расходы не найдены.
-          </Typography>
+      <CardContent className="flex flex-1 items-center justify-center">
+        {!categoryData || categoryData.length === 0 ? (
+          <EmptyState
+            message="В выбранный период расходы не найдены"
+            description="Добавьте транзакции, чтобы увидеть распределение по категориям"
+            className="min-h-[280px]"
+          />
         ) : (
           <ChartContainer
             config={chartConfig}
-            className="[&_.recharts-pie-label-text]:fill-foreground mx-auto aspect-square max-h-[280px] w-full max-w-[320px] pb-0"
+            className="[&_.recharts-pie-label-text]:fill-foreground h-full w-full pb-0 [&_.recharts-pie-label-text]:text-xs sm:[&_.recharts-pie-label-text]:text-sm"
           >
             <PieChart>
               <ChartTooltip
@@ -73,11 +88,11 @@ const CategoryPieCard = ({ data, isLoading }: CategoryPieCardProps) => {
                   <ChartTooltipContent
                     hideLabel
                     formatter={(value, name) => (
-                      <div className="flex w-full items-center justify-between gap-4">
-                        <span className="text-muted-foreground">
+                      <div className="flex w-full items-center justify-between gap-2 sm:gap-4">
+                        <span className="text-muted-foreground text-xs sm:text-sm">
                           {CATEGORY_LABELS[name as TransactionTags]}
                         </span>
-                        <span className="font-medium">
+                        <span className="text-xs font-medium sm:text-sm">
                           {Number(value).toLocaleString("ru-RU")} ₽
                         </span>
                       </div>
@@ -86,19 +101,25 @@ const CategoryPieCard = ({ data, isLoading }: CategoryPieCardProps) => {
                 }
               />
               <Pie
-                data={data.data}
+                data={categoryData}
                 dataKey="total"
                 nameKey="tag"
-                innerRadius={50}
-                outerRadius={110}
+                innerRadius={innerRadius}
+                outerRadius={outerRadius}
                 paddingAngle={0}
                 labelLine={false}
                 minAngle={12}
-                label={({ value }) =>
-                  `${Math.round(value as number).toLocaleString("ru-RU")} ₽`
+                label={
+                  isMobile
+                    ? false
+                    : ({ value, percent }) => {
+                        // Показываем label только для секторов больше 5%
+                        if (percent < 0.05) return null;
+                        return `${Math.round(value as number).toLocaleString("ru-RU")} ₽`;
+                      }
                 }
               >
-                {data.data.map((item) => (
+                {categoryData.map((item) => (
                   <Cell
                     key={item.tag}
                     fill={`var(--color-${item.tag})`}
@@ -108,6 +129,7 @@ const CategoryPieCard = ({ data, isLoading }: CategoryPieCardProps) => {
               </Pie>
               <ChartLegend
                 verticalAlign="bottom"
+                wrapperStyle={{ fontSize: isMobile ? "10px" : "12px" }}
                 content={<ChartLegendContent nameKey="tag" />}
               />
             </PieChart>

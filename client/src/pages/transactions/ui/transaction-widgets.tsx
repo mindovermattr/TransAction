@@ -1,5 +1,5 @@
 import { useGetTransactionsSummaryQuery } from "@/api/hooks";
-import { useGetIncomeSummaryQuery } from "@/api/hooks/useGetIncomeSummaryQuery";
+import { useGetIncomeSummaryQuery } from "@/api/hooks/income/useGetIncomeSummaryQuery";
 import {
   Card,
   CardContent,

@@ -1,6 +1,6 @@
 import { useGetExpensesByWeekdayQuery } from "@/api/hooks";
-import { useGetExpensesByCategoryQuery } from "@/api/hooks/useGetExpensesByCategoryQuery";
-import { useGetExpensesTrendQuery } from "@/api/hooks/useGetExpensesTrendQuery";
+import { useGetExpensesByCategoryQuery } from "@/api/hooks/expenses/useGetExpensesByCategoryQuery";
+import { useGetExpensesTrendQuery } from "@/api/hooks/expenses/useGetExpensesTrendQuery";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import { CategoryPieCard } from "./ui/category-pie-card";

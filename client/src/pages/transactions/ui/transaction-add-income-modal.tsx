@@ -1,4 +1,4 @@
-import { usePostIncomeMutation } from "@/api/hooks/usePostIncomeMutation";
+import { usePostIncomeMutation } from "@/api/hooks/income/usePostIncomeMutation";
 import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
 import {

@@ -1,4 +1,4 @@
-import { usePostTransactionsMutation } from "@/api/hooks/usePostTransactionMutation";
+import { usePostTransactionsMutation } from "@/api/hooks/transactions/usePostTransactionMutation";
 import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
 import {

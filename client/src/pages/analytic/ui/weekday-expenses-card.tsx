@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
-import { AlertTriangle } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { EmptyState } from "./empty-state";
 import type { ChartProps } from "./types";
 
 type WeekdayExpensesCardProps = ChartProps<ExpensesByWeekdayResponse>;
@@ -25,22 +25,21 @@ const WeekdayExpensesCard = ({ data, isLoading }: WeekdayExpensesCardProps) => {
     return <Skeleton className="h-[360px] w-full" />;
   }
 
-  if (!data) {
+  if (!data || data.data.length === 0) {
     return (
-      <Card className="h-[360px]">
+      <Card className="flex flex-col">
         <CardHeader className="space-y-1">
           <CardTitle>Расходы по дням недели</CardTitle>
           <Typography tag="p" className="text-muted-foreground text-sm">
-            Нет данных для отображения.
+            Где тратите больше всего в течение недели.
           </Typography>
         </CardHeader>
-        <CardContent className="flex h-full items-center justify-center">
-          <div className="text-muted-foreground flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4" />
-            <Typography tag="p" className="text-sm">
-              Добавьте хотя бы одну транзакцию в выбранном периоде.
-            </Typography>
-          </div>
+        <CardContent className="flex-1">
+          <EmptyState
+            message="В выбранный период расходы не найдены"
+            description="Добавьте транзакции, чтобы увидеть распределение расходов по дням недели"
+            className="min-h-[280px]"
+          />
         </CardContent>
       </Card>
     );
