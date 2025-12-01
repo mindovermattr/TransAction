@@ -242,11 +242,11 @@ const WEEKDAY_LABELS = [
   "Пятница",
   "Суббота",
   "Воскресенье",
-];
+] as const;
 
 const getWeekdayIndex = (date: Date) => {
-  const utcDay = date.getUTCDay(); 
-  return (utcDay + 6) % 7; 
+  const utcDay = date.getUTCDay();
+  return (utcDay + 6) % 7;
 };
 
 const getExpensesByWeekday = async (
