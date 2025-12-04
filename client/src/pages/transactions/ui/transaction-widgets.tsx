@@ -53,12 +53,12 @@ const TransactionWidgets = () => {
     ((currentMonthSum - prevMonthSum) / prevMonthSum) * 100,
   );
 
-  const isDifferencePositive = diff >= 100;
+  const isDifferencePositive = diff >= 0;
 
   const formattedCurrentMonthSum = formatter.format(currentMonthSum);
 
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col gap-4 lg:flex-row">
       <Card className="grow gap-4">
         <CardHeader className="flex items-center">
           <Wallet2Icon size={18} />
@@ -102,7 +102,7 @@ const TransactionWidgets = () => {
         <CardHeader className="flex items-center">
           <BanknoteArrowDownIcon size={22} />
           <Typography tag="h3" variant="title" className="font-medium">
-            Сумма транзакций за месяц
+            Расходы за месяц
           </Typography>
         </CardHeader>
         <CardContent>
@@ -118,11 +118,12 @@ const TransactionWidgets = () => {
                   На{" "}
                   <Typography
                     tag="span"
-                    className={cn("text-sm text-rose-500", {
-                      "text-emerald-300": isDifferencePositive,
+                    className={cn("text-sm text-emerald-300", {
+                      "text-rose-500": isDifferencePositive,
                     })}
                   >
-                    {diff}% {isDifferencePositive ? "меньше " : "больше "}
+                    {Math.abs(diff)}%{" "}
+                    {isDifferencePositive ? "больше " : "меньше "}
                   </Typography>
                   чем в предыдущем месяце
                 </>

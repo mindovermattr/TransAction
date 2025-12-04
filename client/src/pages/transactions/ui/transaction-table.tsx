@@ -110,7 +110,7 @@ const TransactionTable = () => {
   };
 
   return (
-    <Card className="relative gap-3">
+    <Card className="relative gap-3 py-5.5">
       <CardHeader className="flex justify-between">
         <Typography tag="h3" variant="title" className="font-medium">
           Таблица расходов

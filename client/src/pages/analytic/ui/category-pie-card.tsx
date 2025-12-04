@@ -13,7 +13,7 @@ import { Typography } from "@/components/ui/typography";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useMemo } from "react";
 import { Cell, Pie, PieChart } from "recharts";
-import { EmptyState } from "./empty-state";
+import { EmptyState } from "./empty-state-placeholder";
 import type { ChartProps } from "./types";
 
 const CATEGORY_LABELS: Record<TransactionTags, string> = {
@@ -113,7 +113,6 @@ const CategoryPieCard = ({ data, isLoading }: CategoryPieCardProps) => {
                   isMobile
                     ? false
                     : ({ value, percent }) => {
-                        // Показываем label только для секторов больше 5%
                         if (percent < 0.05) return null;
                         return `${Math.round(value as number).toLocaleString("ru-RU")} ₽`;
                       }

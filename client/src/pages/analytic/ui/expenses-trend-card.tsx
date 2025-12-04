@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { EmptyState } from "./empty-state";
+import { EmptyState } from "./empty-state-placeholder";
 import type { ChartProps } from "./types";
 
 type ExpensesTrendCardProps = ChartProps<ExpenseTrendResponse>;
