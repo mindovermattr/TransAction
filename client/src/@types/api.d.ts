@@ -33,7 +33,7 @@ interface Income {
   userId: number;
 }
 
-type AnalyticsPeriod = "month" | "quarter" | "year";
+type AnalyticsPeriod = "month" | "quarter" | "halfYear" | "year";
 
 interface PaginationMeta {
   currentPage: number;

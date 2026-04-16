@@ -1,4 +1,4 @@
-type AnalyticsPeriod = "month" | "quarter" | "year";
+type AnalyticsPeriod = "month" | "quarter" | "halfYear" | "year";
 
 const buildDate = (year: number, month: number, day: number) =>
   new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
@@ -7,22 +7,27 @@ const getAnalyticsDateRange = (period: AnalyticsPeriod) => {
   const currentDate = new Date();
   const year = currentDate.getUTCFullYear();
   const month = currentDate.getUTCMonth();
+  const endDate = buildDate(year, month + 1, 0);
 
   switch (period) {
     case "quarter": {
-      const quarterStartMonth = Math.floor(month / 3) * 3;
-      const quarterEndMonth = quarterStartMonth + 2;
-
       return {
-        startDate: new Date(Date.UTC(year, quarterStartMonth, 1)),
-        endDate: buildDate(year, quarterEndMonth + 1, 0),
+        startDate: new Date(Date.UTC(year, month - 2, 1)),
+        endDate,
         granularity: "week" as const,
+      };
+    }
+    case "halfYear": {
+      return {
+        startDate: new Date(Date.UTC(year, month - 5, 1)),
+        endDate,
+        granularity: "month" as const,
       };
     }
     case "year": {
       return {
-        startDate: new Date(Date.UTC(year, 0, 1)),
-        endDate: buildDate(year + 1, 0, 0),
+        startDate: new Date(Date.UTC(year, month - 11, 1)),
+        endDate,
         granularity: "month" as const,
       };
     }
@@ -30,7 +35,7 @@ const getAnalyticsDateRange = (period: AnalyticsPeriod) => {
     default: {
       return {
         startDate: new Date(Date.UTC(year, month, 1)),
-        endDate: buildDate(year, month + 1, 0),
+        endDate,
         granularity: "day" as const,
       };
     }

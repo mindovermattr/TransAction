@@ -1,14 +1,29 @@
 import { useGetExpensesByWeekdayQuery } from "@/api/hooks";
 import { useGetExpensesByCategoryQuery } from "@/api/hooks/expenses/useGetExpensesByCategoryQuery";
 import { useGetExpensesTrendQuery } from "@/api/hooks/expenses/useGetExpensesTrendQuery";
+import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
+import { useState } from "react";
 import { CategoryPieCard } from "./ui/category-pie-card";
 import { ExpensesTrendCard } from "./ui/expenses-trend-card";
 import { WeekdayExpensesCard } from "./ui/weekday-expenses-card";
 
+const PERIOD_OPTIONS: { value: AnalyticsPeriod; label: string }[] = [
+  { value: "month", label: "Месяц" },
+  { value: "halfYear", label: "Полгода" },
+  { value: "year", label: "Год" },
+];
+
+const PERIOD_DESCRIPTION_MAP: Record<AnalyticsPeriod, string> = {
+  month: "последний месяц",
+  quarter: "последний квартал",
+  halfYear: "последние полгода",
+  year: "последний год",
+};
+
 const Analytic = () => {
-  const period: AnalyticsPeriod = "month";
+  const [period, setPeriod] = useState<AnalyticsPeriod>("month");
 
   const { data: categoryData, isLoading: isCategoryLoading } =
     useGetExpensesByCategoryQuery(period);
@@ -26,9 +41,23 @@ const Analytic = () => {
             Аналитика
           </Typography>
         </div>
-        <Typography tag="p" className="text-muted-foreground text-sm">
-          Период: последний месяц
-        </Typography>
+        <div className="flex items-center gap-3">
+          <div className="flex gap-2">
+            {PERIOD_OPTIONS.map((option) => (
+              <Button
+                key={option.value}
+                variant={period === option.value ? "default" : "outline"}
+                size="sm"
+                onClick={() => setPeriod(option.value)}
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
+          <Typography tag="p" className="text-muted-foreground text-sm">
+            Период: {PERIOD_DESCRIPTION_MAP[period]}
+          </Typography>
+        </div>
       </header>
 
       <section className="grid gap-4 lg:grid-cols-2">

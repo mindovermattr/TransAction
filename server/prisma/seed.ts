@@ -1,8 +1,32 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, TransactionTag } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import * as argon2 from "argon2";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
+
+const TAGS: TransactionTag[] = [
+  TransactionTag.JOY,
+  TransactionTag.TRANSPORT,
+  TransactionTag.FOOD,
+  TransactionTag.EDUCATION,
+  TransactionTag.HOUSING,
+  TransactionTag.OTHER,
+];
+
+const TRANSACTION_TITLES = [
+  "Groceries",
+  "Coffee",
+  "Taxi",
+  "Subscription",
+  "Restaurant",
+  "Pharmacy",
+  "Fuel",
+  "Books",
+  "Cinema",
+  "Utilities",
+];
+
+const INCOME_TITLES = ["Salary", "Freelance", "Bonus", "Cashback"];
 
 const userData: Prisma.UserCreateInput[] = [
   {
@@ -22,36 +46,60 @@ const userData: Prisma.UserCreateInput[] = [
   },
 ];
 
-const transactionData: Prisma.TransactionCreateInput[] = [
-  ...Array.from({ length: 30 }, (_, i) => ({
-    name: `Transaction June ${i + 1}`,
-    tag: ["JOY", "TRANSPORT", "FOOD", "EDUCATION", "HOUSING", "OTHER"][
-      Math.floor(Math.random() * 6)
-    ] as any,
-    price: Math.floor(Math.random() * 1000) + 100,
-    date: new Date(2025, 5, i + 1),
-    user: { connect: { email: "test@test.com" } },
-  })),
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-  ...Array.from({ length: 30 }, (_, i) => ({
-    name: `Transaction July ${i + 1}`,
-    tag: ["JOY", "TRANSPORT", "FOOD", "EDUCATION", "HOUSING", "OTHER"][
-      Math.floor(Math.random() * 6)
-    ] as any,
-    price: Math.floor(Math.random() * 1000) + 100,
-    date: new Date(2025, 6, i + 1),
-    user: { connect: { email: "test@test.com" } },
-  })),
-];
+function startOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
 
-const incomeData: Prisma.IncomeCreateInput[] = [
-  ...Array.from({ length: 12 }, (_, i) => ({
-    name: `Income ${i + 1}`,
-    price: Math.floor(Math.random() * 1000) + 100,
-    date: new Date(2025, i, i),
-    user: { connect: { email: "test@test.com" } },
-  })),
-];
+function endOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
+}
+
+function addDays(date: Date, days: number): Date {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function generateMonthTransactions(
+  startDate: Date,
+  endDate: Date,
+  userId: number,
+): Prisma.TransactionCreateManyInput[] {
+  const daysInMonth = endDate.getDate();
+  const count = randomInt(24, 40);
+
+  return Array.from({ length: count }, (_, i) => {
+    const day = randomInt(0, daysInMonth - 1);
+    const date = addDays(startDate, day);
+
+    return {
+      name: `${TRANSACTION_TITLES[randomInt(0, TRANSACTION_TITLES.length - 1)]} #${
+        i + 1
+      }`,
+      tag: TAGS[randomInt(0, TAGS.length - 1)],
+      price: randomInt(80, 4200),
+      date,
+      userId,
+    };
+  });
+}
+
+function generateMonthIncomes(
+  startDate: Date,
+  userId: number,
+): Prisma.IncomeCreateManyInput[] {
+  const incomeCount = randomInt(2, 4);
+  return Array.from({ length: incomeCount }, (_, i) => ({
+    name: `${INCOME_TITLES[randomInt(0, INCOME_TITLES.length - 1)]} #${i + 1}`,
+    price: randomInt(12000, 220000),
+    date: addDays(startDate, randomInt(0, 27)),
+    userId,
+  }));
+}
 
 async function main() {
   console.log(`Start seeding ...`);
@@ -73,28 +121,57 @@ async function main() {
     console.log(`Created user with id: ${user.id}`);
   }
 
-  for (let i = 0; i < transactionData.length; i++) {
-    const t = transactionData[i];
-    const transaction = await prisma.transaction.upsert({
-      create: t,
-      where: {
-        id: i,
+  const seededUser = await prisma.user.findUniqueOrThrow({
+    where: { email: "test@test.com" },
+  });
+
+  const now = new Date();
+  const currentMonthStart = startOfMonth(now);
+  const previousMonthStart = startOfMonth(
+    new Date(now.getFullYear(), now.getMonth() - 1, 1),
+  );
+  const currentMonthEnd = endOfMonth(now);
+
+  await prisma.transaction.deleteMany({
+    where: {
+      userId: seededUser.id,
+      date: {
+        gte: previousMonthStart,
+        lte: currentMonthEnd,
       },
-      update: t,
-    });
-    console.log(`Created transaction with id: ${transaction.id}`);
-  }
-  for (let i = 0; i < incomeData.length; i++) {
-    const income = incomeData[i];
-    const incomeCreated = await prisma.income.upsert({
-      create: income,
-      where: {
-        id: i,
+    },
+  });
+
+  await prisma.income.deleteMany({
+    where: {
+      userId: seededUser.id,
+      date: {
+        gte: previousMonthStart,
+        lte: currentMonthEnd,
       },
-      update: income,
-    });
-    console.log(`Created income with id: ${incomeCreated.id}`);
-  }
+    },
+  });
+
+  const transactionData: Prisma.TransactionCreateManyInput[] = [
+    ...generateMonthTransactions(
+      previousMonthStart,
+      endOfMonth(previousMonthStart),
+      seededUser.id,
+    ),
+    ...generateMonthTransactions(currentMonthStart, currentMonthEnd, seededUser.id),
+  ];
+
+  const incomeData: Prisma.IncomeCreateManyInput[] = [
+    ...generateMonthIncomes(previousMonthStart, seededUser.id),
+    ...generateMonthIncomes(currentMonthStart, seededUser.id),
+  ];
+
+  await prisma.transaction.createMany({ data: transactionData });
+  await prisma.income.createMany({ data: incomeData });
+
+  console.log(
+    `Created ${transactionData.length} transactions and ${incomeData.length} incomes for ${seededUser.email}`,
+  );
   console.log(`Seeding finished.`);
 }
 
