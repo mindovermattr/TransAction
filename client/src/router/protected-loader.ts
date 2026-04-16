@@ -5,12 +5,23 @@ import {
 import { redirect } from "react-router";
 import { ROUTES } from "./routes";
 
-const protectedLoader = async () => {
+const isAuthenticated = () => {
   const user = getDataFromLocalStorage(LOCAL_STORAGE_KEYS.USER);
-  if (!user) {
+  return Boolean(user?.token);
+};
+
+const protectedLoader = async () => {
+  if (!isAuthenticated()) {
     return redirect(ROUTES.LOGIN);
   }
   return;
 };
 
-export { protectedLoader };
+const publicLoader = async () => {
+  if (!isAuthenticated()) {
+    return redirect(ROUTES.LOGIN);
+  }
+  return redirect(ROUTES.TRANSACTIONS);
+};
+
+export { protectedLoader, publicLoader };

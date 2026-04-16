@@ -6,19 +6,24 @@ import { Login } from "@/pages/auth/login";
 import { Registration } from "@/pages/auth/registration";
 import { Transactions } from "@/pages/transactions/transactions";
 import { Providers } from "@/providers";
-import { createBrowserRouter, Outlet, redirect } from "react-router";
-import { protectedLoader } from "./protected-loader";
+import { createBrowserRouter, Outlet } from "react-router";
+import { protectedLoader, publicLoader } from "./protected-loader";
 import { ROUTES } from "./routes";
 
 const router = createBrowserRouter([
   {
     path: ROUTES.ROOT,
+
     element: (
       <Providers>
         <App />
       </Providers>
     ),
     children: [
+      {
+        index: true,
+        loader: publicLoader,
+      },
       {
         path: ROUTES.LOGIN,
         Component: Login,
@@ -47,7 +52,7 @@ const router = createBrowserRouter([
       {
         path: "*",
         element: null,
-        loader: () => redirect(ROUTES.TRANSACTIONS),
+        loader: publicLoader,
       },
     ],
   },

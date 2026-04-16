@@ -58,7 +58,7 @@ JWT_SECRET="your-secret-key-here"
 
 ```bash
 # Примените миграции
-npx prisma migrate dev
+pnpm dlx prisma migrate dev
 
 # (Опционально) Заполните базу тестовыми данными
 pnpm seed
