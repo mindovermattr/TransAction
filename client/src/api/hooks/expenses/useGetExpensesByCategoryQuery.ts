@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getExpensesByCategoryAnalytics } from "../../requests";
 
 export const useGetExpensesByCategoryQuery = (
@@ -12,5 +12,6 @@ export const useGetExpensesByCategoryQuery = (
         params: { period },
         config: settings?.config,
       }),
+    placeholderData: keepPreviousData,
     ...settings?.options,
   });

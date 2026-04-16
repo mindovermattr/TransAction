@@ -1,18 +1,28 @@
+import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import { BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AlertCircle } from "lucide-react";
 
 type EmptyStateProps = {
   className?: string;
   message?: string;
   description?: string;
+  variant?: "empty" | "error";
+  actionLabel?: string;
+  onAction?: () => void;
 };
 
 const EmptyState = ({
   className,
   message = "В выбранный период расходы не найдены",
   description,
+  variant = "empty",
+  actionLabel,
+  onAction,
 }: EmptyStateProps) => {
+  const isError = variant === "error";
+
   return (
     <div
       className={cn(
@@ -21,7 +31,11 @@ const EmptyState = ({
       )}
     >
       <div className="bg-muted/50 rounded-full p-4">
-        <BarChart3 className="text-muted-foreground h-8 w-8" />
+        {isError ? (
+          <AlertCircle className="text-muted-foreground h-8 w-8" />
+        ) : (
+          <BarChart3 className="text-muted-foreground h-8 w-8" />
+        )}
       </div>
       <div className="space-y-2">
         <Typography
@@ -36,6 +50,11 @@ const EmptyState = ({
           </Typography>
         )}
       </div>
+      {onAction && actionLabel && (
+        <Button variant="outline" onClick={onAction} size="sm">
+          {actionLabel}
+        </Button>
+      )}
     </div>
   );
 };

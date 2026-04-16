@@ -23,25 +23,74 @@ const formatRangeDate = (value: string) =>
 const BAR_HEIGHT = 18;
 const BAR_GAP = 12;
 
-const WeekdayExpensesCard = ({ data, isLoading }: WeekdayExpensesCardProps) => {
+const chartConfig: ChartConfig = {
+  total: {
+    label: "Расходы",
+    color: "var(--color-chart-2)",
+  },
+};
+
+const WeekdayExpensesCard = ({
+  data,
+  isLoading,
+  isError,
+  onRetry,
+}: WeekdayExpensesCardProps) => {
   if (isLoading) {
-    return <Skeleton className="h-[360px] w-full" />;
+    return (
+      <Card className="flex min-h-[420px] flex-col">
+        <CardHeader className="space-y-2">
+          <Skeleton className="h-6 w-56" />
+          <Skeleton className="h-4 w-72" />
+        </CardHeader>
+        <CardContent className="flex flex-1 flex-col gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+          <Skeleton className="h-full min-h-[220px] w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="flex min-h-[420px] flex-col">
+        <CardHeader className="space-y-1">
+          <CardTitle>Расходы по дням недели</CardTitle>
+          <Typography tag="p" className="text-muted-foreground text-sm">
+            Где вы тратите больше всего в течение недели.
+          </Typography>
+        </CardHeader>
+        <CardContent className="flex flex-1">
+          <EmptyState
+            variant="error"
+            message="Не удалось загрузить данные по дням недели"
+            description="Проверьте соединение и попробуйте обновить карточку."
+            actionLabel="Повторить"
+            onAction={onRetry}
+            className="min-h-[280px] w-full"
+          />
+        </CardContent>
+      </Card>
+    );
   }
 
   if (!data || data.data.length === 0) {
     return (
-      <Card className="flex flex-col">
+      <Card className="flex min-h-[420px] flex-col">
         <CardHeader className="space-y-1">
           <CardTitle>Расходы по дням недели</CardTitle>
           <Typography tag="p" className="text-muted-foreground text-sm">
-            Где тратите больше всего в течение недели.
+            Где вы тратите больше всего в течение недели.
           </Typography>
         </CardHeader>
         <CardContent className="flex-1">
           <EmptyState
-            message="В выбранный период расходы не найдены"
-            description="Добавьте транзакции, чтобы увидеть распределение расходов по дням недели"
-            className="min-h-[280px]"
+            message="Нет данных по дням недели за выбранный период"
+            description="Добавьте расходы, чтобы увидеть недельный профиль трат."
+            className="min-h-[280px] w-full"
           />
         </CardContent>
       </Card>
@@ -60,19 +109,12 @@ const WeekdayExpensesCard = ({ data, isLoading }: WeekdayExpensesCardProps) => {
 
   const totalWeek = chartData.reduce((sum, item) => sum + item.total, 0);
 
-  const chartConfig: ChartConfig = {
-    total: {
-      label: "Расходы",
-      color: "hsl(262, 83%, 65%)",
-    },
-  };
-
   return (
-    <Card className="flex flex-col">
+    <Card className="flex min-h-[420px] flex-col">
       <CardHeader>
         <CardTitle>Расходы по дням недели</CardTitle>
         <Typography tag="p" className="text-muted-foreground text-sm">
-          Где тратите больше всего в течение недели.
+          Где вы тратите больше всего в течение недели.
         </Typography>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-2">
@@ -90,7 +132,7 @@ const WeekdayExpensesCard = ({ data, isLoading }: WeekdayExpensesCardProps) => {
           </div>
           <div>
             <Typography tag="p" className="text-muted-foreground text-xs">
-              Суммарно за месяц
+              Сумма за период
             </Typography>
             <Typography tag="p" className="text-lg font-semibold">
               {totalWeek.toLocaleString("ru-RU")} ₽

@@ -20,15 +20,20 @@ const MOVING_AVERAGE_WINDOW = 4;
 const chartConfig: ChartConfig = {
   total: {
     label: "Фактические расходы",
-    color: "hsl(242, 77%, 65%)",
+    color: "var(--color-chart-1)",
   },
   average: {
     label: "Скользящее среднее",
-    color: "hsl(214, 83%, 55%)",
+    color: "var(--color-chart-3)",
   },
 };
 
-const ExpensesTrendCard = ({ data, isLoading }: ExpensesTrendCardProps) => {
+const ExpensesTrendCard = ({
+  data,
+  isLoading,
+  isError,
+  onRetry,
+}: ExpensesTrendCardProps) => {
   const [activeMetric, setActiveMetric] =
     useState<keyof typeof chartConfig>("total");
 
@@ -60,22 +65,60 @@ const ExpensesTrendCard = ({ data, isLoading }: ExpensesTrendCardProps) => {
   }, [data?.points]);
 
   if (isLoading) {
-    return <Skeleton className="h-[360px] w-full" />;
+    return (
+      <Card className="flex min-h-[420px] flex-col">
+        <CardHeader className="space-y-2">
+          <Skeleton className="h-6 w-56" />
+          <Skeleton className="h-4 w-80" />
+        </CardHeader>
+        <CardContent className="flex flex-1 flex-col gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+          <Skeleton className="h-10 w-full sm:w-96" />
+          <Skeleton className="h-full min-h-[220px] w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Card className="flex min-h-[420px] flex-col overflow-hidden">
+        <CardHeader className="space-y-1 border-b">
+          <CardTitle>Динамика расходов</CardTitle>
+          <Typography tag="p" className="text-muted-foreground text-sm">
+            Переключайтесь между фактическими значениями и сглаженным трендом.
+          </Typography>
+        </CardHeader>
+        <CardContent className="flex flex-1">
+          <EmptyState
+            variant="error"
+            message="Не удалось загрузить динамику расходов"
+            description="Проверьте соединение и попробуйте обновить карточку."
+            actionLabel="Повторить"
+            onAction={onRetry}
+            className="h-full w-full"
+          />
+        </CardContent>
+      </Card>
+    );
   }
 
   if (!data || data.points.length === 0) {
     return (
-      <Card className="flex flex-col overflow-hidden">
+      <Card className="flex min-h-[420px] flex-col overflow-hidden">
         <CardHeader className="space-y-1 border-b">
           <CardTitle>Динамика расходов</CardTitle>
           <Typography tag="p" className="text-muted-foreground text-sm">
-            Переключайтесь между фактическими значениями и скользящим средним.
+            Переключайтесь между фактическими значениями и сглаженным трендом.
           </Typography>
         </CardHeader>
         <CardContent className="flex-1">
           <EmptyState
-            message="В выбранный период расходы не найдены"
-            description="Добавьте транзакции, чтобы увидеть динамику расходов"
+            message="Нет данных по динамике расходов за выбранный период"
+            description="Добавьте расходы, чтобы увидеть тренд изменения трат."
             className="h-full"
           />
         </CardContent>
@@ -84,15 +127,35 @@ const ExpensesTrendCard = ({ data, isLoading }: ExpensesTrendCardProps) => {
   }
 
   return (
-    <Card className="flex h-[500px] flex-col overflow-hidden py-4 sm:h-[360px] sm:py-0">
-      <CardHeader className="flex flex-col gap-4 border-b px-6 pb-4 sm:flex-row sm:items-center sm:justify-between sm:px-0 sm:pb-0 sm:pl-6">
+    <Card className="flex min-h-[420px] flex-col overflow-hidden">
+      <CardHeader className="flex flex-col gap-4 border-b">
         <div className="flex flex-col gap-1">
           <CardTitle>Динамика расходов</CardTitle>
           <Typography tag="p" className="text-muted-foreground text-sm">
-            Переключайтесь между фактическими значениями и скользящим средним.
+            Переключайтесь между фактическими значениями и сглаженным трендом.
           </Typography>
         </div>
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:gap-0">
+        <div className="border-border/60 grid gap-3 rounded-lg border p-3 sm:grid-cols-2">
+          {(Object.keys(chartConfig) as Array<keyof typeof chartConfig>).map(
+            (metricKey) => (
+              <div
+                key={metricKey}
+                className="flex flex-col gap-1"
+              >
+                <span className="text-muted-foreground text-xs">
+                  {chartConfig[metricKey].label}
+                </span>
+                <span className="text-lg leading-none font-semibold">
+                  {totals[metricKey as keyof typeof totals].toLocaleString(
+                    "ru-RU",
+                  )}{" "}
+                  ₽
+                </span>
+              </div>
+            ),
+          )}
+        </div>
+        <div className="bg-muted inline-flex w-full gap-1 rounded-lg p-1 sm:w-fit">
           {(Object.keys(chartConfig) as Array<keyof typeof chartConfig>).map(
             (metricKey) => (
               <button
@@ -100,23 +163,15 @@ const ExpensesTrendCard = ({ data, isLoading }: ExpensesTrendCardProps) => {
                 type="button"
                 onClick={() => setActiveMetric(metricKey)}
                 data-active={activeMetric === metricKey}
-                className="data-[active=true]:bg-muted/70 hover:bg-muted/70 flex flex-1 cursor-pointer flex-col justify-center gap-1 border border-t px-4 py-3 text-left text-sm transition-colors first:rounded-t-md first:border-l last:rounded-b-md sm:rounded-none sm:border sm:border-t sm:border-b sm:border-l-0 sm:px-6 sm:py-4 sm:text-base sm:first:rounded-t-none sm:first:rounded-l-md sm:last:rounded-r-md sm:last:rounded-b-none"
+                className="data-[active=true]:bg-background data-[active=true]:text-foreground text-muted-foreground rounded-md px-3 py-1.5 text-sm font-medium transition-colors"
               >
-                <span className="text-muted-foreground text-xs sm:text-sm">
-                  {chartConfig[metricKey].label}
-                </span>
-                <span className="text-lg leading-none font-semibold sm:text-2xl">
-                  {totals[metricKey as keyof typeof totals].toLocaleString(
-                    "ru-RU",
-                  )}{" "}
-                  ₽
-                </span>
+                {chartConfig[metricKey].label}
               </button>
             ),
           )}
         </div>
       </CardHeader>
-      <CardContent className="flex-1 px-2 pt-4 sm:p-6">
+      <CardContent className="flex flex-1 px-4 py-4 sm:px-6">
         <ChartContainer
           config={chartConfig}
           className="aspect-auto h-full w-full"

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getExpensesByWeekdayAnalytics } from "../../requests";
 
 export const useGetExpensesByWeekdayQuery = (
@@ -12,5 +12,6 @@ export const useGetExpensesByWeekdayQuery = (
         params: { period },
         config: settings?.config,
       }),
+    placeholderData: keepPreviousData,
     ...settings?.options,
   });
