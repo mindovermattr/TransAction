@@ -24,6 +24,41 @@ const PERIOD_DESCRIPTION_MAP: Record<AnalyticsPeriod, string> = {
   year: "последний год",
 };
 
+const formatPeakDateLabel = (
+  value: string | undefined,
+  granularity: "day" | "week" | "month" | undefined,
+) => {
+  if (!value) return "—";
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  if (granularity === "day") {
+    return new Intl.DateTimeFormat("ru-RU", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }).format(date);
+  }
+
+  if (granularity === "week") {
+    return `Неделя от ${new Intl.DateTimeFormat("ru-RU", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(date)}`;
+  }
+
+  const monthLabel = new Intl.DateTimeFormat("ru-RU", {
+    month: "long",
+    year: "numeric",
+  }).format(date);
+
+  return monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
+};
+
 const Analytic = () => {
   const [period, setPeriod] = useState<AnalyticsPeriod>("month");
 
@@ -85,10 +120,10 @@ const Analytic = () => {
     return {
       total,
       average,
-      peakLabel: peak?.label ?? "—",
+      peakLabel: formatPeakDateLabel(peak?.date, trendData?.granularity),
       peakValue: peak?.total ?? 0,
     };
-  }, [trendData?.points]);
+  }, [trendData?.points, trendData?.granularity]);
 
   return (
     <div className="space-y-4 lg:space-y-5">
