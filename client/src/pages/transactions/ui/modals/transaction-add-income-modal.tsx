@@ -80,7 +80,7 @@ const TransactionAddIncomeModal = () => {
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="ml-auto self-center">
+        <Button variant="outline" size="icon">
           <CirclePlusIcon />
         </Button>
       </DialogTrigger>

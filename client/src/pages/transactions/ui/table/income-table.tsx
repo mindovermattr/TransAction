@@ -81,6 +81,14 @@ const currencyFormatter = new Intl.NumberFormat("ru-RU", {
   maximumFractionDigits: 0,
 });
 
+const TABLE_MAX_HEIGHT = 560;
+const TABLE_HEAD_HEIGHT = 36;
+const TABLE_ROW_HEIGHT = 44;
+const PAGE_SIZE = Math.max(
+  1,
+  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT)
+);
+
 const IncomeTable = () => {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<IncomeFiltersState>(DEFAULT_FILTERS);
@@ -126,7 +134,7 @@ const IncomeTable = () => {
       dateFrom: filters.dateFrom ? new Date(filters.dateFrom).toISOString() : undefined,
       dateTo: dateTo?.toISOString(),
       page,
-      limit: 12,
+      limit: PAGE_SIZE,
       sortBy: sorting.sortBy,
       sortOrder: sorting.sortOrder,
     };
@@ -209,7 +217,7 @@ const IncomeTable = () => {
 
   return (
     <>
-      <Card className="relative gap-3 py-5.5">
+      <Card className="relative gap-3 overflow-hidden py-5.5">
         <CardHeader className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
@@ -220,7 +228,9 @@ const IncomeTable = () => {
                 Отдельный журнал поступлений
               </Typography>
             </div>
-            <TransactionAddIncomeModal />
+            <div className="ml-auto flex self-end sm:self-auto">
+              <TransactionAddIncomeModal />
+            </div>
           </div>
 
           <div className="bg-muted/35 grid gap-3 rounded-lg border p-3 lg:grid-cols-3">
@@ -254,14 +264,14 @@ const IncomeTable = () => {
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="min-h-0">
           {isFetching && (
             <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center">
               <Typography tag="span">Загрузка...</Typography>
             </div>
           )}
 
-          <div className="max-h-[560px] rounded-md border">
+          <div className="max-h-[560px] overflow-hidden rounded-md border">
             <Table className="[&_td]:px-3 [&_td]:py-2 [&_th]:h-9 [&_th]:px-3">
               <TableHeader>
                 <TableRow>

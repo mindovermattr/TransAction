@@ -180,6 +180,14 @@ const currencyFormatter = new Intl.NumberFormat("ru-RU", {
   maximumFractionDigits: 0,
 });
 
+const TABLE_MAX_HEIGHT = 560;
+const TABLE_HEAD_HEIGHT = 36;
+const TABLE_ROW_HEIGHT = 44;
+const PAGE_SIZE = Math.max(
+  1,
+  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT)
+);
+
 const TransactionTable = () => {
   const [page, setPage] = useState(1);
   const [filters, setFilters] =
@@ -210,7 +218,7 @@ const TransactionTable = () => {
     () => ({
       ...normalizedFilters,
       page,
-      limit: 12,
+      limit: PAGE_SIZE,
       sortBy: sorting.sortBy,
       sortOrder: sorting.sortOrder,
     }),
@@ -315,7 +323,7 @@ const TransactionTable = () => {
 
   return (
     <>
-      <Card className="relative gap-3 py-5.5">
+      <Card className="relative gap-3 overflow-hidden py-5.5">
         <CardHeader className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
@@ -326,7 +334,7 @@ const TransactionTable = () => {
                 Серверные фильтры, сортировка и постраничная загрузка
               </Typography>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="ml-auto flex items-center gap-2 self-end sm:self-auto">
               {hasActiveFilters ? (
                 <Button
                   variant="outline"
@@ -452,14 +460,14 @@ const TransactionTable = () => {
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="min-h-0">
           {isFetching && (
             <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center">
               <Typography tag="span">Загрузка...</Typography>
             </div>
           )}
 
-          <div className="max-h-[560px] rounded-md border">
+          <div className="max-h-[560px] overflow-hidden rounded-md border">
             <Table className="[&_td]:px-3 [&_td]:py-2 [&_th]:h-9 [&_th]:px-3">
               <TableHeader>
                 <TableRow>
