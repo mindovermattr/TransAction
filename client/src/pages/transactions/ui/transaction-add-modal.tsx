@@ -86,6 +86,7 @@ const TransactionAddModal = () => {
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["transactions"] }),
           queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
+          queryClient.invalidateQueries({ queryKey: ["analytics"] }),
         ]);
         setIsOpen(false);
         form.reset();

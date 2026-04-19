@@ -1,9 +1,14 @@
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getIncome } from "@/api/requests";
-import { useQuery } from "@tanstack/react-query";
+import type { IncomeListParams } from "@/api/requests/income";
 
-export const useGetIncomeQuery = (settings?: QuerySettings<typeof getIncome>) =>
+export const useGetIncomeQuery = (
+  params?: IncomeListParams,
+  settings?: QuerySettings<typeof getIncome>
+) =>
   useQuery({
-    queryKey: ["income"],
-    queryFn: () => getIncome({ config: settings?.config }),
+    queryKey: ["income", params],
+    queryFn: () => getIncome({ params, config: settings?.config }),
+    placeholderData: keepPreviousData,
     ...settings?.options,
   });

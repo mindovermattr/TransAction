@@ -1,5 +1,7 @@
 import cors from "cors";
 import express from "express";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
 import passport from "passport";
 import analyticsRouter from "./controllers/analytics.controller";
 import authRouter from "./controllers/auth.controller";
@@ -15,23 +17,52 @@ const jwtMiddleware = jwtAuthMiddleware();
 
 passport.use(jwtStrategy);
 
-//middlewares
+const port = Number(process.env.PORT ?? 3000);
+
+const allowedOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const authRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use(helmet());
 app.use(passport.initialize());
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
 
-//routes
-app.use("/auth", authRouter);
+      callback(new Error("Not allowed by CORS"));
+    },
+  })
+);
+
+app.get("/health", (_req, res) => {
+  res.json({
+    status: "ok",
+  });
+});
+
+app.use("/auth", authRateLimiter, authRouter);
 app.use("/users", jwtMiddleware, userRouter);
 app.use("/transactions", jwtMiddleware, transactionRouter);
 app.use("/income", jwtMiddleware, incomeRouter);
 app.use("/analytics", jwtMiddleware, analyticsRouter);
 
-//error handler middleware
 app.use(errorHandler);
 
-app.listen(+process.env.PORT!, () =>
+app.listen(port, () =>
   console.log(`
-🚀 Server ready at: http://localhost:${process.env.PORT}
+🚀 Server ready at: http://localhost:${port}
 `)
 );

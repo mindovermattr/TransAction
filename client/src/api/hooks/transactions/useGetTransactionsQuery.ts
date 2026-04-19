@@ -1,11 +1,14 @@
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getTransactions } from "@/api/requests";
-import { useQuery } from "@tanstack/react-query";
+import type { TransactionListParams } from "@/api/requests/transactions";
 
 export const useGetTransactionsQuery = (
+  params?: TransactionListParams,
   settings?: QuerySettings<typeof getTransactions>,
 ) =>
   useQuery({
-    queryKey: ["transactions"],
-    queryFn: () => getTransactions({ config: settings?.config }),
+    queryKey: ["transactions", params],
+    queryFn: () => getTransactions({ params, config: settings?.config }),
+    placeholderData: keepPreviousData,
     ...settings?.options,
   });

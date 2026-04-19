@@ -1,6 +1,13 @@
 import { $Enums } from "@prisma/client";
 import { Transform } from "class-transformer";
-import { IsDate, IsEnum, IsNumber, IsString, MinLength } from "class-validator";
+import {
+  IsDate,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MinLength,
+} from "class-validator";
 
 export class TransactionDTO {
   @IsString()
@@ -16,4 +23,24 @@ export class TransactionDTO {
 
   @IsNumber()
   price!: number;
+}
+
+export class UpdateTransactionDTO {
+  @IsOptional()
+  @IsString()
+  @MinLength(4)
+  name?: string;
+
+  @IsOptional()
+  @IsDate()
+  @Transform(({ value }) => new Date(value))
+  date?: Date;
+
+  @IsOptional()
+  @IsEnum($Enums.TransactionTag)
+  tag?: $Enums.TransactionTag;
+
+  @IsOptional()
+  @IsNumber()
+  price?: number;
 }
