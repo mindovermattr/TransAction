@@ -51,7 +51,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { TransactionAddIncomeModal } from "./modals/transaction-add-income-modal";
+import { TransactionAddIncomeModal } from "../modals/transaction-add-income-modal";
 
 type SortBy = "date" | "price" | "name";
 type SortOrder = "asc" | "desc";

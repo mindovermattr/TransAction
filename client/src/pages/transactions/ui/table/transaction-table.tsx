@@ -69,7 +69,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { TransactionAddModal } from "./modals/transaction-add-modal";
+import { TransactionAddModal } from "../modals/transaction-add-modal";
 
 type DatePreset = "all" | "thisMonth" | "last30" | "last90" | "custom";
 type SortBy = "date" | "price" | "name";

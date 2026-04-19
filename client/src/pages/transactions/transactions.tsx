@@ -1,8 +1,7 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import { Circle } from "lucide-react";
-import { IncomeTable } from "@/pages/transactions/ui/income-table";
-import { TransactionTable, TransactionWidgets } from "./ui";
+import { IncomeTable, TransactionTable, TransactionWidgets } from "./ui";
 
 const Transactions = () => {
   return (
