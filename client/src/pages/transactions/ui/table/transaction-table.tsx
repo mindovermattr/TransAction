@@ -17,7 +17,7 @@ import { Typography } from "@/components/ui/typography";
 import { transactionGetSchema } from "@/schemas/transaction.schema";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { columns } from "../transaction-columns";
+import { columns } from "../../transaction-columns";
 import {
   DEFAULT_FILTERS,
   hasActiveFilters,

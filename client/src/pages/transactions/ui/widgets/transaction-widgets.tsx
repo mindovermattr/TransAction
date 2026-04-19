@@ -2,7 +2,7 @@ import { useGetTransactionsSummaryQuery } from "@/api/hooks";
 import { useGetIncomeSummaryQuery } from "@/api/hooks/income/useGetIncomeSummaryQuery";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BanknoteArrowDownIcon, Wallet2Icon } from "lucide-react";
-import { TransactionAddIncomeModal } from "./transaction-add-income-modal";
+import { TransactionAddIncomeModal } from "../modals/transaction-add-income-modal";
 import { TransactionSummaryCard } from "./transaction-summary-card";
 import { calculateDifferencePercent } from "./transaction-widgets.utils";
 

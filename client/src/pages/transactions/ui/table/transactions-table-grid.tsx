@@ -18,7 +18,7 @@ import {
   ArrowUpDownIcon,
   ArrowUpIcon,
 } from "lucide-react";
-import { columns } from "../transaction-columns";
+import { columns } from "../../transaction-columns";
 import type { TransactionRow } from "./transaction-table.types";
 
 const SORT_ICON_MAP = {

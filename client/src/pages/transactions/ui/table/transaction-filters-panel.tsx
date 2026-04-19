@@ -14,7 +14,7 @@ import { Typography } from "@/components/ui/typography";
 import { TRANSACTION_TAGS } from "@/schemas/transaction.schema";
 import { SelectGroup } from "@radix-ui/react-select";
 import { CalendarRangeIcon, FunnelXIcon, SearchIcon } from "lucide-react";
-import { TransactionAddModal } from "./transaction-add-modal";
+import { TransactionAddModal } from "../modals/transaction-add-modal";
 import {
   DATE_PRESETS,
   getDatePresetPatch,
