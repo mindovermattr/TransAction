@@ -1,7 +1,7 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import { Circle } from "lucide-react";
-import { TransactionTable, TransactionWidgets } from "./ui";
+import { IncomeTable, TransactionTable, TransactionWidgets } from "./ui";
 
 const Transactions = () => {
   return (
@@ -29,6 +29,7 @@ const Transactions = () => {
 
       <TransactionWidgets />
       <TransactionTable />
+      <IncomeTable />
     </div>
   );
 };

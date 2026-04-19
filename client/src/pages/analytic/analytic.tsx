@@ -1,4 +1,5 @@
 import { useGetExpensesByWeekdayQuery } from "@/api/hooks";
+import { useGetBalanceOverviewQuery } from "@/api/hooks/expenses/useGetBalanceOverviewQuery";
 import { useGetExpensesByCategoryQuery } from "@/api/hooks/expenses/useGetExpensesByCategoryQuery";
 import { useGetExpensesTrendQuery } from "@/api/hooks/expenses/useGetExpensesTrendQuery";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -63,6 +64,14 @@ const Analytic = () => {
   const [period, setPeriod] = useState<AnalyticsPeriod>("month");
 
   const {
+    data: balanceData,
+    isLoading: isBalanceLoading,
+    isFetching: isBalanceFetching,
+    isError: isBalanceError,
+    refetch: refetchBalance,
+  } = useGetBalanceOverviewQuery(period);
+
+  const {
     data: categoryData,
     isLoading: isCategoryLoading,
     isFetching: isCategoryFetching,
@@ -91,11 +100,15 @@ const Analytic = () => {
   const isInitialWeekdayLoading = isWeekdayLoading && !weekdayData;
 
   const isTrendRefreshing = isTrendFetching && !!trendData;
+  const isBalanceRefreshing = isBalanceFetching && !!balanceData;
   const isCategoryRefreshing = isCategoryFetching && !!categoryData;
   const isWeekdayRefreshing = isWeekdayFetching && !!weekdayData;
 
   const isPageRefreshing =
-    isTrendRefreshing || isCategoryRefreshing || isWeekdayRefreshing;
+    isTrendRefreshing ||
+    isBalanceRefreshing ||
+    isCategoryRefreshing ||
+    isWeekdayRefreshing;
 
   const heroMetrics = useMemo(() => {
     const points = trendData?.points ?? [];
@@ -205,6 +218,65 @@ const Analytic = () => {
                 </Typography>
                 <Typography tag="p" className="text-muted-foreground text-sm">
                   {heroMetrics.peakValue.toLocaleString("ru-RU")} ₽
+                </Typography>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="mt-3 grid gap-3 lg:grid-cols-3">
+          {isBalanceLoading && !balanceData ? (
+            <>
+              <Skeleton className="h-[92px] w-full rounded-lg" />
+              <Skeleton className="h-[92px] w-full rounded-lg" />
+              <Skeleton className="h-[92px] w-full rounded-lg" />
+            </>
+          ) : isBalanceError && !balanceData ? (
+            <div className="bg-muted/45 col-span-full rounded-lg p-3.5">
+              <Typography tag="p" className="text-sm">
+                Не удалось загрузить баланс.
+              </Typography>
+              <button
+                type="button"
+                className="text-primary mt-1 text-sm underline"
+                onClick={() => {
+                  void refetchBalance();
+                }}
+              >
+                Повторить
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="bg-muted/45 rounded-lg p-3.5">
+                <Typography tag="p" className="text-muted-foreground text-xs">
+                  Доходы за период
+                </Typography>
+                <Typography tag="p" className="text-2xl font-semibold">
+                  {(balanceData?.totals.income ?? 0).toLocaleString("ru-RU")} ₽
+                </Typography>
+              </div>
+              <div className="bg-muted/45 rounded-lg p-3.5">
+                <Typography tag="p" className="text-muted-foreground text-xs">
+                  Расходы за период
+                </Typography>
+                <Typography tag="p" className="text-2xl font-semibold">
+                  {(balanceData?.totals.expenses ?? 0).toLocaleString("ru-RU")} ₽
+                </Typography>
+              </div>
+              <div className="bg-muted/45 rounded-lg p-3.5">
+                <Typography tag="p" className="text-muted-foreground text-xs">
+                  Баланс периода
+                </Typography>
+                <Typography
+                  tag="p"
+                  className={`text-2xl font-semibold ${
+                    (balanceData?.totals.balance ?? 0) >= 0
+                      ? "text-emerald-500"
+                      : "text-rose-500"
+                  }`}
+                >
+                  {(balanceData?.totals.balance ?? 0).toLocaleString("ru-RU")} ₽
                 </Typography>
               </div>
             </>

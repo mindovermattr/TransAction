@@ -86,6 +86,7 @@ const TransactionAddModal = () => {
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["transactions"] }),
           queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
+          queryClient.invalidateQueries({ queryKey: ["analytics"] }),
         ]);
         setIsOpen(false);
         form.reset();
@@ -101,7 +102,7 @@ const TransactionAddModal = () => {
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="self-center p-0">
+        <Button variant="outline" size="icon">
           <CirclePlusIcon />
         </Button>
       </DialogTrigger>

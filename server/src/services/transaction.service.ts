@@ -1,68 +1,109 @@
+import { Prisma, TransactionTag } from "@prisma/client";
 import HttpException from "../exceptions/Http.exception";
 import { getDateRange } from "../helpers/getDateRange";
-import type { TransactionDTO } from "../models/transaction/transaction.dto";
+import type {
+  TransactionDTO,
+  UpdateTransactionDTO,
+} from "../models/transaction/transaction.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
 
-type PaginationOptions = {
-  page: number;
-  limit: number;
+type SortOrder = "asc" | "desc";
+type TransactionSortBy = "date" | "price" | "name" | "createdAt";
+
+type TransactionListFilters = {
+  search?: string;
+  tag?: TransactionTag;
+  minAmount?: number;
+  maxAmount?: number;
+  dateFrom?: Date;
+  dateTo?: Date;
+  page?: number;
+  limit?: number;
+  sortBy?: TransactionSortBy;
+  sortOrder?: SortOrder;
 };
 
-//TODO: Refactor condition
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 12;
+const MAX_LIMIT = 100;
+
 const getTransactions = async (
   user: Omit<User, "password">,
-  paginationOptions: PaginationOptions | false = false
+  filters: TransactionListFilters = {}
 ) => {
-  if (!paginationOptions) {
-    const transactions = await prisma.transaction.findMany({
-      where: {
-        user: {
-          id: user.id,
-        },
-      },
-    });
+  const page =
+    !filters.page || Number.isNaN(filters.page) || filters.page < 1
+      ? DEFAULT_PAGE
+      : filters.page;
 
-    if (!transactions.length)
-      throw new HttpException(400, "У пользователя нет транзакций");
+  const limit =
+    !filters.limit || Number.isNaN(filters.limit) || filters.limit < 1
+      ? DEFAULT_LIMIT
+      : Math.min(filters.limit, MAX_LIMIT);
 
-    return transactions;
+  const sortBy: TransactionSortBy = filters.sortBy ?? "date";
+  const sortOrder: SortOrder = filters.sortOrder ?? "desc";
+
+  const where: Prisma.TransactionWhereInput = {
+    userId: user.id,
+  };
+
+  if (filters.search) {
+    where.name = {
+      contains: filters.search,
+      mode: "insensitive",
+    };
   }
 
-  const { limit, page } = paginationOptions;
+  if (filters.tag) {
+    where.tag = filters.tag;
+  }
 
-  if (limit <= 0 || page <= 0)
-    throw new HttpException(400, "Неверно указаны query параметры");
+  const priceFilters: Prisma.IntFilter = {};
+  if (typeof filters.minAmount === "number") {
+    priceFilters.gte = filters.minAmount;
+  }
+  if (typeof filters.maxAmount === "number") {
+    priceFilters.lte = filters.maxAmount;
+  }
+  if (Object.keys(priceFilters).length > 0) {
+    where.price = priceFilters;
+  }
 
-  const [transactions, transactionCount] = await Promise.all([
+  const dateFilters: Prisma.DateTimeFilter = {};
+  if (filters.dateFrom) {
+    dateFilters.gte = filters.dateFrom;
+  }
+  if (filters.dateTo) {
+    dateFilters.lte = filters.dateTo;
+  }
+  if (Object.keys(dateFilters).length > 0) {
+    where.date = dateFilters;
+  }
+
+  const [items, totalItems] = await Promise.all([
     prisma.transaction.findMany({
-      where: {
-        user: {
-          id: user.id,
-        },
-      },
+      where,
       take: limit,
       skip: (page - 1) * limit,
-    }),
-    prisma.transaction.count({
-      where: {
-        userId: user.id,
+      orderBy: {
+        [sortBy]: sortOrder,
       },
     }),
+    prisma.transaction.count({ where }),
   ]);
 
-  if (!transactions.length)
-    throw new HttpException(400, "У пользователя нет транзакций");
-
-  const totalPages = Math.ceil(transactionCount / limit);
+  const totalPages =
+    totalItems === 0 ? 1 : Math.ceil(totalItems / limit);
 
   return {
-    transactions: transactions,
+    items,
     pagination: {
       currentPage: page,
       pageSize: limit,
-      totalItems: transactionCount,
-      totalPages: totalPages,
+      totalItems,
+      totalPages,
       hasNext: page < totalPages,
       hasPrev: page > 1,
     },
@@ -73,7 +114,7 @@ const createTransaction = async (
   user: User,
   transactionDTO: TransactionDTO
 ) => {
-  const createdTranscation = await prisma.transaction.create({
+  return prisma.transaction.create({
     data: {
       ...transactionDTO,
       user: {
@@ -83,27 +124,77 @@ const createTransaction = async (
       },
     },
   });
-  if (!createdTranscation)
-    throw new HttpException(400, "Не удалось создать транзакцию");
+};
 
-  return createdTranscation;
+const updateTransaction = async (
+  user: Omit<User, "password">,
+  transactionId: number,
+  payload: UpdateTransactionDTO
+) => {
+  const transaction = await prisma.transaction.findFirst({
+    where: {
+      id: transactionId,
+      userId: user.id,
+    },
+  });
+
+  if (!transaction) {
+    throw new HttpException(404, "Транзакция не найдена", "TRANSACTION_NOT_FOUND");
+  }
+
+  return prisma.transaction.update({
+    where: {
+      id: transactionId,
+    },
+    data: payload,
+  });
+};
+
+const deleteTransaction = async (
+  user: Omit<User, "password">,
+  transactionId: number
+) => {
+  const transaction = await prisma.transaction.findFirst({
+    where: {
+      id: transactionId,
+      userId: user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!transaction) {
+    throw new HttpException(404, "Транзакция не найдена", "TRANSACTION_NOT_FOUND");
+  }
+
+  await prisma.transaction.delete({
+    where: {
+      id: transactionId,
+    },
+  });
+
+  return {
+    success: true,
+  };
 };
 
 const getTransactionsSummary = async (user: Omit<User, "password">) => {
   const date = new Date();
-
-  const month = date.getUTCMonth();
   const year = date.getUTCFullYear();
+  const month = date.getUTCMonth();
 
   const currentMonth = getDateRange(year, month);
-  const prevMonth = getDateRange(year, month - 1 < 0 ? 12 : month - 1);
+  const previousMonthDate = new Date(Date.UTC(year, month - 1, 1));
+  const prevMonth = getDateRange(
+    previousMonthDate.getUTCFullYear(),
+    previousMonthDate.getUTCMonth()
+  );
 
   const [currentMonthTransactions, prevMonthTransactions] = await Promise.all([
     prisma.transaction.aggregate({
       where: {
-        user: {
-          id: user.id,
-        },
+        userId: user.id,
         date: {
           gte: currentMonth.startDate,
           lte: currentMonth.endDate,
@@ -115,12 +206,10 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
     }),
     prisma.transaction.aggregate({
       where: {
-        user: {
-          id: user.id,
-        },
+        userId: user.id,
         date: {
-          gt: prevMonth.startDate,
-          lt: prevMonth.endDate,
+          gte: prevMonth.startDate,
+          lte: prevMonth.endDate,
         },
       },
       _sum: {
@@ -129,16 +218,17 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
     }),
   ]);
 
-  if (!currentMonthTransactions)
-    throw new HttpException(400, "У пользователя нет транзакций");
-
-  // TODO: Обработать случай, когда у пользователя
-  // 1) Нет транзакций вообще
-  // 2) Нет транзакций за предыдущий месяц
   return {
     currentMonthSum: currentMonthTransactions._sum.price ?? 0,
     prevMonthSum: prevMonthTransactions._sum.price ?? 0,
   };
 };
 
-export { createTransaction, getTransactions, getTransactionsSummary };
+export {
+  createTransaction,
+  deleteTransaction,
+  getTransactions,
+  getTransactionsSummary,
+  updateTransaction,
+};
+export type { TransactionListFilters };

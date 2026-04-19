@@ -40,6 +40,9 @@ type ApiRequestConfig<ResponseType = "json"> =
 type OfetchRequestConfig<
   Params = undefined,
   ResponseType = "json",
-> = Params extends undefined
+  ParamsOptional extends boolean = false,
+> = [Params] extends [undefined]
   ? { config?: ApiRequestConfig<ResponseType> }
-  : { params: Params; config?: ApiRequestConfig<ResponseType> };
+  : ParamsOptional extends true
+    ? { params?: Params; config?: ApiRequestConfig<ResponseType> }
+    : { params: Params; config?: ApiRequestConfig<ResponseType> };

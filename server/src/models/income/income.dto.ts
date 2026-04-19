@@ -1,5 +1,11 @@
 import { Transform } from "class-transformer";
-import { IsDate, IsNumber, IsString, MinLength } from "class-validator";
+import {
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MinLength,
+} from "class-validator";
 
 export class IncomeDTO {
   @IsString()
@@ -12,4 +18,20 @@ export class IncomeDTO {
 
   @IsNumber()
   price!: number;
+}
+
+export class UpdateIncomeDTO {
+  @IsOptional()
+  @IsString()
+  @MinLength(4)
+  name?: string;
+
+  @IsOptional()
+  @IsDate()
+  @Transform(({ value }) => new Date(value))
+  date?: Date;
+
+  @IsOptional()
+  @IsNumber()
+  price?: number;
 }

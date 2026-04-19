@@ -18,13 +18,16 @@ const jwtAuthMiddleware = () => {
               401,
               info.name === "TokenExpiredError"
                 ? "Token expired"
-                : "Invalid token"
+                : "Invalid token",
+              info.name === "TokenExpiredError" ? "TOKEN_EXPIRED" : "INVALID_TOKEN"
             )
           );
         }
 
         if (err || !user) {
-          return next(new HttpException(401, info?.message || "Unauthorized"));
+          return next(
+            new HttpException(401, info?.message || "Unauthorized", "UNAUTHORIZED")
+          );
         }
 
         req.user = user;

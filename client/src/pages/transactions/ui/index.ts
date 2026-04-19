@@ -1,2 +1,2 @@
-export { TransactionTable } from "./table";
+export { IncomeTable, TransactionTable } from "./table";
 export { TransactionWidgets } from "./widgets";

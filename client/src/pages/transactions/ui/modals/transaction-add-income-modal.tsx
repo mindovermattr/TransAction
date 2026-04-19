@@ -61,7 +61,11 @@ const TransactionAddIncomeModal = () => {
   const postIncomeMutation = usePostIncomeMutation({
     options: {
       onSuccess: async () => {
-        await queryClient.invalidateQueries({ queryKey: ["income"] });
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ["income"] }),
+          queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
+          queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+        ]);
         setIsOpen(false);
         form.reset();
       },
@@ -76,7 +80,7 @@ const TransactionAddIncomeModal = () => {
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon" className="ml-auto self-center">
+        <Button variant="outline" size="icon">
           <CirclePlusIcon />
         </Button>
       </DialogTrigger>
