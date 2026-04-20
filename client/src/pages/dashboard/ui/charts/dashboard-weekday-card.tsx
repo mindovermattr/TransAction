@@ -20,12 +20,15 @@ const DashboardWeekdayCard = ({
         Где чаще всего сосредоточены траты в этом месяце
       </Typography>
     </CardHeader>
-    <CardContent className="px-5 pt-0">
+    <CardContent className="flex flex-1 flex-col px-5 pt-0">
       {data.length === 0 ? (
         <DashboardEmptyChartState text="Нет данных по дням недели." />
       ) : (
-        <div className="h-[220px]">
-          <ChartContainer config={DASHBOARD_CHART_CONFIG} className="h-full w-full">
+        <div className="min-h-[280px] flex-1">
+          <ChartContainer
+            config={DASHBOARD_CHART_CONFIG}
+            className="h-full w-full aspect-auto"
+          >
             <BarChart data={data} layout="vertical" margin={{ left: 0, right: 8 }}>
               <CartesianGrid horizontal={false} strokeDasharray="4 4" />
               <XAxis type="number" hide />

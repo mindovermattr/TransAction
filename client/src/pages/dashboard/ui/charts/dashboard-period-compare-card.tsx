@@ -43,38 +43,38 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="px-5 pt-0">
+      <CardContent className="flex flex-1 flex-col px-5 pt-0">
         {maxValue === 0 ? (
           <DashboardEmptyChartState text="Нет данных для сравнения доходов и расходов." />
         ) : (
-          <div className="flex h-full min-h-[220px] flex-col justify-between gap-5">
+          <div className="flex h-full flex-1 flex-col gap-5">
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border bg-muted/25 p-4">
+              <div className="flex h-full flex-col rounded-2xl border bg-muted/25 p-4">
                 <Typography tag="p" className="text-muted-foreground text-sm">
                   Доходы
                 </Typography>
                 <Typography tag="p" className="mt-2 text-2xl font-semibold tracking-tight">
                   {dashboardCurrencyFormatter.format(income)}
                 </Typography>
-                <Typography tag="p" className="text-muted-foreground mt-3 text-xs font-medium">
+                <Typography tag="p" className="text-muted-foreground mt-auto pt-3 text-xs font-medium">
                   {incomeWidth.toFixed(0)}% от ведущего показателя
                 </Typography>
               </div>
 
-              <div className="rounded-2xl border bg-muted/25 p-4">
+              <div className="flex h-full flex-col rounded-2xl border bg-muted/25 p-4">
                 <Typography tag="p" className="text-muted-foreground text-sm">
                   Расходы
                 </Typography>
                 <Typography tag="p" className="mt-2 text-2xl font-semibold tracking-tight">
                   {dashboardCurrencyFormatter.format(expenses)}
                 </Typography>
-                <Typography tag="p" className="text-muted-foreground mt-3 text-xs font-medium">
+                <Typography tag="p" className="text-muted-foreground mt-auto pt-3 text-xs font-medium">
                   {expensesWidth.toFixed(0)}% от ведущего показателя
                 </Typography>
               </div>
             </div>
 
-            <div className="rounded-2xl border bg-muted/35 p-4">
+            <div className="flex flex-1 flex-col rounded-2xl border bg-muted/35 p-4">
               <div className="flex items-center justify-between gap-3">
                 <Typography tag="p" className="text-sm font-medium">
                   Соотношение месяца
@@ -84,7 +84,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                 </Typography>
               </div>
 
-              <div className="mt-4 space-y-4">
+              <div className="mt-4 flex flex-1 flex-col justify-center space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-medium">Доходы</span>

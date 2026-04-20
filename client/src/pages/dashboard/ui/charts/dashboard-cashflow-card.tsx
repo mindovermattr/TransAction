@@ -73,14 +73,17 @@ const DashboardCashflowCard = ({
           Доходы, расходы и чистый баланс по месяцам
         </Typography>
       </CardHeader>
-      <CardContent className="px-5 pt-0">
+      <CardContent className="flex flex-1 flex-col px-5 pt-0">
         {data.length === 0 ? (
           <DashboardEmptyChartState text="Нет данных для cashflow." />
         ) : isSparse ? (
           <CashflowSparseState data={data} />
         ) : (
-          <div className="h-[240px]">
-            <ChartContainer config={DASHBOARD_CHART_CONFIG} className="h-full w-full">
+          <div className="min-h-[280px] flex-1">
+            <ChartContainer
+              config={DASHBOARD_CHART_CONFIG}
+              className="h-full w-full aspect-auto"
+            >
               <LineChart data={data} margin={{ left: 8, right: 8 }}>
                 <CartesianGrid vertical={false} strokeDasharray="4 4" />
                 <XAxis dataKey="label" tickLine={false} axisLine={false} />

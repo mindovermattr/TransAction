@@ -19,7 +19,7 @@ const DashboardTopCategoriesCard = ({
 }: {
   data: CategoryPoint[];
 }) => (
-  <Card className="h-full min-h-[420px] gap-4 py-5">
+  <Card className="h-full gap-4 py-5">
     <CardHeader className="px-5">
       <CardTitle>Топ категорий</CardTitle>
       <Typography tag="p" className="text-muted-foreground text-sm">
@@ -30,8 +30,9 @@ const DashboardTopCategoriesCard = ({
       {data.length === 0 ? (
         <DashboardEmptyChartState text="Нет данных по категориям." />
       ) : (
-        <div className="flex h-full flex-col">
-          <div className="mx-auto h-[180px] w-full max-w-[240px] shrink-0">
+        <div className="flex h-full flex-1 flex-col">
+          <div className="flex flex-1 items-center justify-center pb-4">
+            <div className="mx-auto h-[180px] w-full max-w-[240px] shrink-0">
             <ChartContainer config={DASHBOARD_CHART_CONFIG} className="h-full w-full">
               <PieChart>
                 <ChartTooltip
@@ -64,9 +65,10 @@ const DashboardTopCategoriesCard = ({
                 </Pie>
               </PieChart>
             </ChartContainer>
+            </div>
           </div>
 
-          <div className="mt-4 flex min-h-0 flex-1 flex-col">
+          <div className="flex min-h-0 flex-1 flex-col border-t pt-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <Typography tag="p" className="text-sm font-medium">
                 Категории месяца
@@ -77,7 +79,7 @@ const DashboardTopCategoriesCard = ({
             </div>
 
             <div className="min-h-0 flex-1">
-              <div className="max-h-[204px] space-y-2 overflow-y-auto pr-1">
+              <div className="h-full space-y-2 overflow-y-auto pr-1">
                 {data.map((item) => (
                   <div
                     key={item.tag}
@@ -109,7 +111,6 @@ const DashboardTopCategoriesCard = ({
                   </div>
                 ))}
               </div>
-
             </div>
           </div>
         </div>
