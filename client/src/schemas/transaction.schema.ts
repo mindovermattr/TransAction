@@ -1,4 +1,5 @@
 import z from "zod";
+import { accountReferenceSchema } from "./account.schema";
 
 export const TRANSACTION_TAGS = [
   "JOY",
@@ -18,6 +19,8 @@ export const transactionSchema = z.object({
   price: z.number().positive("Цена должна быть положительной"),
   date: z.string(),
   userId: z.number(),
+  accountId: z.number(),
+  account: accountReferenceSchema,
 });
 
 export const transactionGetSchema = transactionSchema.extend({
@@ -32,6 +35,7 @@ export const transactionPostSchema = transactionSchema
     id: true,
     updatedAt: true,
     userId: true,
+    account: true,
   })
   .extend({
     price: z.preprocess(
@@ -39,4 +43,8 @@ export const transactionPostSchema = transactionSchema
       z.number().positive("Цена должна быть положительной"),
     ),
     name: z.string().min(4, "Минимум 4 символа"),
+    accountId: z.preprocess(
+      (val) => Number(val),
+      z.number().int().positive("Выберите счет"),
+    ),
   });

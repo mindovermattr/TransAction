@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, TransactionTag } from "@prisma/client";
+import { AccountType, Prisma, PrismaClient, TransactionTag } from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import * as argon2 from "argon2";
 
@@ -27,6 +27,28 @@ const TRANSACTION_TITLES = [
 ];
 
 const INCOME_TITLES = ["Salary", "Freelance", "Bonus", "Cashback"];
+
+const ACCOUNT_TEMPLATES: Array<{
+  name: string;
+  type: AccountType;
+  openingBalance: number;
+}> = [
+  {
+    name: "Основная карта",
+    type: AccountType.debit,
+    openingBalance: 125_000,
+  },
+  {
+    name: "Наличные",
+    type: AccountType.cash,
+    openingBalance: 18_000,
+  },
+  {
+    name: "Подушка",
+    type: AccountType.savings,
+    openingBalance: 320_000,
+  },
+];
 
 const userData: Prisma.UserCreateInput[] = [
   {
@@ -68,6 +90,7 @@ function generateMonthTransactions(
   startDate: Date,
   endDate: Date,
   userId: number,
+  accountIds: number[],
 ): Prisma.TransactionCreateManyInput[] {
   const daysInMonth = endDate.getDate();
   const count = randomInt(24, 40);
@@ -84,6 +107,7 @@ function generateMonthTransactions(
       price: randomInt(80, 4200),
       date,
       userId,
+      accountId: accountIds[randomInt(0, accountIds.length - 1)],
     };
   });
 }
@@ -91,6 +115,7 @@ function generateMonthTransactions(
 function generateMonthIncomes(
   startDate: Date,
   userId: number,
+  accountIds: number[],
 ): Prisma.IncomeCreateManyInput[] {
   const incomeCount = randomInt(2, 4);
   return Array.from({ length: incomeCount }, (_, i) => ({
@@ -98,6 +123,7 @@ function generateMonthIncomes(
     price: randomInt(12000, 220000),
     date: addDays(startDate, randomInt(0, 27)),
     userId,
+    accountId: accountIds[randomInt(0, accountIds.length - 1)],
   }));
 }
 
@@ -152,25 +178,82 @@ async function main() {
     },
   });
 
+  await prisma.transfer.deleteMany({
+    where: {
+      userId: seededUser.id,
+    },
+  });
+
+  await prisma.account.deleteMany({
+    where: {
+      userId: seededUser.id,
+    },
+  });
+
+  await prisma.account.createMany({
+    data: ACCOUNT_TEMPLATES.map((account) => ({
+      ...account,
+      currency: "RUB",
+      userId: seededUser.id,
+    })),
+  });
+
+  const accounts = await prisma.account.findMany({
+    where: {
+      userId: seededUser.id,
+      isArchived: false,
+    },
+    orderBy: {
+      id: "asc",
+    },
+  });
+  const accountIds = accounts.map((account) => account.id);
+
   const transactionData: Prisma.TransactionCreateManyInput[] = [
     ...generateMonthTransactions(
       previousMonthStart,
       endOfMonth(previousMonthStart),
       seededUser.id,
+      accountIds,
     ),
-    ...generateMonthTransactions(currentMonthStart, currentMonthEnd, seededUser.id),
+    ...generateMonthTransactions(
+      currentMonthStart,
+      currentMonthEnd,
+      seededUser.id,
+      accountIds,
+    ),
   ];
 
   const incomeData: Prisma.IncomeCreateManyInput[] = [
-    ...generateMonthIncomes(previousMonthStart, seededUser.id),
-    ...generateMonthIncomes(currentMonthStart, seededUser.id),
+    ...generateMonthIncomes(previousMonthStart, seededUser.id, accountIds),
+    ...generateMonthIncomes(currentMonthStart, seededUser.id, accountIds),
   ];
 
   await prisma.transaction.createMany({ data: transactionData });
   await prisma.income.createMany({ data: incomeData });
+  await prisma.transfer.createMany({
+    data: [
+      {
+        userId: seededUser.id,
+        fromAccountId: accounts[0].id,
+        toAccountId: accounts[2].id,
+        amount: 15000,
+        date: addDays(previousMonthStart, 12),
+        note: "Пополнение подушки",
+      },
+      {
+        userId: seededUser.id,
+        fromAccountId: accounts[0].id,
+        toAccountId: accounts[1].id,
+        amount: 8000,
+        date: addDays(currentMonthStart, 6),
+        note: "Снятие наличных",
+      },
+    ],
+  });
 
   console.log(
-    `Created ${transactionData.length} transactions and ${incomeData.length} incomes for ${seededUser.email}`,
+    `Created ${accounts.length} accounts, ${transactionData.length} transactions and ${incomeData.length} incomes for ${seededUser.email}`,
   );
   console.log(`Seeding finished.`);
 }

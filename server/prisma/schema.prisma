@@ -11,6 +11,13 @@ enum TransactionTag {
   OTHER
 }
 
+enum AccountType {
+  cash
+  debit
+  savings
+  credit
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -21,8 +28,31 @@ model User {
   email        String        @unique
   name         String
   password     String
+  accounts     Account[]
   transactions Transaction[]
   incomes      Income[]
+  transfers    Transfer[]
+}
+
+model Account {
+  id                Int        @id @default(autoincrement())
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  name              String
+  type              AccountType @default(debit)
+  currency          String     @default("RUB")
+  openingBalance    Int        @default(0) @map("opening_balance")
+  isArchived        Boolean    @default(false) @map("is_archived")
+
+  user              User       @relation(fields: [userId], references: [id])
+  userId            Int        @map("user_id")
+  transactions      Transaction[]
+  incomes           Income[]
+  outgoingTransfers Transfer[] @relation("TransferFromAccount")
+  incomingTransfers Transfer[] @relation("TransferToAccount")
+
+  @@index([userId])
 }
 
 model Transaction {
@@ -35,8 +65,13 @@ model Transaction {
   price Int
   date  DateTime
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @map("user_id")
+  user    User    @relation(fields: [userId], references: [id])
+  userId  Int     @map("user_id")
+  account Account @relation(fields: [accountId], references: [id])
+  accountId Int   @map("account_id")
+
+  @@index([userId])
+  @@index([accountId])
 }
 
 model Income {
@@ -48,6 +83,32 @@ model Income {
   price Int
   date  DateTime
 
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @map("user_id")
+  user    User    @relation(fields: [userId], references: [id])
+  userId  Int     @map("user_id")
+  account Account @relation(fields: [accountId], references: [id])
+  accountId Int   @map("account_id")
+
+  @@index([userId])
+  @@index([accountId])
+}
+
+model Transfer {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  amount Int
+  date   DateTime
+  note   String?
+
+  user          User    @relation(fields: [userId], references: [id])
+  userId        Int     @map("user_id")
+  fromAccount   Account @relation("TransferFromAccount", fields: [fromAccountId], references: [id])
+  fromAccountId Int     @map("from_account_id")
+  toAccount     Account @relation("TransferToAccount", fields: [toAccountId], references: [id])
+  toAccountId   Int     @map("to_account_id")
+
+  @@index([userId])
+  @@index([fromAccountId])
+  @@index([toAccountId])
 }

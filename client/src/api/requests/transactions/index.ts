@@ -10,6 +10,7 @@ type TransactionSortBy = "date" | "price" | "name" | "createdAt";
 export type TransactionListParams = {
   search?: string;
   tag?: TransactionTags | "ALL";
+  accountId?: number;
   minAmount?: number;
   maxAmount?: number;
   dateFrom?: string;
@@ -47,7 +48,7 @@ export const getTransactions = (requestConfig?: GetTransactionsConfig) =>
 
 export type PostTransactionsParams = Omit<
   Transaction,
-  "userId" | "createdAt" | "updatedAt" | "id" | "date"
+  "userId" | "createdAt" | "updatedAt" | "id" | "date" | "account"
 > & {
   date: string;
 };
@@ -76,7 +77,10 @@ export const patchTransaction = ({ params, config }: PatchTransactionsConfig) =>
 
 export type DeleteTransactionConfig = OfetchRequestConfig<{ id: number }>;
 
-export const deleteTransaction = ({ params, config }: DeleteTransactionConfig) =>
+export const deleteTransaction = ({
+  params,
+  config,
+}: DeleteTransactionConfig) =>
   protectedInstance<{ success: boolean }>(`transactions/${params.id}`, {
     method: "DELETE",
     ...config,

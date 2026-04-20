@@ -1,6 +1,7 @@
 import {
   BadgeDollarSignIcon,
   DoorOpenIcon,
+  LandmarkIcon,
   TrendingUpIcon,
   UserIcon,
 } from "lucide-react";
@@ -41,6 +42,11 @@ const data = {
       name: "Анализ",
       url: ROUTES.ANALYTICS,
       icon: TrendingUpIcon,
+    },
+    {
+      name: "Счета",
+      url: ROUTES.ACCOUNTS,
+      icon: LandmarkIcon,
     },
   ],
 };

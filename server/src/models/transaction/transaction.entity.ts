@@ -9,4 +9,5 @@ export class Transaction implements TransactionPrisma {
   price!: number;
   date!: Date;
   userId!: number;
+  accountId!: number;
 }

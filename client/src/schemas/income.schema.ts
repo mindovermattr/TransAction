@@ -1,4 +1,5 @@
 import z from "zod";
+import { accountReferenceSchema } from "./account.schema";
 
 export const incomeSchema = z.object({
   id: z.number(),
@@ -8,6 +9,8 @@ export const incomeSchema = z.object({
   price: z.number().positive("Цена должна быть положительной"),
   date: z.string(),
   userId: z.number(),
+  accountId: z.number(),
+  account: accountReferenceSchema,
 });
 
 export const incomeGetSchema = incomeSchema.extend({
@@ -22,6 +25,7 @@ export const incomePostSchema = incomeSchema
     id: true,
     updatedAt: true,
     userId: true,
+    account: true,
   })
   .extend({
     price: z.preprocess(
@@ -29,4 +33,8 @@ export const incomePostSchema = incomeSchema
       z.number().positive("Цена должна быть положительной"),
     ),
     name: z.string().min(4, "Минимум 4 символа"),
+    accountId: z.preprocess(
+      (val) => Number(val),
+      z.number().int().positive("Выберите счет"),
+    ),
   });

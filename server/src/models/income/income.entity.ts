@@ -8,4 +8,5 @@ export class Income implements IncomePrisma {
   price!: number;
   date!: Date;
   userId!: number;
+  accountId!: number;
 }

@@ -25,7 +25,7 @@ const parseOptionalInt = (value?: string) => {
 router.get("/", async (req, res, next) => {
   try {
     const user = req.user as User;
-    const { page, limit, dateFrom, dateTo, sortBy, sortOrder, search } =
+    const { page, limit, dateFrom, dateTo, sortBy, sortOrder, search, accountId } =
       req.query as Record<string, string | undefined>;
 
     const parsedDateFrom = dateFrom ? new Date(dateFrom) : undefined;
@@ -35,6 +35,7 @@ router.get("/", async (req, res, next) => {
       page: parseOptionalInt(page),
       limit: parseOptionalInt(limit),
       search: search?.trim() || undefined,
+      accountId: parseOptionalInt(accountId),
       dateFrom:
         parsedDateFrom && !Number.isNaN(parsedDateFrom.getTime())
           ? parsedDateFrom

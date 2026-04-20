@@ -3,9 +3,11 @@ import { Transform } from "class-transformer";
 import {
   IsDate,
   IsEnum,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
+  Min,
   MinLength,
 } from "class-validator";
 
@@ -23,6 +25,11 @@ export class TransactionDTO {
 
   @IsNumber()
   price!: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsInt()
+  @Min(1)
+  accountId!: number;
 }
 
 export class UpdateTransactionDTO {
@@ -43,4 +50,10 @@ export class UpdateTransactionDTO {
   @IsOptional()
   @IsNumber()
   price?: number;
+
+  @IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsInt()
+  @Min(1)
+  accountId?: number;
 }

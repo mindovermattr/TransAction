@@ -7,6 +7,7 @@ import type {
 } from "../models/transaction/transaction.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
+import { assertAccountAccess } from "./account.service";
 
 type SortOrder = "asc" | "desc";
 type TransactionSortBy = "date" | "price" | "name" | "createdAt";
@@ -14,6 +15,7 @@ type TransactionSortBy = "date" | "price" | "name" | "createdAt";
 type TransactionListFilters = {
   search?: string;
   tag?: TransactionTag;
+  accountId?: number;
   minAmount?: number;
   maxAmount?: number;
   dateFrom?: Date;
@@ -60,6 +62,10 @@ const getTransactions = async (
     where.tag = filters.tag;
   }
 
+  if (typeof filters.accountId === "number") {
+    where.accountId = filters.accountId;
+  }
+
   const priceFilters: Prisma.IntFilter = {};
   if (typeof filters.minAmount === "number") {
     priceFilters.gte = filters.minAmount;
@@ -87,6 +93,16 @@ const getTransactions = async (
       where,
       take: limit,
       skip: (page - 1) * limit,
+      include: {
+        account: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            isArchived: true,
+          },
+        },
+      },
       orderBy: {
         [sortBy]: sortOrder,
       },
@@ -114,12 +130,34 @@ const createTransaction = async (
   user: User,
   transactionDTO: TransactionDTO
 ) => {
+  await assertAccountAccess(user.id, transactionDTO.accountId, {
+    allowArchived: false,
+  });
+
   return prisma.transaction.create({
     data: {
-      ...transactionDTO,
+      name: transactionDTO.name,
+      tag: transactionDTO.tag,
+      price: transactionDTO.price,
+      date: transactionDTO.date,
       user: {
         connect: {
           id: user.id,
+        },
+      },
+      account: {
+        connect: {
+          id: transactionDTO.accountId,
+        },
+      },
+    },
+    include: {
+      account: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          isArchived: true,
         },
       },
     },
@@ -142,11 +180,27 @@ const updateTransaction = async (
     throw new HttpException(404, "Транзакция не найдена", "TRANSACTION_NOT_FOUND");
   }
 
+  if (typeof payload.accountId === "number") {
+    await assertAccountAccess(user.id, payload.accountId, {
+      allowArchived: false,
+    });
+  }
+
   return prisma.transaction.update({
     where: {
       id: transactionId,
     },
     data: payload,
+    include: {
+      account: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          isArchived: true,
+        },
+      },
+    },
   });
 };
 

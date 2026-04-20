@@ -3,9 +3,11 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import passport from "passport";
+import accountsRouter from "./controllers/accounts.controller";
 import analyticsRouter from "./controllers/analytics.controller";
 import authRouter from "./controllers/auth.controller";
 import incomeRouter from "./controllers/income.controller";
+import transfersRouter from "./controllers/transfers.controller";
 import transactionRouter from "./controllers/transactions.controller";
 import userRouter from "./controllers/user.contoller";
 import { jwtAuthMiddleware } from "./middleware/auth.middleware";
@@ -55,6 +57,8 @@ app.get("/health", (_req, res) => {
 
 app.use("/auth", authRateLimiter, authRouter);
 app.use("/users", jwtMiddleware, userRouter);
+app.use("/accounts", jwtMiddleware, accountsRouter);
+app.use("/transfers", jwtMiddleware, transfersRouter);
 app.use("/transactions", jwtMiddleware, transactionRouter);
 app.use("/income", jwtMiddleware, incomeRouter);
 app.use("/analytics", jwtMiddleware, analyticsRouter);

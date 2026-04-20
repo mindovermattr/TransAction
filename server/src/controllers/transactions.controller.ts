@@ -38,6 +38,7 @@ router.get("/", async (req, res, next) => {
     const {
       search,
       tag,
+      accountId,
       minAmount,
       maxAmount,
       dateFrom,
@@ -59,6 +60,7 @@ router.get("/", async (req, res, next) => {
     const transactions = await getTransactions(user, {
       search: search?.trim() || undefined,
       tag: parsedTag,
+      accountId: parseOptionalInt(accountId),
       minAmount: parseOptionalNumber(minAmount),
       maxAmount: parseOptionalNumber(maxAmount),
       dateFrom:
