@@ -4,7 +4,7 @@ import type { IncomeListParams } from "@/api/requests/income";
 
 export const useGetIncomeQuery = (
   params?: IncomeListParams,
-  settings?: QuerySettings<typeof getIncome>
+  settings?: QuerySettings<typeof getIncome>,
 ) =>
   useQuery({
     queryKey: ["income", params],

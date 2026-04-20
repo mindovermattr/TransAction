@@ -140,7 +140,7 @@ const Analytic = () => {
 
   return (
     <div className="space-y-4 lg:space-y-5">
-      <section className="rounded-xl border bg-card p-4 lg:p-5">
+      <section className="bg-card rounded-xl border p-4 lg:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div className="flex items-start gap-2.5">
             <SidebarTrigger />
@@ -175,7 +175,7 @@ const Analytic = () => {
                   type="button"
                   onClick={() => setPeriod(option.value)}
                   data-active={period === option.value}
-                  className="data-[active=true]:bg-background data-[active=true]:text-foreground data-[active=true]:shadow-xs text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-sm font-semibold transition-colors"
+                  className="data-[active=true]:bg-background data-[active=true]:text-foreground text-muted-foreground hover:text-foreground rounded-md px-3 py-1.5 text-sm font-semibold transition-colors data-[active=true]:shadow-xs"
                 >
                   {option.label}
                 </button>
@@ -261,7 +261,8 @@ const Analytic = () => {
                   Расходы за период
                 </Typography>
                 <Typography tag="p" className="text-2xl font-semibold">
-                  {(balanceData?.totals.expenses ?? 0).toLocaleString("ru-RU")} ₽
+                  {(balanceData?.totals.expenses ?? 0).toLocaleString("ru-RU")}{" "}
+                  ₽
                 </Typography>
               </div>
               <div className="bg-muted/45 rounded-lg p-3.5">

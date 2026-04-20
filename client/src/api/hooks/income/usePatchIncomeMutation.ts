@@ -2,7 +2,7 @@ import { patchIncome, type PatchIncomeConfig } from "@/api/requests";
 import { useMutation } from "@tanstack/react-query";
 
 export const usePatchIncomeMutation = (
-  settings?: MutationSettings<PatchIncomeConfig, typeof patchIncome>
+  settings?: MutationSettings<PatchIncomeConfig, typeof patchIncome>,
 ) =>
   useMutation({
     mutationKey: ["income", "patch"],

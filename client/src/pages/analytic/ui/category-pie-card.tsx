@@ -91,7 +91,7 @@ const CategoryPieCard = ({
       isError={isError}
       isEmpty={categoryData.length === 0}
       loadingContent={
-        <div className="flex min-h-[420px] flex-col rounded-xl border bg-card p-6">
+        <div className="bg-card flex min-h-[420px] flex-col rounded-xl border p-6">
           <Skeleton className="h-5 w-36" />
           <Skeleton className="mt-2 h-4 w-44" />
           <div className="mt-4 grid gap-2 sm:grid-cols-2">

@@ -3,7 +3,7 @@ import { getBalanceOverviewAnalytics } from "../../requests";
 
 export const useGetBalanceOverviewQuery = (
   period: AnalyticsPeriod,
-  settings?: QuerySettings<typeof getBalanceOverviewAnalytics>
+  settings?: QuerySettings<typeof getBalanceOverviewAnalytics>,
 ) =>
   useQuery({
     queryKey: ["analytics", "balance", "overview", period],

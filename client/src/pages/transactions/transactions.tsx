@@ -6,7 +6,7 @@ import { IncomeTable, TransactionTable, TransactionWidgets } from "./ui";
 const Transactions = () => {
   return (
     <div className="space-y-4 lg:space-y-5">
-      <section className="rounded-xl border bg-card p-4 lg:p-5">
+      <section className="bg-card rounded-xl border p-4 lg:p-5">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-2.5">
             <SidebarTrigger />
