@@ -70,9 +70,9 @@ export const Dashboard = () => {
               <Typography tag="h1" variant="title" className="text-2xl">
                 Дашборд
               </Typography>
-              <Typography tag="p" className="text-muted-foreground text-sm">
-                Главная сводка по доходам, расходам и динамике месяца
-              </Typography>
+            <Typography tag="p" className="text-muted-foreground text-sm">
+              Главная сводка по доходам, расходам и динамике месяца
+            </Typography>
             </div>
           </div>
 

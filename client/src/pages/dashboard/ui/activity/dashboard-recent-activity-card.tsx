@@ -45,8 +45,8 @@ const DashboardRecentActivityCard = ({
                     className={cn(
                       "flex h-10 w-10 items-center justify-center rounded-full border",
                       item.type === "income"
-                        ? "bg-emerald-500/10 text-emerald-600"
-                        : "bg-rose-500/10 text-rose-600",
+                        ? "dark:bg-emerald-500/10 dark:text-emerald-600"
+                        : "dark:bg-rose-500/10 dark:text-rose-600",
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -54,7 +54,10 @@ const DashboardRecentActivityCard = ({
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <Typography tag="p" className="truncate text-sm font-medium">
+                      <Typography
+                        tag="p"
+                        className="truncate text-sm font-medium"
+                      >
                         {item.name}
                       </Typography>
                       <Badge
@@ -63,15 +66,20 @@ const DashboardRecentActivityCard = ({
                           "rounded-full",
                           item.type === "income"
                             ? "border-emerald-200 text-emerald-700"
-                            : "border-rose-200 text-rose-700",
+                            : "border-rose-200 dark:text-rose-700",
                         )}
                       >
                         {item.type === "income" ? "Доход" : "Расход"}
                       </Badge>
                     </div>
-                    <Typography tag="p" className="text-muted-foreground text-xs">
+                    <Typography
+                      tag="p"
+                      className="text-muted-foreground text-xs"
+                    >
                       {formatDashboardDateLabel(item.date)}
-                      {item.tag ? ` • ${formatDashboardCategoryLabel(item.tag)}` : ""}
+                      {item.tag
+                        ? ` • ${formatDashboardCategoryLabel(item.tag)}`
+                        : ""}
                     </Typography>
                   </div>
 
@@ -79,14 +87,18 @@ const DashboardRecentActivityCard = ({
                     tag="p"
                     className={cn(
                       "text-sm font-semibold",
-                      item.type === "income" ? "text-emerald-600" : "text-foreground",
+                      item.type === "income"
+                        ? "text-emerald-600"
+                        : "text-foreground",
                     )}
                   >
                     {item.type === "income" ? "+" : "-"}
                     {dashboardCurrencyFormatter.format(item.amount)}
                   </Typography>
                 </div>
-                {index < data.length - 1 ? <Separator className="mt-3" /> : null}
+                {index < data.length - 1 ? (
+                  <Separator className="mt-3" />
+                ) : null}
               </div>
             );
           })}
