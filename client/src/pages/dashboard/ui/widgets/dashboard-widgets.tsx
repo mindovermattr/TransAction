@@ -29,24 +29,28 @@ const DashboardWidgets = ({
           value={dashboardCurrencyFormatter.format(data?.totals.balance ?? 0)}
           detail={`${data?.totals.savingsRate ?? 0}% сбережений от дохода`}
           icon={Wallet2Icon}
+          tone="balance"
         />
         <DashboardKpiCard
           title="Доходы месяца"
           value={dashboardCurrencyFormatter.format(data?.totals.income ?? 0)}
           detail={`${formatDashboardPercentDelta(data?.comparisons.incomeDeltaPercent ?? 0)} к прошлому месяцу`}
           icon={TrendingUpIcon}
+          tone="income"
         />
         <DashboardKpiCard
           title="Расходы месяца"
           value={dashboardCurrencyFormatter.format(data?.totals.expenses ?? 0)}
           detail={`${formatDashboardPercentDelta(data?.comparisons.expensesDeltaPercent ?? 0)} к прошлому месяцу`}
           icon={TrendingDownIcon}
+          tone="expense"
         />
         <DashboardKpiCard
           title="Savings rate"
           value={`${data?.totals.savingsRate ?? 0}%`}
           detail="Часть дохода, которая осталась после расходов"
           icon={PiggyBankIcon}
+          tone="savings"
         />
       </div>
 

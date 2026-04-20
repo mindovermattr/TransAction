@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
-import { Circle } from "lucide-react";
+import { ArrowDownCircleIcon, BadgePlusIcon, Circle } from "lucide-react";
 import { useMemo } from "react";
 import { TransactionAddIncomeModal } from "../transactions/ui/modals/transaction-add-income-modal";
 import { TransactionAddModal } from "../transactions/ui/modals/transaction-add-modal";
@@ -88,9 +88,21 @@ export const Dashboard = () => {
               {isFetching ? "Обновление" : "Актуально"}
             </Badge>
 
-            <div className="flex items-center gap-2">
-              <TransactionAddModal />
-              <TransactionAddIncomeModal />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <TransactionAddModal
+                triggerLabel="Добавить транзакцию"
+                triggerVariant="default"
+                triggerSize="default"
+                triggerIcon={ArrowDownCircleIcon}
+                triggerClassName="shadow-sm sm:min-w-[198px]"
+              />
+              <TransactionAddIncomeModal
+                triggerLabel="Добавить доход"
+                triggerVariant="outline"
+                triggerSize="default"
+                triggerIcon={BadgePlusIcon}
+                triggerClassName="sm:min-w-[172px]"
+              />
             </div>
           </div>
         </header>

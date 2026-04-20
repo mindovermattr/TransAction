@@ -21,8 +21,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { incomePostSchema } from "@/schemas/income.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CirclePlusIcon } from "lucide-react";
-import { useState } from "react";
+import { CirclePlusIcon, type LucideIcon } from "lucide-react";
+import { type ComponentProps, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
@@ -52,7 +52,19 @@ const formFields = [
   { name: "price", label: "Цена", type: "number", placeholder: "Цена" },
 ] satisfies readonly FormField[];
 
-const TransactionAddIncomeModal = () => {
+const TransactionAddIncomeModal = ({
+  triggerLabel,
+  triggerVariant = "outline",
+  triggerSize = "icon",
+  triggerClassName,
+  triggerIcon: TriggerIcon = CirclePlusIcon,
+}: {
+  triggerLabel?: string;
+  triggerVariant?: ComponentProps<typeof Button>["variant"];
+  triggerSize?: ComponentProps<typeof Button>["size"];
+  triggerClassName?: string;
+  triggerIcon?: LucideIcon;
+}) => {
   const [open, setIsOpen] = useState(false);
   const form = useForm({
     resolver: zodResolver(incomePostSchema),
@@ -80,8 +92,13 @@ const TransactionAddIncomeModal = () => {
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <CirclePlusIcon />
+        <Button
+          variant={triggerVariant}
+          size={triggerSize}
+          className={triggerClassName}
+        >
+          <TriggerIcon />
+          {triggerLabel ? <span>{triggerLabel}</span> : null}
         </Button>
       </DialogTrigger>
       <DialogContent showCloseButton={false}>
