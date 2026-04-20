@@ -33,15 +33,27 @@ import {
 } from "@/schemas/transaction.schema";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CirclePlusIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import { CirclePlusIcon, type LucideIcon } from "lucide-react";
+import { type ComponentProps, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
 type TransactionFormInput = z.input<typeof transactionPostSchema>;
 type TransactionFormValues = z.output<typeof transactionPostSchema>;
 
-const TransactionAddModal = () => {
+const TransactionAddModal = ({
+  triggerLabel,
+  triggerVariant = "outline",
+  triggerSize = "icon",
+  triggerClassName,
+  triggerIcon: TriggerIcon = CirclePlusIcon,
+}: {
+  triggerLabel?: string;
+  triggerVariant?: ComponentProps<typeof Button>["variant"];
+  triggerSize?: ComponentProps<typeof Button>["size"];
+  triggerClassName?: string;
+  triggerIcon?: LucideIcon;
+}) => {
   const [open, setIsOpen] = useState(false);
   const { data: accountsData } = useGetAccountsQuery();
   const accounts = useMemo(
@@ -84,8 +96,13 @@ const TransactionAddModal = () => {
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="icon">
-          <CirclePlusIcon />
+        <Button
+          variant={triggerVariant}
+          size={triggerSize}
+          className={triggerClassName}
+        >
+          <TriggerIcon />
+          {triggerLabel ? <span>{triggerLabel}</span> : null}
         </Button>
       </DialogTrigger>
       <DialogContent showCloseButton={false}>
