@@ -5,6 +5,7 @@ import { DashboardWeekdayCard } from "./dashboard-weekday-card";
 
 type CashflowPoint = DashboardOverviewResponse["cashflow"]["months"][number] & {
   label: string;
+  signedExpenses: number;
 };
 
 type CategoryPoint = DashboardOverviewResponse["topCategories"][number] & {

@@ -29,7 +29,7 @@ const DashboardPeriodCompareCard = ({
       </Typography>
     </CardHeader>
     <CardContent className="px-5 pt-0">
-      <div className="h-[220px]">
+      <div className="h-[180px]">
         <ChartContainer config={DASHBOARD_CHART_CONFIG} className="h-full w-full">
           <BarChart data={data} margin={{ left: 0, right: 0 }}>
             <CartesianGrid vertical={false} strokeDasharray="4 4" />
@@ -57,7 +57,7 @@ const DashboardPeriodCompareCard = ({
                 />
               }
             />
-            <Bar dataKey="total" radius={8}>
+            <Bar dataKey="total" radius={8} maxBarSize={96}>
               {data.map((entry) => (
                 <Cell key={entry.label} fill={entry.fill} />
               ))}

@@ -9,6 +9,7 @@ const getDashboardCashflowPoints = (
 ) =>
   (months ?? []).map((item) => ({
     ...item,
+    signedExpenses: item.expenses > 0 ? -item.expenses : 0,
     label: formatDashboardMonthLabel(item.monthStart),
   }));
 

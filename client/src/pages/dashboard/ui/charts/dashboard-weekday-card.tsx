@@ -24,7 +24,7 @@ const DashboardWeekdayCard = ({
       {data.length === 0 ? (
         <DashboardEmptyChartState text="Нет данных по дням недели." />
       ) : (
-        <div className="h-[280px]">
+        <div className="h-[220px]">
           <ChartContainer config={DASHBOARD_CHART_CONFIG} className="h-full w-full">
             <BarChart data={data} layout="vertical" margin={{ left: 0, right: 8 }}>
               <CartesianGrid horizontal={false} strokeDasharray="4 4" />

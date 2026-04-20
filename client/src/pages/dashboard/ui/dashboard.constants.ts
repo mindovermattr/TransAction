@@ -12,6 +12,7 @@ const DASHBOARD_CATEGORY_LABELS: Record<TransactionTags, string> = {
 const DASHBOARD_CHART_CONFIG: ChartConfig = {
   income: { label: "Доходы", color: "var(--color-chart-2)" },
   expenses: { label: "Расходы", color: "var(--color-chart-5)" },
+  signedExpenses: { label: "Расходы", color: "var(--color-chart-5)" },
   balance: { label: "Баланс", color: "var(--color-chart-1)" },
   total: { label: "Сумма", color: "var(--color-chart-4)" },
 };
