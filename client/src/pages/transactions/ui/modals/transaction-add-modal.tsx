@@ -1,3 +1,4 @@
+import { useGetAccountsQuery } from "@/api/hooks";
 import { usePostTransactionsMutation } from "@/api/hooks/transactions/usePostTransactionMutation";
 import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
@@ -30,49 +31,15 @@ import {
   TRANSACTION_TAGS,
   transactionPostSchema,
 } from "@/schemas/transaction.schema";
+import { accountGetSchema } from "@/schemas/account.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CirclePlusIcon, type LucideIcon } from "lucide-react";
-import { type ComponentProps, useState } from "react";
+import { type ComponentProps, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
-type FormField = {
-  name: keyof z.infer<typeof transactionPostSchema>;
-  label: string;
-} & (
-  | {
-      type: "text" | "number";
-      placeholder?: string;
-      value?: string | number;
-    }
-  | {
-      type: "date";
-      value?: string;
-    }
-  | {
-      type: "select";
-      options: typeof TRANSACTION_TAGS;
-    }
-);
-
-const formFields = [
-  {
-    name: "name",
-    label: "Имя",
-    type: "text",
-    placeholder: "Enter name",
-  },
-  { name: "date", label: "Дата", type: "date" },
-  { name: "price", label: "Цена", type: "number", placeholder: "Цена" },
-  {
-    name: "tag",
-    label: "Тег",
-    type: "select",
-    options: TRANSACTION_TAGS,
-  },
-] satisfies readonly FormField[];
-
-/* TODO: Change component name */
+type TransactionFormInput = z.input<typeof transactionPostSchema>;
+type TransactionFormValues = z.output<typeof transactionPostSchema>;
 
 const TransactionAddModal = ({
   triggerLabel,
@@ -88,8 +55,22 @@ const TransactionAddModal = ({
   triggerIcon?: LucideIcon;
 }) => {
   const [open, setIsOpen] = useState(false);
-  const form = useForm({
+  const { data: accountsData } = useGetAccountsQuery();
+  const accounts = useMemo(
+    () =>
+      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    [accountsData],
+  );
+
+  const form = useForm<TransactionFormInput, undefined, TransactionFormValues>({
     resolver: zodResolver(transactionPostSchema),
+    defaultValues: {
+      name: "",
+      date: new Date().toISOString().slice(0, 10),
+      price: undefined,
+      tag: "OTHER",
+      accountId: accounts[0]?.id ?? 0,
+    },
   });
 
   const postTransactionMutation = usePostTransactionsMutation({
@@ -98,6 +79,7 @@ const TransactionAddModal = ({
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["transactions"] }),
           queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
+          queryClient.invalidateQueries({ queryKey: ["accounts"] }),
           queryClient.invalidateQueries({ queryKey: ["analytics"] }),
         ]);
         setIsOpen(false);
@@ -106,7 +88,7 @@ const TransactionAddModal = ({
     },
   });
 
-  const submitHandler = async (data: z.infer<typeof transactionPostSchema>) =>
+  const submitHandler = async (data: TransactionFormValues) =>
     await postTransactionMutation.mutateAsync({
       params: data,
     });
@@ -132,50 +114,111 @@ const TransactionAddModal = ({
             <DialogHeader>
               <DialogTitle>Добавить транзакцию</DialogTitle>
             </DialogHeader>
-
-            {formFields.map((formField) => (
-              <FormField
-                key={formField.name}
-                control={form.control}
-                name={formField.name}
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>{formField.label}</FormLabel>
-                      <FormControl>
-                        {formField.type === "select" ? (
-                          <Select onValueChange={field.onChange}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Выберите тег" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {formField.options?.map((option) => (
-                                <SelectItem key={option} value={option}>
-                                  {option}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Input
-                            type={formField.type}
-                            placeholder={formField.placeholder ?? ""}
-                            {...field}
-                            value={field.value as string | number | undefined}
-                          />
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            ))}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Имя</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Название операции" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Дата</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Цена</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Цена"
+                      {...field}
+                      value={field.value as string | number | undefined}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="accountId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Счет</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value ? String(field.value) : undefined}
+                      onValueChange={(value) => field.onChange(Number(value))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Выберите счет" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {accounts.map((account) => (
+                          <SelectItem
+                            key={account.id}
+                            value={String(account.id)}
+                          >
+                            {account.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tag"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Тег</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Выберите тег" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TRANSACTION_TAGS.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Закрыть</Button>
               </DialogClose>
-              <Button type="submit">Добавить</Button>
+              <Button type="submit" disabled={accounts.length === 0}>
+                Добавить
+              </Button>
             </DialogFooter>
           </form>
         </Form>

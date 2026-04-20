@@ -1,9 +1,11 @@
 import { Transform } from "class-transformer";
 import {
   IsDate,
+  IsInt,
   IsNumber,
   IsOptional,
   IsString,
+  Min,
   MinLength,
 } from "class-validator";
 
@@ -18,6 +20,11 @@ export class IncomeDTO {
 
   @IsNumber()
   price!: number;
+
+  @Transform(({ value }) => Number(value))
+  @IsInt()
+  @Min(1)
+  accountId!: number;
 }
 
 export class UpdateIncomeDTO {
@@ -34,4 +41,10 @@ export class UpdateIncomeDTO {
   @IsOptional()
   @IsNumber()
   price?: number;
+
+  @IsOptional()
+  @Transform(({ value }) => Number(value))
+  @IsInt()
+  @Min(1)
+  accountId?: number;
 }

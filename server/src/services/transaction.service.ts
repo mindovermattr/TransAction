@@ -7,6 +7,7 @@ import type {
 } from "../models/transaction/transaction.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
+import { assertAccountAccess } from "./account.service";
 
 type SortOrder = "asc" | "desc";
 type TransactionSortBy = "date" | "price" | "name" | "createdAt";
@@ -14,6 +15,7 @@ type TransactionSortBy = "date" | "price" | "name" | "createdAt";
 type TransactionListFilters = {
   search?: string;
   tag?: TransactionTag;
+  accountId?: number;
   minAmount?: number;
   maxAmount?: number;
   dateFrom?: Date;
@@ -30,7 +32,7 @@ const MAX_LIMIT = 100;
 
 const getTransactions = async (
   user: Omit<User, "password">,
-  filters: TransactionListFilters = {}
+  filters: TransactionListFilters = {},
 ) => {
   const page =
     !filters.page || Number.isNaN(filters.page) || filters.page < 1
@@ -60,6 +62,10 @@ const getTransactions = async (
     where.tag = filters.tag;
   }
 
+  if (typeof filters.accountId === "number") {
+    where.accountId = filters.accountId;
+  }
+
   const priceFilters: Prisma.IntFilter = {};
   if (typeof filters.minAmount === "number") {
     priceFilters.gte = filters.minAmount;
@@ -87,6 +93,16 @@ const getTransactions = async (
       where,
       take: limit,
       skip: (page - 1) * limit,
+      include: {
+        account: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            isArchived: true,
+          },
+        },
+      },
       orderBy: {
         [sortBy]: sortOrder,
       },
@@ -94,8 +110,7 @@ const getTransactions = async (
     prisma.transaction.count({ where }),
   ]);
 
-  const totalPages =
-    totalItems === 0 ? 1 : Math.ceil(totalItems / limit);
+  const totalPages = totalItems === 0 ? 1 : Math.ceil(totalItems / limit);
 
   return {
     items,
@@ -112,14 +127,36 @@ const getTransactions = async (
 
 const createTransaction = async (
   user: User,
-  transactionDTO: TransactionDTO
+  transactionDTO: TransactionDTO,
 ) => {
+  await assertAccountAccess(user.id, transactionDTO.accountId, {
+    allowArchived: false,
+  });
+
   return prisma.transaction.create({
     data: {
-      ...transactionDTO,
+      name: transactionDTO.name,
+      tag: transactionDTO.tag,
+      price: transactionDTO.price,
+      date: transactionDTO.date,
       user: {
         connect: {
           id: user.id,
+        },
+      },
+      account: {
+        connect: {
+          id: transactionDTO.accountId,
+        },
+      },
+    },
+    include: {
+      account: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          isArchived: true,
         },
       },
     },
@@ -129,7 +166,7 @@ const createTransaction = async (
 const updateTransaction = async (
   user: Omit<User, "password">,
   transactionId: number,
-  payload: UpdateTransactionDTO
+  payload: UpdateTransactionDTO,
 ) => {
   const transaction = await prisma.transaction.findFirst({
     where: {
@@ -139,7 +176,17 @@ const updateTransaction = async (
   });
 
   if (!transaction) {
-    throw new HttpException(404, "Транзакция не найдена", "TRANSACTION_NOT_FOUND");
+    throw new HttpException(
+      404,
+      "Транзакция не найдена",
+      "TRANSACTION_NOT_FOUND",
+    );
+  }
+
+  if (typeof payload.accountId === "number") {
+    await assertAccountAccess(user.id, payload.accountId, {
+      allowArchived: false,
+    });
   }
 
   return prisma.transaction.update({
@@ -147,12 +194,22 @@ const updateTransaction = async (
       id: transactionId,
     },
     data: payload,
+    include: {
+      account: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          isArchived: true,
+        },
+      },
+    },
   });
 };
 
 const deleteTransaction = async (
   user: Omit<User, "password">,
-  transactionId: number
+  transactionId: number,
 ) => {
   const transaction = await prisma.transaction.findFirst({
     where: {
@@ -165,7 +222,11 @@ const deleteTransaction = async (
   });
 
   if (!transaction) {
-    throw new HttpException(404, "Транзакция не найдена", "TRANSACTION_NOT_FOUND");
+    throw new HttpException(
+      404,
+      "Транзакция не найдена",
+      "TRANSACTION_NOT_FOUND",
+    );
   }
 
   await prisma.transaction.delete({
@@ -188,7 +249,7 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
   const previousMonthDate = new Date(Date.UTC(year, month - 1, 1));
   const prevMonth = getDateRange(
     previousMonthDate.getUTCFullYear(),
-    previousMonthDate.getUTCMonth()
+    previousMonthDate.getUTCMonth(),
   );
 
   const [currentMonthTransactions, prevMonthTransactions] = await Promise.all([

@@ -12,6 +12,11 @@ const ERROR_CODE_DICTIONARY = {
   TRANSACTION_NOT_FOUND: "transaction.not_found",
   INVALID_INCOME_ID: "income.invalid_id",
   INCOME_NOT_FOUND: "income.not_found",
+  INVALID_ACCOUNT_ID: "account.invalid_id",
+  ACCOUNT_NOT_FOUND: "account.not_found",
+  ACCOUNT_ARCHIVED: "account.archived",
+  LAST_ACTIVE_ACCOUNT: "account.last_active",
+  INVALID_TRANSFER_ACCOUNTS: "transfer.invalid_accounts",
   INTERNAL_ERROR: "system.internal_error",
 } as const;
 

@@ -4,12 +4,14 @@ import { getDateRange } from "../helpers/getDateRange";
 import type { IncomeDTO, UpdateIncomeDTO } from "../models/income/income.dto";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
+import { assertAccountAccess } from "./account.service";
 
 type SortOrder = "asc" | "desc";
 type IncomeSortBy = "date" | "price" | "name" | "createdAt";
 
 type IncomeListFilters = {
   search?: string;
+  accountId?: number;
   dateFrom?: Date;
   dateTo?: Date;
   page?: number;
@@ -24,7 +26,7 @@ const MAX_LIMIT = 100;
 
 const getIncomes = async (
   user: Omit<User, "password">,
-  filters: IncomeListFilters = {}
+  filters: IncomeListFilters = {},
 ) => {
   const page =
     !filters.page || Number.isNaN(filters.page) || filters.page < 1
@@ -50,6 +52,10 @@ const getIncomes = async (
     };
   }
 
+  if (typeof filters.accountId === "number") {
+    where.accountId = filters.accountId;
+  }
+
   const dateFilters: Prisma.DateTimeFilter = {};
   if (filters.dateFrom) {
     dateFilters.gte = filters.dateFrom;
@@ -66,6 +72,16 @@ const getIncomes = async (
       where,
       take: limit,
       skip: (page - 1) * limit,
+      include: {
+        account: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            isArchived: true,
+          },
+        },
+      },
       orderBy: {
         [sortBy]: sortOrder,
       },
@@ -99,7 +115,7 @@ const getIncomeSummary = async (user: Omit<User, "password">) => {
   const previousMonthDate = new Date(Date.UTC(year, month - 1, 1));
   const prevMonth = getDateRange(
     previousMonthDate.getUTCFullYear(),
-    previousMonthDate.getUTCMonth()
+    previousMonthDate.getUTCMonth(),
   );
 
   const [currentMonthIncomes, prevMonthIncomes] = await Promise.all([
@@ -136,12 +152,33 @@ const getIncomeSummary = async (user: Omit<User, "password">) => {
 };
 
 const createIncome = async (user: User, incomeDTO: IncomeDTO) => {
+  await assertAccountAccess(user.id, incomeDTO.accountId, {
+    allowArchived: false,
+  });
+
   return prisma.income.create({
     data: {
-      ...incomeDTO,
+      name: incomeDTO.name,
+      price: incomeDTO.price,
+      date: incomeDTO.date,
       user: {
         connect: {
           id: user.id,
+        },
+      },
+      account: {
+        connect: {
+          id: incomeDTO.accountId,
+        },
+      },
+    },
+    include: {
+      account: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          isArchived: true,
         },
       },
     },
@@ -151,7 +188,7 @@ const createIncome = async (user: User, incomeDTO: IncomeDTO) => {
 const updateIncome = async (
   user: Omit<User, "password">,
   incomeId: number,
-  payload: UpdateIncomeDTO
+  payload: UpdateIncomeDTO,
 ) => {
   const income = await prisma.income.findFirst({
     where: {
@@ -167,11 +204,27 @@ const updateIncome = async (
     throw new HttpException(404, "Доход не найден", "INCOME_NOT_FOUND");
   }
 
+  if (typeof payload.accountId === "number") {
+    await assertAccountAccess(user.id, payload.accountId, {
+      allowArchived: false,
+    });
+  }
+
   return prisma.income.update({
     where: {
       id: incomeId,
     },
     data: payload,
+    include: {
+      account: {
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          isArchived: true,
+        },
+      },
+    },
   });
 };
 

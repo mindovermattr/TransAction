@@ -1,1 +1,1 @@
-cd client && pnpm lint-staged
+cd client && pnpm lint-staged --config package.json --relative

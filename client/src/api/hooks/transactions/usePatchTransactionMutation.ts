@@ -1,11 +1,8 @@
-import {
-  patchTransaction,
-  type PatchTransactionsConfig,
-} from "@/api/requests";
+import { patchTransaction, type PatchTransactionsConfig } from "@/api/requests";
 import { useMutation } from "@tanstack/react-query";
 
 export const usePatchTransactionMutation = (
-  settings?: MutationSettings<PatchTransactionsConfig, typeof patchTransaction>
+  settings?: MutationSettings<PatchTransactionsConfig, typeof patchTransaction>,
 ) =>
   useMutation({
     mutationKey: ["transactions", "patch"],

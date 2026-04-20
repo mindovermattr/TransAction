@@ -1,6 +1,7 @@
 import {
   BadgeDollarSignIcon,
   DoorOpenIcon,
+  LandmarkIcon,
   LayoutDashboardIcon,
   TrendingUpIcon,
   UserIcon,
@@ -47,6 +48,11 @@ const data = {
       name: "Анализ",
       url: ROUTES.ANALYTICS,
       icon: TrendingUpIcon,
+    },
+    {
+      name: "Счета",
+      url: ROUTES.ACCOUNTS,
+      icon: LandmarkIcon,
     },
   ],
 };

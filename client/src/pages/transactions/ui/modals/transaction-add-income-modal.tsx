@@ -1,3 +1,4 @@
+import { useGetAccountsQuery } from "@/api/hooks";
 import { usePostIncomeMutation } from "@/api/hooks/income/usePostIncomeMutation";
 import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
@@ -19,38 +20,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { accountGetSchema } from "@/schemas/account.schema";
 import { incomePostSchema } from "@/schemas/income.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CirclePlusIcon, type LucideIcon } from "lucide-react";
-import { type ComponentProps, useState } from "react";
+import { type ComponentProps, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
-type FormField = {
-  name: keyof z.infer<typeof incomePostSchema>;
-  label: string;
-} & (
-  | {
-      type: "text" | "number";
-      placeholder?: string;
-      value?: string | number;
-    }
-  | {
-      type: "date";
-      value?: string;
-    }
-);
-
-const formFields = [
-  {
-    name: "name",
-    label: "Имя",
-    type: "text",
-    placeholder: "Enter name",
-  },
-  { name: "date", label: "Дата", type: "date" },
-  { name: "price", label: "Цена", type: "number", placeholder: "Цена" },
-] satisfies readonly FormField[];
+type IncomeFormInput = z.input<typeof incomePostSchema>;
+type IncomeFormValues = z.output<typeof incomePostSchema>;
 
 const TransactionAddIncomeModal = ({
   triggerLabel,
@@ -66,8 +52,21 @@ const TransactionAddIncomeModal = ({
   triggerIcon?: LucideIcon;
 }) => {
   const [open, setIsOpen] = useState(false);
-  const form = useForm({
+  const { data: accountsData } = useGetAccountsQuery();
+  const accounts = useMemo(
+    () =>
+      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    [accountsData],
+  );
+
+  const form = useForm<IncomeFormInput, undefined, IncomeFormValues>({
     resolver: zodResolver(incomePostSchema),
+    defaultValues: {
+      name: "",
+      date: new Date().toISOString().slice(0, 10),
+      price: undefined,
+      accountId: accounts[0]?.id ?? 0,
+    },
   });
 
   const postIncomeMutation = usePostIncomeMutation({
@@ -76,6 +75,7 @@ const TransactionAddIncomeModal = ({
         await Promise.all([
           queryClient.invalidateQueries({ queryKey: ["income"] }),
           queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
+          queryClient.invalidateQueries({ queryKey: ["accounts"] }),
           queryClient.invalidateQueries({ queryKey: ["analytics"] }),
         ]);
         setIsOpen(false);
@@ -84,7 +84,7 @@ const TransactionAddIncomeModal = ({
     },
   });
 
-  const submitHandler = async (data: z.infer<typeof incomePostSchema>) =>
+  const submitHandler = async (data: IncomeFormValues) =>
     await postIncomeMutation.mutateAsync({
       params: data,
     });
@@ -110,35 +110,87 @@ const TransactionAddIncomeModal = ({
             <DialogHeader>
               <DialogTitle>Добавить доход</DialogTitle>
             </DialogHeader>
-
-            {formFields.map((formField) => (
-              <FormField
-                key={formField.name}
-                control={form.control}
-                name={formField.name}
-                render={({ field }) => {
-                  return (
-                    <FormItem>
-                      <FormLabel>{formField.label}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type={formField.type}
-                          placeholder={formField.placeholder ?? ""}
-                          {...field}
-                          value={field.value as string | number | undefined}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  );
-                }}
-              />
-            ))}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Имя</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Источник дохода" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Дата</FormLabel>
+                  <FormControl>
+                    <Input type="date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Цена</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="Цена"
+                      {...field}
+                      value={field.value as string | number | undefined}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="accountId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Счет</FormLabel>
+                  <FormControl>
+                    <Select
+                      value={field.value ? String(field.value) : undefined}
+                      onValueChange={(value) => field.onChange(Number(value))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Выберите счет" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {accounts.map((account) => (
+                          <SelectItem
+                            key={account.id}
+                            value={String(account.id)}
+                          >
+                            {account.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Закрыть</Button>
               </DialogClose>
-              <Button type="submit">Добавить</Button>
+              <Button type="submit" disabled={accounts.length === 0}>
+                Добавить
+              </Button>
             </DialogFooter>
           </form>
         </Form>

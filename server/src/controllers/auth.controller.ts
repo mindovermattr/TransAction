@@ -20,7 +20,7 @@ router.post(
     } catch (error: unknown) {
       next(error);
     }
-  }
+  },
 );
 
 router.post(
@@ -34,7 +34,7 @@ router.post(
     } catch (error) {
       next(error);
     }
-  }
+  },
 );
 
 export default router;

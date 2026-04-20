@@ -62,6 +62,12 @@ const router = createBrowserRouter([
               Component: (await import("@/pages/analytic/analytic")).Analytic,
             }),
           },
+          {
+            path: ROUTES.ACCOUNTS,
+            lazy: async () => ({
+              Component: (await import("@/pages/accounts/accounts")).Accounts,
+            }),
+          },
         ],
       },
       //other routes

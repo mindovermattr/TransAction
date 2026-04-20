@@ -6,7 +6,7 @@ const errorHandler = (
   error: unknown,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   if (isHttpException(error)) {
     const status = error.status || 500;

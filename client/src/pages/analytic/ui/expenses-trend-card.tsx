@@ -78,7 +78,7 @@ const ExpensesTrendCard = ({
       isError={isError}
       isEmpty={!data || data.points.length === 0}
       loadingContent={
-        <div className="flex min-h-[400px] flex-col rounded-xl border bg-card p-6">
+        <div className="bg-card flex min-h-[400px] flex-col rounded-xl border p-6">
           <Skeleton className="h-5 w-56" />
           <Skeleton className="mt-2 h-4 w-44" />
           <div className="mt-4 grid gap-2 sm:grid-cols-2">

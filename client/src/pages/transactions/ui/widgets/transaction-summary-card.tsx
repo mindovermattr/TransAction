@@ -80,13 +80,15 @@ const TransactionSummaryCard = ({
     <Card className={cn("gap-4 py-5.5", styles.container)}>
       <CardHeader className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2">
-          <div className={cn("rounded-lg p-2.5", styles.iconBox, styles.iconColor)}>
+          <div
+            className={cn("rounded-lg p-2.5", styles.iconBox, styles.iconColor)}
+          >
             <Icon size={18} />
           </div>
           <div className="space-y-0.5">
             <Typography
               tag="p"
-              className="text-muted-foreground text-xs font-medium uppercase tracking-wide"
+              className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
             >
               {sectionLabel}
             </Typography>
@@ -108,7 +110,9 @@ const TransactionSummaryCard = ({
         </Typography>
         <div className="text-muted-foreground flex items-center gap-2 text-sm">
           <CircleDollarSignIcon className="h-4 w-4" />
-          <span>За прошлый месяц: {currencyFormatter.format(previousAmount)}</span>
+          <span>
+            За прошлый месяц: {currencyFormatter.format(previousAmount)}
+          </span>
         </div>
       </CardContent>
 

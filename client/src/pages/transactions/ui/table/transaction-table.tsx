@@ -1,4 +1,5 @@
 import {
+  useGetAccountsQuery,
   useDeleteTransactionMutation,
   useGetTransactionsQuery,
   usePatchTransactionMutation,
@@ -48,6 +49,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
+import { accountGetSchema } from "@/schemas/account.schema";
 import {
   TRANSACTION_TAGS,
   transactionGetSchema,
@@ -78,6 +80,7 @@ type SortOrder = "asc" | "desc";
 type TransactionFiltersState = {
   search: string;
   tag: "ALL" | TransactionTags;
+  accountId: "ALL" | string;
   minAmount: string;
   maxAmount: string;
   datePreset: DatePreset;
@@ -88,6 +91,7 @@ type TransactionFiltersState = {
 const DEFAULT_FILTERS: TransactionFiltersState = {
   search: "",
   tag: "ALL",
+  accountId: "ALL",
   minAmount: "",
   maxAmount: "",
   datePreset: "all",
@@ -125,7 +129,10 @@ const getPresetRange = (preset: DatePreset) => {
     return { from, to: now };
   }
 
-  return { from: undefined as Date | undefined, to: undefined as Date | undefined };
+  return {
+    from: undefined as Date | undefined,
+    to: undefined as Date | undefined,
+  };
 };
 
 const toInputDate = (date: Date) => {
@@ -154,6 +161,8 @@ const normalizeFilters = (filters: TransactionFiltersState) => {
     return {
       search: filters.search.trim(),
       tag: filters.tag,
+      accountId:
+        filters.accountId === "ALL" ? undefined : Number(filters.accountId),
       minAmount: safeMinAmount,
       maxAmount: safeMaxAmount,
       dateFrom:
@@ -167,6 +176,8 @@ const normalizeFilters = (filters: TransactionFiltersState) => {
   return {
     search: filters.search.trim(),
     tag: filters.tag,
+    accountId:
+      filters.accountId === "ALL" ? undefined : Number(filters.accountId),
     minAmount: safeMinAmount,
     maxAmount: safeMaxAmount,
     dateFrom: from?.toISOString(),
@@ -185,29 +196,39 @@ const TABLE_HEAD_HEIGHT = 36;
 const TABLE_ROW_HEIGHT = 44;
 const PAGE_SIZE = Math.max(
   1,
-  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT)
+  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT),
 );
 
 const TransactionTable = () => {
   const [page, setPage] = useState(1);
   const [filters, setFilters] =
     useState<TransactionFiltersState>(DEFAULT_FILTERS);
-  const [sorting, setSorting] = useState<{ sortBy: SortBy; sortOrder: SortOrder }>({
+  const [sorting, setSorting] = useState<{
+    sortBy: SortBy;
+    sortOrder: SortOrder;
+  }>({
     sortBy: "date",
     sortOrder: "desc",
   });
-  const [editingTransaction, setEditingTransaction] = useState<
-    z.infer<typeof transactionGetSchema> | null
-  >(null);
-  const [deletingTransaction, setDeletingTransaction] = useState<
-    z.infer<typeof transactionGetSchema> | null
-  >(null);
+  const [editingTransaction, setEditingTransaction] = useState<z.infer<
+    typeof transactionGetSchema
+  > | null>(null);
+  const [deletingTransaction, setDeletingTransaction] = useState<z.infer<
+    typeof transactionGetSchema
+  > | null>(null);
+  const { data: accountsData } = useGetAccountsQuery();
 
   const normalizedFilters = useMemo(() => normalizeFilters(filters), [filters]);
+  const accounts = useMemo(
+    () =>
+      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    [accountsData],
+  );
 
   const hasActiveFilters =
     filters.search.length > 0 ||
     filters.tag !== "ALL" ||
+    filters.accountId !== "ALL" ||
     filters.minAmount.length > 0 ||
     filters.maxAmount.length > 0 ||
     filters.datePreset !== "all" ||
@@ -222,7 +243,7 @@ const TransactionTable = () => {
       sortBy: sorting.sortBy,
       sortOrder: sorting.sortOrder,
     }),
-    [normalizedFilters, page, sorting.sortBy, sorting.sortOrder]
+    [normalizedFilters, page, sorting.sortBy, sorting.sortOrder],
   );
 
   const { data, isFetching } = useGetTransactionsQuery(queryParams);
@@ -245,6 +266,7 @@ const TransactionTable = () => {
       tag: editingTransaction.tag,
       price: editingTransaction.price,
       date: toInputDate(editingTransaction.date),
+      accountId: editingTransaction.accountId,
     });
   }, [editForm, editingTransaction]);
 
@@ -284,7 +306,9 @@ const TransactionTable = () => {
     );
   };
 
-  const onEditSubmit = async (values: z.infer<typeof transactionPostSchema>) => {
+  const onEditSubmit = async (
+    values: z.infer<typeof transactionPostSchema>,
+  ) => {
     if (!editingTransaction) return;
 
     await patchTransactionMutation.mutateAsync({
@@ -297,6 +321,7 @@ const TransactionTable = () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["transactions"] }),
       queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
+      queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
     ]);
 
@@ -315,6 +340,7 @@ const TransactionTable = () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["transactions"] }),
       queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
+      queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
     ]);
 
@@ -327,7 +353,11 @@ const TransactionTable = () => {
         <CardHeader className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <Typography tag="h3" variant="title" className="text-xl font-medium">
+              <Typography
+                tag="h3"
+                variant="title"
+                className="text-xl font-medium"
+              >
                 Лента транзакций
               </Typography>
               <Typography tag="p" className="text-muted-foreground text-sm">
@@ -349,13 +379,16 @@ const TransactionTable = () => {
             </div>
           </div>
 
-          <div className="bg-muted/35 grid gap-3 rounded-lg border p-3 lg:grid-cols-5">
+          <div className="bg-muted/35 grid gap-3 rounded-lg border p-3 lg:grid-cols-6">
             <div className="relative lg:col-span-2">
               <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <Input
                 value={filters.search}
                 onChange={(event) =>
-                  setFilters((prev) => ({ ...prev, search: event.target.value }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    search: event.target.value,
+                  }))
                 }
                 placeholder="Поиск по названию"
                 className="bg-background pl-9"
@@ -392,11 +425,40 @@ const TransactionTable = () => {
               </SelectContent>
             </Select>
 
+            <Select
+              value={filters.accountId}
+              onValueChange={(value) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  accountId: value,
+                }))
+              }
+            >
+              <SelectTrigger className="bg-background w-full">
+                <SelectValue placeholder="Счет" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Фильтрация по счету</SelectLabel>
+                  <SelectItem value="ALL">Все счета</SelectItem>
+                  <SelectSeparator />
+                  {accounts.map((account) => (
+                    <SelectItem key={account.id} value={String(account.id)}>
+                      {account.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
             <div className="grid grid-cols-2 gap-2">
               <Input
                 value={filters.minAmount}
                 onChange={(event) =>
-                  setFilters((prev) => ({ ...prev, minAmount: event.target.value }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    minAmount: event.target.value,
+                  }))
                 }
                 inputMode="numeric"
                 placeholder="Сумма от"
@@ -405,7 +467,10 @@ const TransactionTable = () => {
               <Input
                 value={filters.maxAmount}
                 onChange={(event) =>
-                  setFilters((prev) => ({ ...prev, maxAmount: event.target.value }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    maxAmount: event.target.value,
+                  }))
                 }
                 inputMode="numeric"
                 placeholder="Сумма до"
@@ -443,7 +508,10 @@ const TransactionTable = () => {
                   type="date"
                   value={filters.dateFrom}
                   onChange={(event) =>
-                    setFilters((prev) => ({ ...prev, dateFrom: event.target.value }))
+                    setFilters((prev) => ({
+                      ...prev,
+                      dateFrom: event.target.value,
+                    }))
                   }
                   className="bg-background"
                 />
@@ -451,7 +519,10 @@ const TransactionTable = () => {
                   type="date"
                   value={filters.dateTo}
                   onChange={(event) =>
-                    setFilters((prev) => ({ ...prev, dateTo: event.target.value }))
+                    setFilters((prev) => ({
+                      ...prev,
+                      dateTo: event.target.value,
+                    }))
                   }
                   className="bg-background"
                 />
@@ -501,8 +572,11 @@ const TransactionTable = () => {
                       {sortIcon("date")}
                     </button>
                   </TableHead>
+                  <TableHead>Счет</TableHead>
                   <TableHead>Тег</TableHead>
-                  <TableHead className="w-[120px] text-right">Действия</TableHead>
+                  <TableHead className="w-[120px] text-right">
+                    Действия
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -515,10 +589,13 @@ const TransactionTable = () => {
                     return (
                       <TableRow key={transaction.id}>
                         <TableCell>{transaction.name}</TableCell>
-                        <TableCell>{currencyFormatter.format(transaction.price)}</TableCell>
+                        <TableCell>
+                          {currencyFormatter.format(transaction.price)}
+                        </TableCell>
                         <TableCell>
                           {transaction.date.toLocaleDateString("ru-RU")}
                         </TableCell>
+                        <TableCell>{transaction.account.name}</TableCell>
                         <TableCell>
                           <Badge>
                             <Icon />
@@ -537,7 +614,9 @@ const TransactionTable = () => {
                             <Button
                               variant="outline"
                               size="icon"
-                              onClick={() => setDeletingTransaction(transaction)}
+                              onClick={() =>
+                                setDeletingTransaction(transaction)
+                              }
                             >
                               <Trash2Icon className="h-4 w-4 text-rose-500" />
                             </Button>
@@ -548,7 +627,7 @@ const TransactionTable = () => {
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
+                    <TableCell colSpan={6} className="h-24 text-center">
                       По заданным параметрам ничего не найдено
                     </TableCell>
                   </TableRow>
@@ -571,7 +650,11 @@ const TransactionTable = () => {
             >
               <ArrowLeftIcon />
             </Button>
-            <Typography tag="p" variant="default" className="min-w-14 text-center">
+            <Typography
+              tag="p"
+              variant="default"
+              className="min-w-14 text-center"
+            >
               {currentPage} / {Math.max(totalPages, 1)}
             </Typography>
             <Button
@@ -647,12 +730,45 @@ const TransactionTable = () => {
               />
               <FormField
                 control={editForm.control}
+                name="accountId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Счет</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value ? String(field.value) : undefined}
+                        onValueChange={(value) => field.onChange(Number(value))}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Выберите счет" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {accounts.map((account) => (
+                            <SelectItem
+                              key={account.id}
+                              value={String(account.id)}
+                            >
+                              {account.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={editForm.control}
                 name="tag"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Тег</FormLabel>
                     <FormControl>
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Выберите тег" />
                         </SelectTrigger>
@@ -673,7 +789,10 @@ const TransactionTable = () => {
                 <DialogClose asChild>
                   <Button variant="outline">Отмена</Button>
                 </DialogClose>
-                <Button type="submit" disabled={patchTransactionMutation.isPending}>
+                <Button
+                  type="submit"
+                  disabled={patchTransactionMutation.isPending}
+                >
                   Сохранить
                 </Button>
               </DialogFooter>

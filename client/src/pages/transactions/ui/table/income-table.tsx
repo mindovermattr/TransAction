@@ -3,6 +3,7 @@ import {
   useGetIncomeQuery,
   usePatchIncomeMutation,
 } from "@/api/hooks/income";
+import { useGetAccountsQuery } from "@/api/hooks";
 import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -37,6 +45,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
+import { accountGetSchema } from "@/schemas/account.schema";
 import { incomeGetSchema, incomePostSchema } from "@/schemas/income.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -58,12 +67,14 @@ type SortOrder = "asc" | "desc";
 
 type IncomeFiltersState = {
   search: string;
+  accountId: "ALL" | string;
   dateFrom: string;
   dateTo: string;
 };
 
 const DEFAULT_FILTERS: IncomeFiltersState = {
   search: "",
+  accountId: "ALL",
   dateFrom: "",
   dateTo: "",
 };
@@ -86,25 +97,34 @@ const TABLE_HEAD_HEIGHT = 36;
 const TABLE_ROW_HEIGHT = 44;
 const PAGE_SIZE = Math.max(
   1,
-  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT)
+  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT),
 );
 
 const IncomeTable = () => {
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState<IncomeFiltersState>(DEFAULT_FILTERS);
-  const [sorting, setSorting] = useState<{ sortBy: SortBy; sortOrder: SortOrder }>({
+  const [sorting, setSorting] = useState<{
+    sortBy: SortBy;
+    sortOrder: SortOrder;
+  }>({
     sortBy: "date",
     sortOrder: "desc",
   });
-  const [editingIncome, setEditingIncome] = useState<
-    z.infer<typeof incomeGetSchema> | null
-  >(null);
-  const [deletingIncome, setDeletingIncome] = useState<
-    z.infer<typeof incomeGetSchema> | null
-  >(null);
+  const [editingIncome, setEditingIncome] = useState<z.infer<
+    typeof incomeGetSchema
+  > | null>(null);
+  const [deletingIncome, setDeletingIncome] = useState<z.infer<
+    typeof incomeGetSchema
+  > | null>(null);
+  const { data: accountsData } = useGetAccountsQuery();
 
   const patchIncomeMutation = usePatchIncomeMutation();
   const deleteIncomeMutation = useDeleteIncomeMutation();
+  const accounts = useMemo(
+    () =>
+      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    [accountsData],
+  );
 
   const editForm = useForm({
     resolver: zodResolver(incomePostSchema),
@@ -112,7 +132,13 @@ const IncomeTable = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [filters.dateFrom, filters.dateTo, filters.search, sorting.sortBy, sorting.sortOrder]);
+  }, [
+    filters.dateFrom,
+    filters.dateTo,
+    filters.search,
+    sorting.sortBy,
+    sorting.sortOrder,
+  ]);
 
   useEffect(() => {
     if (!editingIncome) return;
@@ -120,6 +146,7 @@ const IncomeTable = () => {
       name: editingIncome.name,
       price: editingIncome.price,
       date: toInputDate(editingIncome.date),
+      accountId: editingIncome.accountId,
     });
   }, [editForm, editingIncome]);
 
@@ -131,14 +158,26 @@ const IncomeTable = () => {
 
     return {
       search: filters.search.trim() || undefined,
-      dateFrom: filters.dateFrom ? new Date(filters.dateFrom).toISOString() : undefined,
+      accountId:
+        filters.accountId === "ALL" ? undefined : Number(filters.accountId),
+      dateFrom: filters.dateFrom
+        ? new Date(filters.dateFrom).toISOString()
+        : undefined,
       dateTo: dateTo?.toISOString(),
       page,
       limit: PAGE_SIZE,
       sortBy: sorting.sortBy,
       sortOrder: sorting.sortOrder,
     };
-  }, [filters.dateFrom, filters.dateTo, filters.search, page, sorting.sortBy, sorting.sortOrder]);
+  }, [
+    filters.accountId,
+    filters.dateFrom,
+    filters.dateTo,
+    filters.search,
+    page,
+    sorting.sortBy,
+    sorting.sortOrder,
+  ]);
 
   const { data, isFetching } = useGetIncomeQuery(queryParams);
 
@@ -191,6 +230,7 @@ const IncomeTable = () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["income"] }),
       queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
+      queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
     ]);
 
@@ -209,6 +249,7 @@ const IncomeTable = () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["income"] }),
       queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
+      queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
     ]);
 
@@ -221,7 +262,11 @@ const IncomeTable = () => {
         <CardHeader className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <Typography tag="h3" variant="title" className="text-xl font-medium">
+              <Typography
+                tag="h3"
+                variant="title"
+                className="text-xl font-medium"
+              >
                 Лента доходов
               </Typography>
               <Typography tag="p" className="text-muted-foreground text-sm">
@@ -233,23 +278,47 @@ const IncomeTable = () => {
             </div>
           </div>
 
-          <div className="bg-muted/35 grid gap-3 rounded-lg border p-3 lg:grid-cols-3">
+          <div className="bg-muted/35 grid gap-3 rounded-lg border p-3 lg:grid-cols-4">
             <div className="relative">
               <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <Input
                 value={filters.search}
                 onChange={(event) =>
-                  setFilters((prev) => ({ ...prev, search: event.target.value }))
+                  setFilters((prev) => ({
+                    ...prev,
+                    search: event.target.value,
+                  }))
                 }
                 placeholder="Поиск по названию"
                 className="bg-background pl-9"
               />
             </div>
+            <Select
+              value={filters.accountId}
+              onValueChange={(value) =>
+                setFilters((prev) => ({ ...prev, accountId: value }))
+              }
+            >
+              <SelectTrigger className="bg-background w-full">
+                <SelectValue placeholder="Счет" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">Все счета</SelectItem>
+                {accounts.map((account) => (
+                  <SelectItem key={account.id} value={String(account.id)}>
+                    {account.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Input
               type="date"
               value={filters.dateFrom}
               onChange={(event) =>
-                setFilters((prev) => ({ ...prev, dateFrom: event.target.value }))
+                setFilters((prev) => ({
+                  ...prev,
+                  dateFrom: event.target.value,
+                }))
               }
               className="bg-background"
             />
@@ -305,7 +374,10 @@ const IncomeTable = () => {
                       {sortIcon("date")}
                     </button>
                   </TableHead>
-                  <TableHead className="w-[120px] text-right">Действия</TableHead>
+                  <TableHead>Счет</TableHead>
+                  <TableHead className="w-[120px] text-right">
+                    Действия
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -313,8 +385,13 @@ const IncomeTable = () => {
                   incomes.map((income) => (
                     <TableRow key={income.id}>
                       <TableCell>{income.name}</TableCell>
-                      <TableCell>{currencyFormatter.format(income.price)}</TableCell>
-                      <TableCell>{income.date.toLocaleDateString("ru-RU")}</TableCell>
+                      <TableCell>
+                        {currencyFormatter.format(income.price)}
+                      </TableCell>
+                      <TableCell>
+                        {income.date.toLocaleDateString("ru-RU")}
+                      </TableCell>
+                      <TableCell>{income.account.name}</TableCell>
                       <TableCell>
                         <div className="flex justify-end gap-1">
                           <Button
@@ -337,7 +414,7 @@ const IncomeTable = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-24 text-center">
                       Нет доходов по выбранным параметрам
                     </TableCell>
                   </TableRow>
@@ -360,7 +437,11 @@ const IncomeTable = () => {
             >
               <ArrowLeftIcon />
             </Button>
-            <Typography tag="p" variant="default" className="min-w-14 text-center">
+            <Typography
+              tag="p"
+              variant="default"
+              className="min-w-14 text-center"
+            >
               {currentPage} / {Math.max(totalPages, 1)}
             </Typography>
             <Button
@@ -411,6 +492,36 @@ const IncomeTable = () => {
                     <FormLabel>Дата</FormLabel>
                     <FormControl>
                       <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={editForm.control}
+                name="accountId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Счет</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value ? String(field.value) : undefined}
+                        onValueChange={(value) => field.onChange(Number(value))}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Выберите счет" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {accounts.map((account) => (
+                            <SelectItem
+                              key={account.id}
+                              value={String(account.id)}
+                            >
+                              {account.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

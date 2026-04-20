@@ -66,7 +66,7 @@ const buildBucketKey = (date: Date, granularity: "day" | "week" | "month") => {
     const pastDaysOfYear =
       (date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000);
     const week = Math.ceil(
-      (pastDaysOfYear + firstDayOfYear.getUTCDay() + 1) / 7
+      (pastDaysOfYear + firstDayOfYear.getUTCDay() + 1) / 7,
     );
     return `${year}-W${week.toString().padStart(2, "0")}`;
   }
@@ -76,7 +76,7 @@ const buildBucketKey = (date: Date, granularity: "day" | "week" | "month") => {
 
 const buildBucketLabel = (
   key: string,
-  granularity: "day" | "week" | "month"
+  granularity: "day" | "week" | "month",
 ) => {
   if (granularity === "week") {
     const [year, week] = key.split("-W");
@@ -93,7 +93,7 @@ const buildBucketLabel = (
 
 const getExpensesByCategory = async (
   user: Omit<User, "password">,
-  period: AnalyticsPeriod
+  period: AnalyticsPeriod,
 ): Promise<ExpensesByCategoryResponse> => {
   const { startDate, endDate } = getAnalyticsDateRange(period);
 
@@ -130,7 +130,7 @@ const getExpensesByCategory = async (
 
 const getExpensesTrend = async (
   user: Omit<User, "password">,
-  period: AnalyticsPeriod
+  period: AnalyticsPeriod,
 ): Promise<ExpenseTrendResponse> => {
   const { startDate, endDate, granularity } = getAnalyticsDateRange(period);
 
@@ -189,7 +189,7 @@ const getExpensesTrend = async (
 
 const getBalanceOverview = async (
   user: Omit<User, "password">,
-  period: AnalyticsPeriod
+  period: AnalyticsPeriod,
 ): Promise<BalanceOverviewResponse> => {
   const { startDate, endDate } = getAnalyticsDateRange(period);
 
@@ -251,7 +251,7 @@ const getWeekdayIndex = (date: Date) => {
 
 const getExpensesByWeekday = async (
   user: Omit<User, "password">,
-  period: AnalyticsPeriod
+  period: AnalyticsPeriod,
 ): Promise<ExpensesByWeekdayResponse> => {
   const { startDate, endDate } = getAnalyticsDateRange(period);
 

@@ -3,7 +3,12 @@ class HttpException extends Error {
   code: string;
   details?: unknown;
   message: string;
-  constructor(status: number, message: string, code = "BAD_REQUEST", details?: unknown) {
+  constructor(
+    status: number,
+    message: string,
+    code = "BAD_REQUEST",
+    details?: unknown,
+  ) {
     super(message);
     this.status = status;
     this.code = code;

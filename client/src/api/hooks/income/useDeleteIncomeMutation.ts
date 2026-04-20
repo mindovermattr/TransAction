@@ -2,7 +2,7 @@ import { deleteIncome, type DeleteIncomeConfig } from "@/api/requests";
 import { useMutation } from "@tanstack/react-query";
 
 export const useDeleteIncomeMutation = (
-  settings?: MutationSettings<DeleteIncomeConfig, typeof deleteIncome>
+  settings?: MutationSettings<DeleteIncomeConfig, typeof deleteIncome>,
 ) =>
   useMutation({
     mutationKey: ["income", "delete"],

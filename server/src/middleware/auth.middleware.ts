@@ -10,7 +10,7 @@ const jwtAuthMiddleware = () => {
       (
         err: any,
         user: Express.User | false,
-        info: { message?: string; name?: string }
+        info: { message?: string; name?: string },
       ) => {
         if (info && info.name) {
           return next(
@@ -19,20 +19,26 @@ const jwtAuthMiddleware = () => {
               info.name === "TokenExpiredError"
                 ? "Token expired"
                 : "Invalid token",
-              info.name === "TokenExpiredError" ? "TOKEN_EXPIRED" : "INVALID_TOKEN"
-            )
+              info.name === "TokenExpiredError"
+                ? "TOKEN_EXPIRED"
+                : "INVALID_TOKEN",
+            ),
           );
         }
 
         if (err || !user) {
           return next(
-            new HttpException(401, info?.message || "Unauthorized", "UNAUTHORIZED")
+            new HttpException(
+              401,
+              info?.message || "Unauthorized",
+              "UNAUTHORIZED",
+            ),
           );
         }
 
         req.user = user;
         next();
-      }
+      },
     )(req, res, next);
   };
 };

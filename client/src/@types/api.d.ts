@@ -4,6 +4,8 @@ interface User {
   name: string;
 }
 
+type AccountType = "cash" | "debit" | "savings" | "credit";
+
 type TransactionTags =
   | "JOY"
   | "TRANSPORT"
@@ -11,6 +13,33 @@ type TransactionTags =
   | "EDUCATION"
   | "HOUSING"
   | "OTHER";
+
+interface AccountReference {
+  id: number;
+  name: string;
+  type: AccountType;
+  isArchived: boolean;
+}
+
+interface Account {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  name: string;
+  type: AccountType;
+  currency: string;
+  openingBalance: number;
+  isArchived: boolean;
+  userId: number;
+}
+
+interface AccountBalanceSnapshot extends Account {
+  currentBalance: number;
+  incomeTotal: number;
+  expenseTotal: number;
+  transferInTotal: number;
+  transferOutTotal: number;
+}
 
 interface Transaction {
   id: number;
@@ -21,6 +50,8 @@ interface Transaction {
   price: number;
   date: Date;
   userId: number;
+  accountId: number;
+  account: AccountReference;
 }
 
 interface Income {
@@ -31,6 +62,22 @@ interface Income {
   price: number;
   date: Date;
   userId: number;
+  accountId: number;
+  account: AccountReference;
+}
+
+interface Transfer {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  amount: number;
+  date: Date;
+  note?: string | null;
+  userId: number;
+  fromAccountId: number;
+  toAccountId: number;
+  fromAccount: AccountReference;
+  toAccount: AccountReference;
 }
 
 interface DashboardOverviewResponse {

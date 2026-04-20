@@ -25,8 +25,16 @@ const parseOptionalInt = (value?: string) => {
 router.get("/", async (req, res, next) => {
   try {
     const user = req.user as User;
-    const { page, limit, dateFrom, dateTo, sortBy, sortOrder, search } =
-      req.query as Record<string, string | undefined>;
+    const {
+      page,
+      limit,
+      dateFrom,
+      dateTo,
+      sortBy,
+      sortOrder,
+      search,
+      accountId,
+    } = req.query as Record<string, string | undefined>;
 
     const parsedDateFrom = dateFrom ? new Date(dateFrom) : undefined;
     const parsedDateTo = dateTo ? new Date(dateTo) : undefined;
@@ -35,6 +43,7 @@ router.get("/", async (req, res, next) => {
       page: parseOptionalInt(page),
       limit: parseOptionalInt(limit),
       search: search?.trim() || undefined,
+      accountId: parseOptionalInt(accountId),
       dateFrom:
         parsedDateFrom && !Number.isNaN(parsedDateFrom.getTime())
           ? parsedDateFrom
@@ -50,7 +59,8 @@ router.get("/", async (req, res, next) => {
         sortBy === "createdAt"
           ? sortBy
           : undefined,
-      sortOrder: sortOrder === "asc" || sortOrder === "desc" ? sortOrder : undefined,
+      sortOrder:
+        sortOrder === "asc" || sortOrder === "desc" ? sortOrder : undefined,
     });
     res.json(transactions);
   } catch (error: unknown) {
@@ -81,7 +91,7 @@ router.post(
     } catch (error: unknown) {
       next(error);
     }
-  }
+  },
 );
 
 router.patch(
@@ -97,12 +107,16 @@ router.patch(
         throw new HttpException(400, "Неверный id дохода", "INVALID_INCOME_ID");
       }
 
-      const income = await updateIncome(user, id, req.validatedBody as UpdateIncomeDTO);
+      const income = await updateIncome(
+        user,
+        id,
+        req.validatedBody as UpdateIncomeDTO,
+      );
       res.json(income);
     } catch (error: unknown) {
       next(error);
     }
-  }
+  },
 );
 
 router.delete("/:id", async (req, res, next) => {

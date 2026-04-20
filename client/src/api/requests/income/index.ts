@@ -9,6 +9,7 @@ type IncomeSortBy = "date" | "price" | "name" | "createdAt";
 
 export type IncomeListParams = {
   search?: string;
+  accountId?: number;
   dateFrom?: string;
   dateTo?: string;
   page?: number;
@@ -44,12 +45,12 @@ export type GetIncomeSummaryConfig = OfetchRequestConfig;
 export const getIncomeSummary = (requestConfig?: GetIncomeSummaryConfig) =>
   protectedInstance<IncomeSummaryResponse>(
     "income/summary",
-    requestConfig?.config
+    requestConfig?.config,
   );
 
 export type PostIncomeParams = Omit<
   Income,
-  "userId" | "createdAt" | "updatedAt" | "id" | "date"
+  "userId" | "createdAt" | "updatedAt" | "id" | "date" | "account"
 > & {
   date: string;
 };
