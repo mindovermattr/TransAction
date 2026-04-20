@@ -11,7 +11,11 @@ const createUser = async (user: CreateUserDTO) => {
   });
 
   if (isExist) {
-    throw new HttpException(400, "Пользователь уже создан", "USER_ALREADY_EXISTS");
+    throw new HttpException(
+      400,
+      "Пользователь уже создан",
+      "USER_ALREADY_EXISTS",
+    );
   }
 
   const hashPassword = await argon2.hash(user.password);

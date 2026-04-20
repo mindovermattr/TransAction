@@ -80,7 +80,8 @@ router.get("/", async (req, res, next) => {
         sortBy === "createdAt"
           ? sortBy
           : undefined,
-      sortOrder: sortOrder === "asc" || sortOrder === "desc" ? sortOrder : undefined,
+      sortOrder:
+        sortOrder === "asc" || sortOrder === "desc" ? sortOrder : undefined,
     });
 
     res.json(transactions);
@@ -102,7 +103,7 @@ router.post(
     } catch (error: unknown) {
       next(error);
     }
-  }
+  },
 );
 
 router.patch(
@@ -115,19 +116,23 @@ router.patch(
       const id = Number.parseInt(req.params.id, 10);
 
       if (Number.isNaN(id) || id <= 0) {
-        throw new HttpException(400, "Неверный id транзакции", "INVALID_TRANSACTION_ID");
+        throw new HttpException(
+          400,
+          "Неверный id транзакции",
+          "INVALID_TRANSACTION_ID",
+        );
       }
 
       const transaction = await updateTransaction(
         user,
         id,
-        req.validatedBody as UpdateTransactionDTO
+        req.validatedBody as UpdateTransactionDTO,
       );
       res.json(transaction);
     } catch (error: unknown) {
       next(error);
     }
-  }
+  },
 );
 
 router.delete("/:id", async (req, res, next) => {
@@ -136,7 +141,11 @@ router.delete("/:id", async (req, res, next) => {
     const id = Number.parseInt(req.params.id, 10);
 
     if (Number.isNaN(id) || id <= 0) {
-      throw new HttpException(400, "Неверный id транзакции", "INVALID_TRANSACTION_ID");
+      throw new HttpException(
+        400,
+        "Неверный id транзакции",
+        "INVALID_TRANSACTION_ID",
+      );
     }
 
     const response = await deleteTransaction(user, id);

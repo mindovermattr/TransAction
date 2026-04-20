@@ -26,7 +26,7 @@ const MAX_LIMIT = 100;
 
 const getIncomes = async (
   user: Omit<User, "password">,
-  filters: IncomeListFilters = {}
+  filters: IncomeListFilters = {},
 ) => {
   const page =
     !filters.page || Number.isNaN(filters.page) || filters.page < 1
@@ -115,7 +115,7 @@ const getIncomeSummary = async (user: Omit<User, "password">) => {
   const previousMonthDate = new Date(Date.UTC(year, month - 1, 1));
   const prevMonth = getDateRange(
     previousMonthDate.getUTCFullYear(),
-    previousMonthDate.getUTCMonth()
+    previousMonthDate.getUTCMonth(),
   );
 
   const [currentMonthIncomes, prevMonthIncomes] = await Promise.all([
@@ -188,7 +188,7 @@ const createIncome = async (user: User, incomeDTO: IncomeDTO) => {
 const updateIncome = async (
   user: Omit<User, "password">,
   incomeId: number,
-  payload: UpdateIncomeDTO
+  payload: UpdateIncomeDTO,
 ) => {
   const income = await prisma.income.findFirst({
     where: {

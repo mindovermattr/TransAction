@@ -32,7 +32,7 @@ const MAX_LIMIT = 100;
 
 const getTransactions = async (
   user: Omit<User, "password">,
-  filters: TransactionListFilters = {}
+  filters: TransactionListFilters = {},
 ) => {
   const page =
     !filters.page || Number.isNaN(filters.page) || filters.page < 1
@@ -110,8 +110,7 @@ const getTransactions = async (
     prisma.transaction.count({ where }),
   ]);
 
-  const totalPages =
-    totalItems === 0 ? 1 : Math.ceil(totalItems / limit);
+  const totalPages = totalItems === 0 ? 1 : Math.ceil(totalItems / limit);
 
   return {
     items,
@@ -128,7 +127,7 @@ const getTransactions = async (
 
 const createTransaction = async (
   user: User,
-  transactionDTO: TransactionDTO
+  transactionDTO: TransactionDTO,
 ) => {
   await assertAccountAccess(user.id, transactionDTO.accountId, {
     allowArchived: false,
@@ -167,7 +166,7 @@ const createTransaction = async (
 const updateTransaction = async (
   user: Omit<User, "password">,
   transactionId: number,
-  payload: UpdateTransactionDTO
+  payload: UpdateTransactionDTO,
 ) => {
   const transaction = await prisma.transaction.findFirst({
     where: {
@@ -177,7 +176,11 @@ const updateTransaction = async (
   });
 
   if (!transaction) {
-    throw new HttpException(404, "Транзакция не найдена", "TRANSACTION_NOT_FOUND");
+    throw new HttpException(
+      404,
+      "Транзакция не найдена",
+      "TRANSACTION_NOT_FOUND",
+    );
   }
 
   if (typeof payload.accountId === "number") {
@@ -206,7 +209,7 @@ const updateTransaction = async (
 
 const deleteTransaction = async (
   user: Omit<User, "password">,
-  transactionId: number
+  transactionId: number,
 ) => {
   const transaction = await prisma.transaction.findFirst({
     where: {
@@ -219,7 +222,11 @@ const deleteTransaction = async (
   });
 
   if (!transaction) {
-    throw new HttpException(404, "Транзакция не найдена", "TRANSACTION_NOT_FOUND");
+    throw new HttpException(
+      404,
+      "Транзакция не найдена",
+      "TRANSACTION_NOT_FOUND",
+    );
   }
 
   await prisma.transaction.delete({
@@ -242,7 +249,7 @@ const getTransactionsSummary = async (user: Omit<User, "password">) => {
   const previousMonthDate = new Date(Date.UTC(year, month - 1, 1));
   const prevMonth = getDateRange(
     previousMonthDate.getUTCFullYear(),
-    previousMonthDate.getUTCMonth()
+    previousMonthDate.getUTCMonth(),
   );
 
   const [currentMonthTransactions, prevMonthTransactions] = await Promise.all([

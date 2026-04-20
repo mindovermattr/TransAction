@@ -4,7 +4,10 @@ import {
   dtoValidation,
   emptyBodyValidation,
 } from "../middleware/validation.middleware";
-import { CreateAccountDTO, UpdateAccountDTO } from "../models/account/account.dto";
+import {
+  CreateAccountDTO,
+  UpdateAccountDTO,
+} from "../models/account/account.dto";
 import { User } from "../models/user/user.entity";
 import {
   archiveAccount,
@@ -57,7 +60,11 @@ router.patch(
         throw new HttpException(400, "Неверный id счета", "INVALID_ACCOUNT_ID");
       }
 
-      const account = await updateAccount(user, id, req.validatedBody as UpdateAccountDTO);
+      const account = await updateAccount(
+        user,
+        id,
+        req.validatedBody as UpdateAccountDTO,
+      );
       res.json(account);
     } catch (error: unknown) {
       next(error);

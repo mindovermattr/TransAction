@@ -46,7 +46,7 @@ app.use(
 
       callback(new Error("Not allowed by CORS"));
     },
-  })
+  }),
 );
 
 app.get("/health", (_req, res) => {
@@ -68,5 +68,5 @@ app.use(errorHandler);
 app.listen(port, () =>
   console.log(`
 🚀 Server ready at: http://localhost:${port}
-`)
+`),
 );

@@ -55,62 +55,66 @@ const getAccountTotals = async (userId: number, accountIds: number[]) => {
     >();
   }
 
-  const [incomeGroups, transactionGroups, incomingTransfers, outgoingTransfers] =
-    (await Promise.all([
-      prisma.income.groupBy({
-        by: ["accountId"],
-        where: {
-          userId,
-          accountId: {
-            in: accountIds,
-          },
+  const [
+    incomeGroups,
+    transactionGroups,
+    incomingTransfers,
+    outgoingTransfers,
+  ] = (await Promise.all([
+    prisma.income.groupBy({
+      by: ["accountId"],
+      where: {
+        userId,
+        accountId: {
+          in: accountIds,
         },
-        _sum: {
-          price: true,
+      },
+      _sum: {
+        price: true,
+      },
+    }),
+    prisma.transaction.groupBy({
+      by: ["accountId"],
+      where: {
+        userId,
+        accountId: {
+          in: accountIds,
         },
-      }),
-      prisma.transaction.groupBy({
-        by: ["accountId"],
-        where: {
-          userId,
-          accountId: {
-            in: accountIds,
-          },
+      },
+      _sum: {
+        price: true,
+      },
+    }),
+    prisma.transfer.groupBy({
+      by: ["toAccountId"],
+      where: {
+        userId,
+        toAccountId: {
+          in: accountIds,
         },
-        _sum: {
-          price: true,
+      },
+      _sum: {
+        amount: true,
+      },
+    }),
+    prisma.transfer.groupBy({
+      by: ["fromAccountId"],
+      where: {
+        userId,
+        fromAccountId: {
+          in: accountIds,
         },
-      }),
-      prisma.transfer.groupBy({
-        by: ["toAccountId"],
-        where: {
-          userId,
-          toAccountId: {
-            in: accountIds,
-          },
-        },
-        _sum: {
-          amount: true,
-        },
-      }),
-      prisma.transfer.groupBy({
-        by: ["fromAccountId"],
-        where: {
-          userId,
-          fromAccountId: {
-            in: accountIds,
-          },
-        },
-        _sum: {
-          amount: true,
-        },
-      }),
-    ])) as [
-      Array<{ accountId: number; _sum: { price: number | null } }>,
-      Array<{ accountId: number; _sum: { price: number | null } }>,
-      Array<{ toAccountId: number; _sum: { amount: number | null } }>,
-      Array<{ fromAccountId: number; _sum: { amount: number | null } }>,
-    ];
+      },
+      _sum: {
+        amount: true,
+      },
+    }),
+  ])) as [
+    Array<{ accountId: number; _sum: { price: number | null } }>,
+    Array<{ accountId: number; _sum: { price: number | null } }>,
+    Array<{ toAccountId: number; _sum: { amount: number | null } }>,
+    Array<{ fromAccountId: number; _sum: { amount: number | null } }>,
+  ];
 
   const totalsByAccount = new Map<
     number,
@@ -178,12 +182,15 @@ const getAccounts = async (
   );
 
   return accounts.map((account) =>
-    formatAccountSnapshot(account, totalsByAccount.get(account.id) ?? {
-      incomeTotal: 0,
-      expenseTotal: 0,
-      transferInTotal: 0,
-      transferOutTotal: 0,
-    }),
+    formatAccountSnapshot(
+      account,
+      totalsByAccount.get(account.id) ?? {
+        incomeTotal: 0,
+        expenseTotal: 0,
+        transferInTotal: 0,
+        transferOutTotal: 0,
+      },
+    ),
   );
 };
 
@@ -201,12 +208,15 @@ const getAccountSnapshot = async (userId: number, accountId: number) => {
   }
 
   const totalsByAccount = await getAccountTotals(userId, [account.id]);
-  return formatAccountSnapshot(account, totalsByAccount.get(account.id) ?? {
-    incomeTotal: 0,
-    expenseTotal: 0,
-    transferInTotal: 0,
-    transferOutTotal: 0,
-  });
+  return formatAccountSnapshot(
+    account,
+    totalsByAccount.get(account.id) ?? {
+      incomeTotal: 0,
+      expenseTotal: 0,
+      transferInTotal: 0,
+      transferOutTotal: 0,
+    },
+  );
 };
 
 const assertAccountAccess = async (

@@ -18,7 +18,12 @@ const dtoValidation =
       }));
 
       next(
-        new HttpException(400, "Validation failed", "VALIDATION_ERROR", messages)
+        new HttpException(
+          400,
+          "Validation failed",
+          "VALIDATION_ERROR",
+          messages,
+        ),
       );
       return;
     }
@@ -34,8 +39,8 @@ const emptyBodyValidation = (): express.RequestHandler => {
         new HttpException(
           400,
           "Нужно передать body в запрос",
-          "EMPTY_REQUEST_BODY"
-        )
+          "EMPTY_REQUEST_BODY",
+        ),
       );
       return;
     }

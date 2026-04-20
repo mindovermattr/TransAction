@@ -6,7 +6,7 @@ import {
 
 export function IsEqual(
   property: string,
-  validationOptions?: ValidationOptions
+  validationOptions?: ValidationOptions,
 ) {
   return function (object: Object, propertyName: string) {
     registerDecorator({

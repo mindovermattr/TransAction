@@ -1,4 +1,9 @@
-import { AccountType, Prisma, PrismaClient, TransactionTag } from "@prisma/client";
+import {
+  AccountType,
+  Prisma,
+  PrismaClient,
+  TransactionTag,
+} from "@prisma/client";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import * as argon2 from "argon2";
 
