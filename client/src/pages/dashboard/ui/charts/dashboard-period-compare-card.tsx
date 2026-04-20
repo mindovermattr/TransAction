@@ -21,7 +21,7 @@ const DashboardPeriodCompareCard = ({
 }: {
   data: PeriodComparePoint[];
 }) => (
-  <Card className="gap-4 py-5">
+  <Card className="h-full gap-4 py-5">
     <CardHeader className="px-5">
       <CardTitle>Доходы vs расходы</CardTitle>
       <Typography tag="p" className="text-muted-foreground text-sm">

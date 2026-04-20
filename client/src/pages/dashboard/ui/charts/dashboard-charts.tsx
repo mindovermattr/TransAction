@@ -30,19 +30,12 @@ const DashboardCharts = ({
   periodCompare: PeriodComparePoint[];
   weekdayTotals: DashboardOverviewResponse["weekdayTotals"];
 }) => (
-  <>
-    <div className="grid gap-4 xl:grid-cols-[1.65fr_1fr]">
-      <DashboardCashflowCard data={cashflowPoints} />
-      <div className="grid gap-4">
-        <DashboardPeriodCompareCard data={periodCompare} />
-        <DashboardTopCategoriesCard data={categoryPoints} />
-      </div>
-    </div>
-
-    <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-      <DashboardWeekdayCard data={weekdayTotals} />
-    </div>
-  </>
+  <div className="grid gap-4 xl:grid-cols-2">
+    <DashboardCashflowCard data={cashflowPoints} />
+    <DashboardPeriodCompareCard data={periodCompare} />
+    <DashboardTopCategoriesCard data={categoryPoints} />
+    <DashboardWeekdayCard data={weekdayTotals} />
+  </div>
 );
 
 export { DashboardCharts };
