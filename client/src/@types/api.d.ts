@@ -33,6 +33,59 @@ interface Income {
   userId: number;
 }
 
+interface DashboardOverviewResponse {
+  period: "month";
+  totals: {
+    income: number;
+    expenses: number;
+    balance: number;
+    savingsRate: number;
+  };
+  comparisons: {
+    previousIncome: number;
+    previousExpenses: number;
+    incomeDeltaPercent: number;
+    expensesDeltaPercent: number;
+  };
+  insights: {
+    topCategory: {
+      tag: TransactionTags;
+      total: number;
+      sharePercent: number;
+    } | null;
+    peakSpendDay: {
+      date: string;
+      total: number;
+    } | null;
+  };
+  cashflow: {
+    months: {
+      monthStart: string;
+      income: number;
+      expenses: number;
+      balance: number;
+    }[];
+  };
+  topCategories: {
+    tag: TransactionTags;
+    total: number;
+    sharePercent: number;
+  }[];
+  weekdayTotals: {
+    weekday: number;
+    label: string;
+    total: number;
+  }[];
+  recentActivity: {
+    id: string;
+    type: "income" | "expense";
+    name: string;
+    amount: number;
+    date: string;
+    tag?: TransactionTags;
+  }[];
+}
+
 type AnalyticsPeriod = "month" | "quarter" | "halfYear" | "year";
 
 interface PaginationMeta {

@@ -1,10 +1,6 @@
 import { App } from "@/App";
 import { AppSidebar } from "@/components/Sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Analytic } from "@/pages/analytic/analytic";
-import { Login } from "@/pages/auth/login";
-import { Registration } from "@/pages/auth/registration";
-import { Transactions } from "@/pages/transactions/transactions";
 import { Providers } from "@/providers";
 import { createBrowserRouter, Outlet } from "react-router";
 import { protectedLoader, publicLoader } from "./protected-loader";
@@ -26,11 +22,15 @@ const router = createBrowserRouter([
       },
       {
         path: ROUTES.LOGIN,
-        Component: Login,
+        lazy: async () => ({
+          Component: (await import("@/pages/auth/login")).Login,
+        }),
       },
       {
         path: ROUTES.REGISTER,
-        Component: Registration,
+        lazy: async () => ({
+          Component: (await import("@/pages/auth/registration")).Registration,
+        }),
       },
       //protected routes
       {
@@ -44,8 +44,24 @@ const router = createBrowserRouter([
           </SidebarProvider>
         ),
         children: [
-          { path: ROUTES.TRANSACTIONS, Component: Transactions },
-          { path: ROUTES.ANALYTICS, Component: Analytic },
+          {
+            path: ROUTES.DASHBOARD,
+            lazy: async () => ({
+              Component: (await import("@/pages/dashboard/dashboard")).Dashboard,
+            }),
+          },
+          {
+            path: ROUTES.TRANSACTIONS,
+            lazy: async () => ({
+              Component: (await import("@/pages/transactions/transactions")).Transactions,
+            }),
+          },
+          {
+            path: ROUTES.ANALYTICS,
+            lazy: async () => ({
+              Component: (await import("@/pages/analytic/analytic")).Analytic,
+            }),
+          },
         ],
       },
       //other routes

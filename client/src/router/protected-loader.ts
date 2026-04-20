@@ -21,7 +21,7 @@ const publicLoader = async () => {
   if (!isAuthenticated()) {
     return redirect(ROUTES.LOGIN);
   }
-  return redirect(ROUTES.TRANSACTIONS);
+  return redirect(ROUTES.DASHBOARD);
 };
 
 export { protectedLoader, publicLoader };

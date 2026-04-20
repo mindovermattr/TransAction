@@ -5,6 +5,7 @@ import helmet from "helmet";
 import passport from "passport";
 import analyticsRouter from "./controllers/analytics.controller";
 import authRouter from "./controllers/auth.controller";
+import dashboardRouter from "./controllers/dashboard.controller";
 import incomeRouter from "./controllers/income.controller";
 import transactionRouter from "./controllers/transactions.controller";
 import userRouter from "./controllers/user.contoller";
@@ -58,6 +59,7 @@ app.use("/users", jwtMiddleware, userRouter);
 app.use("/transactions", jwtMiddleware, transactionRouter);
 app.use("/income", jwtMiddleware, incomeRouter);
 app.use("/analytics", jwtMiddleware, analyticsRouter);
+app.use("/dashboard", jwtMiddleware, dashboardRouter);
 
 app.use(errorHandler);
 

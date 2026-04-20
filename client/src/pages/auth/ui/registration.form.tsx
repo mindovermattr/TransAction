@@ -28,7 +28,7 @@ export const RegistrationForm = () => {
     try {
       const response = await register({ params: data });
       setDataLocalStorage(LOCAL_STORAGE_KEYS.USER, response);
-      navigate(ROUTES.TRANSACTIONS);
+      navigate(ROUTES.DASHBOARD);
     } catch (error) {
       if (!isOfetchError(error)) return;
       const errorData = error.data as { message: string };

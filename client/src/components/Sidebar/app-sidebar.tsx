@@ -1,6 +1,7 @@
 import {
   BadgeDollarSignIcon,
   DoorOpenIcon,
+  LayoutDashboardIcon,
   TrendingUpIcon,
   UserIcon,
 } from "lucide-react";
@@ -32,6 +33,11 @@ import { Typography } from "../ui/typography";
 
 const data = {
   projects: [
+    {
+      name: "Дашборд",
+      url: ROUTES.DASHBOARD,
+      icon: LayoutDashboardIcon,
+    },
     {
       name: "Транзакции",
       url: ROUTES.TRANSACTIONS,
