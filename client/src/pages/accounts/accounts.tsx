@@ -6,6 +6,7 @@ import {
   usePostTransferMutation,
 } from "@/api/hooks";
 import { queryClient } from "@/api/query-client";
+import { AppPageHeader } from "@/components/ui/app-page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import {
@@ -20,7 +21,6 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import {
   ACCOUNT_TYPE_LABELS,
@@ -216,20 +216,10 @@ const Accounts = () => {
   return (
     <>
       <div className="space-y-4 lg:space-y-5">
-        <section className="bg-card rounded-xl border p-4 lg:p-5">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="flex items-start gap-2.5">
-              <SidebarTrigger />
-              <div className="space-y-1">
-                <Typography tag="h1" variant="title" className="text-2xl">
-                  Счета
-                </Typography>
-                <Typography tag="p" className="text-muted-foreground text-sm">
-                  Балансы, структура денег и переводы между кошельками
-                </Typography>
-              </div>
-            </div>
-
+        <AppPageHeader
+          title="Счета"
+          description="Балансы, структура денег и переводы между кошельками"
+          rightSlot={
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -310,9 +300,11 @@ const Accounts = () => {
                 </Form>
               </DialogContent>
             </Dialog>
-          </div>
+          }
+        />
 
-          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <section className="bg-card rounded-xl border p-4 lg:p-5">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <div className="bg-muted/45 rounded-lg p-4">
               <Typography tag="p" className="text-muted-foreground text-xs">
                 Общий баланс

@@ -2,7 +2,8 @@ import { useGetExpensesByWeekdayQuery } from "@/api/hooks";
 import { useGetBalanceOverviewQuery } from "@/api/hooks/expenses/useGetBalanceOverviewQuery";
 import { useGetExpensesByCategoryQuery } from "@/api/hooks/expenses/useGetExpensesByCategoryQuery";
 import { useGetExpensesTrendQuery } from "@/api/hooks/expenses/useGetExpensesTrendQuery";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { AppPageHeader } from "@/components/ui/app-page-header";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
 import { Circle } from "lucide-react";
@@ -133,29 +134,19 @@ const Analytic = () => {
 
   return (
     <div className="space-y-4 lg:space-y-5">
-      <section className="bg-card rounded-xl border p-4 lg:p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="flex items-start gap-2.5">
-            <SidebarTrigger />
-            <div className="space-y-1">
-              <Typography tag="h1" variant="title" className="text-2xl">
-                Аналитика
-              </Typography>
-              <Typography tag="p" className="text-muted-foreground text-sm">
-                Обзор расходов за {PERIOD_DESCRIPTION_MAP[period]}
-              </Typography>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-start gap-2 sm:items-end">
-            <div className="border-border/60 text-muted-foreground inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium">
+      <AppPageHeader
+        title="Аналитика"
+        description={`Обзор расходов за ${PERIOD_DESCRIPTION_MAP[period]}`}
+        rightSlot={
+          <>
+            <Badge variant="outline" className="gap-1.5 self-start rounded-full px-3 py-1">
               <Circle
                 className={`h-2.5 w-2.5 ${
                   isPageRefreshing ? "fill-amber-500 text-amber-500" : "fill-emerald-500 text-emerald-500"
                 }`}
               />
-              <span className="w-[78px] text-left">{isPageRefreshing ? "Обновление" : "Актуально"}</span>
-            </div>
+              {isPageRefreshing ? "Обновление" : "Актуально"}
+            </Badge>
 
             <div className="bg-muted inline-flex w-full gap-1 rounded-lg p-1 sm:w-auto">
               {PERIOD_OPTIONS.map((option) => (
@@ -170,10 +161,12 @@ const Analytic = () => {
                 </button>
               ))}
             </div>
-          </div>
-        </div>
+          </>
+        }
+      />
 
-        <div className="mt-4 grid gap-3 lg:grid-cols-3">
+      <section className="bg-card rounded-xl border p-4 lg:p-5">
+        <div className="grid gap-3 lg:grid-cols-3">
           {isInitialTrendLoading ? (
             <>
               <Skeleton className="h-[92px] w-full rounded-lg" />

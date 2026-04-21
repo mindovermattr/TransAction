@@ -1,7 +1,7 @@
 import { useGetDashboardOverviewQuery } from "@/api/hooks/dashboard";
+import { AppPageHeader } from "@/components/ui/app-page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import { ArrowDownCircleIcon, BadgePlusIcon, Circle } from "lucide-react";
 import { useMemo } from "react";
@@ -43,28 +43,22 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-4 lg:space-y-5">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="flex items-start gap-3">
-          <SidebarTrigger className="mt-0.5" />
-          <div className="space-y-1">
-            <Typography tag="h1" variant="title" className="text-2xl">
-              Дашборд
-            </Typography>
-            <Typography tag="p" className="text-muted-foreground text-sm">
-              Главная сводка по доходам, расходам и динамике месяца
-            </Typography>
-          </div>
-        </div>
-
-        <Badge variant="outline" className="gap-1.5 self-start rounded-full px-3 py-1">
-          <Circle
-            className={
-              isFetching ? "h-2.5 w-2.5 fill-amber-500 text-amber-500" : "h-2.5 w-2.5 fill-emerald-500 text-emerald-500"
-            }
-          />
-          {isFetching ? "Обновление" : "Актуально"}
-        </Badge>
-      </header>
+      <AppPageHeader
+        title="Дашборд"
+        description="Главная сводка по доходам, расходам и динамике месяца"
+        rightSlot={
+          <Badge variant="outline" className="gap-1.5 self-start rounded-full px-3 py-1">
+            <Circle
+              className={
+                isFetching
+                  ? "h-2.5 w-2.5 fill-amber-500 text-amber-500"
+                  : "h-2.5 w-2.5 fill-emerald-500 text-emerald-500"
+              }
+            />
+            {isFetching ? "Обновление" : "Актуально"}
+          </Badge>
+        }
+      />
 
       <section className="bg-card rounded-xl border p-4 lg:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
