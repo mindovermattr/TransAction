@@ -22,18 +22,11 @@ const getDataFromLocalStorage = <T extends LSkey>(key: T) => {
   return data as LocalStorageData[T];
 };
 
-const setDataLocalStorage = <T extends LSkey>(
-  key: T,
-  data: LocalStorageData[T],
-) => localStorage.setItem(key, JSON.stringify(data));
+const setDataLocalStorage = <T extends LSkey>(key: T, data: LocalStorageData[T]) =>
+  localStorage.setItem(key, JSON.stringify(data));
 
 const removeDataFromLocalStorage = (key: LSkey) => {
   localStorage.removeItem(key);
 };
 
-export {
-  getDataFromLocalStorage,
-  LOCAL_STORAGE_KEYS,
-  removeDataFromLocalStorage,
-  setDataLocalStorage,
-};
+export { getDataFromLocalStorage, LOCAL_STORAGE_KEYS, removeDataFromLocalStorage, setDataLocalStorage };

@@ -11,26 +11,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  TRANSACTION_TAGS,
-  transactionPostSchema,
-} from "@/schemas/transaction.schema";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TRANSACTION_TAGS, transactionPostSchema } from "@/schemas/transaction.schema";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CirclePlusIcon, type LucideIcon } from "lucide-react";
@@ -57,8 +41,7 @@ const TransactionAddModal = ({
   const [open, setIsOpen] = useState(false);
   const { data: accountsData } = useGetAccountsQuery();
   const accounts = useMemo(
-    () =>
-      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    () => (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
     [accountsData],
   );
 
@@ -96,21 +79,14 @@ const TransactionAddModal = ({
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant={triggerVariant}
-          size={triggerSize}
-          className={triggerClassName}
-        >
+        <Button variant={triggerVariant} size={triggerSize} className={triggerClassName}>
           <TriggerIcon />
           {triggerLabel ? <span>{triggerLabel}</span> : null}
         </Button>
       </DialogTrigger>
       <DialogContent showCloseButton={false}>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(submitHandler)}
-            className="flex flex-col gap-4"
-          >
+          <form onSubmit={form.handleSubmit(submitHandler)} className="flex flex-col gap-4">
             <DialogHeader>
               <DialogTitle>Добавить транзакцию</DialogTitle>
             </DialogHeader>
@@ -174,10 +150,7 @@ const TransactionAddModal = ({
                       </SelectTrigger>
                       <SelectContent>
                         {accounts.map((account) => (
-                          <SelectItem
-                            key={account.id}
-                            value={String(account.id)}
-                          >
+                          <SelectItem key={account.id} value={String(account.id)}>
                             {account.name}
                           </SelectItem>
                         ))}

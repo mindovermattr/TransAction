@@ -8,28 +8,9 @@ import { queryClient } from "@/api/query-client";
 import { TRANSACTION_TAGS_ICONS } from "@/constants/transaction-tags-icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -40,21 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
 import { accountGetSchema } from "@/schemas/account.schema";
-import {
-  TRANSACTION_TAGS,
-  transactionGetSchema,
-  transactionPostSchema,
-} from "@/schemas/transaction.schema";
+import { TRANSACTION_TAGS, transactionGetSchema, transactionPostSchema } from "@/schemas/transaction.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SelectGroup } from "@radix-ui/react-select";
 import {
@@ -143,10 +113,8 @@ const toInputDate = (date: Date) => {
 };
 
 const normalizeFilters = (filters: TransactionFiltersState) => {
-  const minAmount =
-    filters.minAmount === "" ? undefined : Number.parseFloat(filters.minAmount);
-  const maxAmount =
-    filters.maxAmount === "" ? undefined : Number.parseFloat(filters.maxAmount);
+  const minAmount = filters.minAmount === "" ? undefined : Number.parseFloat(filters.minAmount);
+  const maxAmount = filters.maxAmount === "" ? undefined : Number.parseFloat(filters.maxAmount);
 
   const safeMinAmount = Number.isNaN(minAmount) ? undefined : minAmount;
   const safeMaxAmount = Number.isNaN(maxAmount) ? undefined : maxAmount;
@@ -161,12 +129,10 @@ const normalizeFilters = (filters: TransactionFiltersState) => {
     return {
       search: filters.search.trim(),
       tag: filters.tag,
-      accountId:
-        filters.accountId === "ALL" ? undefined : Number(filters.accountId),
+      accountId: filters.accountId === "ALL" ? undefined : Number(filters.accountId),
       minAmount: safeMinAmount,
       maxAmount: safeMaxAmount,
-      dateFrom:
-        from && !Number.isNaN(from.getTime()) ? from.toISOString() : undefined,
+      dateFrom: from && !Number.isNaN(from.getTime()) ? from.toISOString() : undefined,
       dateTo: to && !Number.isNaN(to.getTime()) ? to.toISOString() : undefined,
     };
   }
@@ -176,8 +142,7 @@ const normalizeFilters = (filters: TransactionFiltersState) => {
   return {
     search: filters.search.trim(),
     tag: filters.tag,
-    accountId:
-      filters.accountId === "ALL" ? undefined : Number(filters.accountId),
+    accountId: filters.accountId === "ALL" ? undefined : Number(filters.accountId),
     minAmount: safeMinAmount,
     maxAmount: safeMaxAmount,
     dateFrom: from?.toISOString(),
@@ -194,15 +159,11 @@ const currencyFormatter = new Intl.NumberFormat("ru-RU", {
 const TABLE_MAX_HEIGHT = 560;
 const TABLE_HEAD_HEIGHT = 36;
 const TABLE_ROW_HEIGHT = 44;
-const PAGE_SIZE = Math.max(
-  1,
-  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT),
-);
+const PAGE_SIZE = Math.max(1, Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT));
 
 const TransactionTable = () => {
   const [page, setPage] = useState(1);
-  const [filters, setFilters] =
-    useState<TransactionFiltersState>(DEFAULT_FILTERS);
+  const [filters, setFilters] = useState<TransactionFiltersState>(DEFAULT_FILTERS);
   const [sorting, setSorting] = useState<{
     sortBy: SortBy;
     sortOrder: SortOrder;
@@ -210,18 +171,13 @@ const TransactionTable = () => {
     sortBy: "date",
     sortOrder: "desc",
   });
-  const [editingTransaction, setEditingTransaction] = useState<z.infer<
-    typeof transactionGetSchema
-  > | null>(null);
-  const [deletingTransaction, setDeletingTransaction] = useState<z.infer<
-    typeof transactionGetSchema
-  > | null>(null);
+  const [editingTransaction, setEditingTransaction] = useState<z.infer<typeof transactionGetSchema> | null>(null);
+  const [deletingTransaction, setDeletingTransaction] = useState<z.infer<typeof transactionGetSchema> | null>(null);
   const { data: accountsData } = useGetAccountsQuery();
 
   const normalizedFilters = useMemo(() => normalizeFilters(filters), [filters]);
   const accounts = useMemo(
-    () =>
-      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    () => (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
     [accountsData],
   );
 
@@ -299,16 +255,10 @@ const TransactionTable = () => {
 
   const sortIcon = (sortBy: SortBy) => {
     if (sorting.sortBy !== sortBy) return null;
-    return sorting.sortOrder === "asc" ? (
-      <ArrowUpIcon className="h-4 w-4" />
-    ) : (
-      <ArrowDownIcon className="h-4 w-4" />
-    );
+    return sorting.sortOrder === "asc" ? <ArrowUpIcon className="h-4 w-4" /> : <ArrowDownIcon className="h-4 w-4" />;
   };
 
-  const onEditSubmit = async (
-    values: z.infer<typeof transactionPostSchema>,
-  ) => {
+  const onEditSubmit = async (values: z.infer<typeof transactionPostSchema>) => {
     if (!editingTransaction) return;
 
     await patchTransactionMutation.mutateAsync({
@@ -353,11 +303,7 @@ const TransactionTable = () => {
         <CardHeader className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <Typography
-                tag="h3"
-                variant="title"
-                className="text-xl font-medium"
-              >
+              <Typography tag="h3" variant="title" className="text-xl font-medium">
                 Лента транзакций
               </Typography>
               <Typography tag="p" className="text-muted-foreground text-sm">
@@ -366,11 +312,7 @@ const TransactionTable = () => {
             </div>
             <div className="ml-auto flex items-center gap-2 self-end sm:self-auto">
               {hasActiveFilters ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setFilters(DEFAULT_FILTERS)}
-                >
+                <Button variant="outline" size="sm" onClick={() => setFilters(DEFAULT_FILTERS)}>
                   <FunnelXIcon className="h-4 w-4" />
                   Сбросить фильтры
                 </Button>
@@ -543,11 +485,7 @@ const TransactionTable = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1"
-                      onClick={() => toggleSort("name")}
-                    >
+                    <button type="button" className="inline-flex items-center gap-1" onClick={() => toggleSort("name")}>
                       Имя
                       {sortIcon("name")}
                     </button>
@@ -563,38 +501,26 @@ const TransactionTable = () => {
                     </button>
                   </TableHead>
                   <TableHead>
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1"
-                      onClick={() => toggleSort("date")}
-                    >
+                    <button type="button" className="inline-flex items-center gap-1" onClick={() => toggleSort("date")}>
                       Дата
                       {sortIcon("date")}
                     </button>
                   </TableHead>
                   <TableHead>Счет</TableHead>
                   <TableHead>Тег</TableHead>
-                  <TableHead className="w-[120px] text-right">
-                    Действия
-                  </TableHead>
+                  <TableHead className="w-[120px] text-right">Действия</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {transactions.length > 0 ? (
                   transactions.map((transaction) => {
-                    const Icon =
-                      TRANSACTION_TAGS_ICONS[transaction.tag] ??
-                      TRANSACTION_TAGS_ICONS.OTHER;
+                    const Icon = TRANSACTION_TAGS_ICONS[transaction.tag] ?? TRANSACTION_TAGS_ICONS.OTHER;
 
                     return (
                       <TableRow key={transaction.id}>
                         <TableCell>{transaction.name}</TableCell>
-                        <TableCell>
-                          {currencyFormatter.format(transaction.price)}
-                        </TableCell>
-                        <TableCell>
-                          {transaction.date.toLocaleDateString("ru-RU")}
-                        </TableCell>
+                        <TableCell>{currencyFormatter.format(transaction.price)}</TableCell>
+                        <TableCell>{transaction.date.toLocaleDateString("ru-RU")}</TableCell>
                         <TableCell>{transaction.account.name}</TableCell>
                         <TableCell>
                           <Badge>
@@ -604,20 +530,10 @@ const TransactionTable = () => {
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-1">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() => setEditingTransaction(transaction)}
-                            >
+                            <Button variant="outline" size="icon" onClick={() => setEditingTransaction(transaction)}>
                               <PencilIcon className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              onClick={() =>
-                                setDeletingTransaction(transaction)
-                              }
-                            >
+                            <Button variant="outline" size="icon" onClick={() => setDeletingTransaction(transaction)}>
                               <Trash2Icon className="h-4 w-4 text-rose-500" />
                             </Button>
                           </div>
@@ -650,19 +566,10 @@ const TransactionTable = () => {
             >
               <ArrowLeftIcon />
             </Button>
-            <Typography
-              tag="p"
-              variant="default"
-              className="min-w-14 text-center"
-            >
+            <Typography tag="p" variant="default" className="min-w-14 text-center">
               {currentPage} / {Math.max(totalPages, 1)}
             </Typography>
-            <Button
-              onClick={() => setPage((prev) => prev + 1)}
-              disabled={!hasNext}
-              size="sm"
-              variant="outline"
-            >
+            <Button onClick={() => setPage((prev) => prev + 1)} disabled={!hasNext} size="sm" variant="outline">
               <ArrowRightIcon />
             </Button>
           </div>
@@ -680,10 +587,7 @@ const TransactionTable = () => {
             <DialogTitle>Редактировать транзакцию</DialogTitle>
           </DialogHeader>
           <Form {...editForm}>
-            <form
-              onSubmit={editForm.handleSubmit(onEditSubmit)}
-              className="flex flex-col gap-4"
-            >
+            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="flex flex-col gap-4">
               <FormField
                 control={editForm.control}
                 name="name"
@@ -744,10 +648,7 @@ const TransactionTable = () => {
                         </SelectTrigger>
                         <SelectContent>
                           {accounts.map((account) => (
-                            <SelectItem
-                              key={account.id}
-                              value={String(account.id)}
-                            >
+                            <SelectItem key={account.id} value={String(account.id)}>
                               {account.name}
                             </SelectItem>
                           ))}
@@ -765,10 +666,7 @@ const TransactionTable = () => {
                   <FormItem>
                     <FormLabel>Тег</FormLabel>
                     <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
+                      <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Выберите тег" />
                         </SelectTrigger>
@@ -789,10 +687,7 @@ const TransactionTable = () => {
                 <DialogClose asChild>
                   <Button variant="outline">Отмена</Button>
                 </DialogClose>
-                <Button
-                  type="submit"
-                  disabled={patchTransactionMutation.isPending}
-                >
+                <Button type="submit" disabled={patchTransactionMutation.isPending}>
                   Сохранить
                 </Button>
               </DialogFooter>
@@ -818,11 +713,7 @@ const TransactionTable = () => {
             <DialogClose asChild>
               <Button variant="outline">Отмена</Button>
             </DialogClose>
-            <Button
-              variant="destructive"
-              onClick={onDelete}
-              disabled={deleteTransactionMutation.isPending}
-            >
+            <Button variant="destructive" onClick={onDelete} disabled={deleteTransactionMutation.isPending}>
               Удалить
             </Button>
           </DialogFooter>

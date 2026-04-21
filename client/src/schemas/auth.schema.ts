@@ -2,9 +2,7 @@ import z from "zod";
 
 const loginSchema = z.object({
   email: z.email("Неверный email"),
-  password: z
-    .string("Пароль обязателен")
-    .min(6, "Пароль должен быть не менее 6 символов"),
+  password: z.string("Пароль обязателен").min(6, "Пароль должен быть не менее 6 символов"),
 });
 
 const registrationSchema = loginSchema

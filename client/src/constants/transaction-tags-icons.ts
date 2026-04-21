@@ -1,12 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import {
-  CarFrontIcon,
-  DramaIcon,
-  EllipsisIcon,
-  GraduationCapIcon,
-  HouseIcon,
-  UtensilsIcon,
-} from "lucide-react";
+import { CarFrontIcon, DramaIcon, EllipsisIcon, GraduationCapIcon, HouseIcon, UtensilsIcon } from "lucide-react";
 
 export const TRANSACTION_TAGS_ICONS: Record<TransactionTags, LucideIcon> = {
   JOY: DramaIcon,

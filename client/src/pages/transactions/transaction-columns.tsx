@@ -45,8 +45,7 @@ export const columns: ColumnDef<TransactionColumnView>[] = [
     enableSorting: false,
     cell: ({ row }) => {
       const value = row.original.tag as keyof typeof TRANSACTION_TAGS_ICONS;
-      const IconComponent =
-        TRANSACTION_TAGS_ICONS[value] ?? TRANSACTION_TAGS_ICONS.OTHER;
+      const IconComponent = TRANSACTION_TAGS_ICONS[value] ?? TRANSACTION_TAGS_ICONS.OTHER;
       return (
         <Badge>
           <IconComponent />

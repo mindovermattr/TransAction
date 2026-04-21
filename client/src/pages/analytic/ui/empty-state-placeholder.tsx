@@ -24,12 +24,7 @@ const EmptyState = ({
   const isError = variant === "error";
 
   return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center gap-4 py-12 text-center",
-        className,
-      )}
-    >
+    <div className={cn("flex flex-col items-center justify-center gap-4 py-12 text-center", className)}>
       <div className="bg-muted/50 rounded-full p-4">
         {isError ? (
           <AlertCircle className="text-muted-foreground h-8 w-8" />
@@ -38,10 +33,7 @@ const EmptyState = ({
         )}
       </div>
       <div className="space-y-2">
-        <Typography
-          tag="p"
-          className="text-muted-foreground text-base font-medium"
-        >
+        <Typography tag="p" className="text-muted-foreground text-base font-medium">
           {message}
         </Typography>
         {description && (

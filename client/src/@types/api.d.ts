@@ -6,13 +6,7 @@ interface User {
 
 type AccountType = "cash" | "debit" | "savings" | "credit";
 
-type TransactionTags =
-  | "JOY"
-  | "TRANSPORT"
-  | "FOOD"
-  | "EDUCATION"
-  | "HOUSING"
-  | "OTHER";
+type TransactionTags = "JOY" | "TRANSPORT" | "FOOD" | "EDUCATION" | "HOUSING" | "OTHER";
 
 interface AccountReference {
   id: number;

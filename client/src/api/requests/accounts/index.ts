@@ -1,17 +1,11 @@
 import { protectedInstance } from "@/api/instance";
 
-export type AccountResponse = Omit<
-  AccountBalanceSnapshot,
-  "createdAt" | "updatedAt"
-> & {
+export type AccountResponse = Omit<AccountBalanceSnapshot, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
 };
 
-export type TransferResponse = Omit<
-  Transfer,
-  "createdAt" | "updatedAt" | "date"
-> & {
+export type TransferResponse = Omit<Transfer, "createdAt" | "updatedAt" | "date"> & {
   createdAt: string;
   updatedAt: string;
   date: string;
@@ -21,11 +15,7 @@ export type GetAccountsParams = {
   includeArchived?: boolean;
 };
 
-export type GetAccountsConfig = OfetchRequestConfig<
-  GetAccountsParams,
-  "json",
-  true
->;
+export type GetAccountsConfig = OfetchRequestConfig<GetAccountsParams, "json", true>;
 
 export const getAccounts = (requestConfig?: GetAccountsConfig) =>
   protectedInstance<AccountResponse[]>("accounts", {
@@ -33,10 +23,7 @@ export const getAccounts = (requestConfig?: GetAccountsConfig) =>
     ...requestConfig?.config,
   });
 
-export type PostAccountParams = Pick<
-  Account,
-  "name" | "type" | "currency" | "openingBalance"
->;
+export type PostAccountParams = Pick<Account, "name" | "type" | "currency" | "openingBalance">;
 
 export type PostAccountConfig = OfetchRequestConfig<PostAccountParams>;
 
@@ -70,13 +57,7 @@ export const deleteAccount = ({ params, config }: DeleteAccountConfig) =>
 
 export type PostTransferParams = Omit<
   Transfer,
-  | "id"
-  | "createdAt"
-  | "updatedAt"
-  | "userId"
-  | "fromAccount"
-  | "toAccount"
-  | "date"
+  "id" | "createdAt" | "updatedAt" | "userId" | "fromAccount" | "toAccount" | "date"
 > & {
   date: string;
 };

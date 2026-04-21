@@ -1,10 +1,5 @@
 import type { ExpenseTrendResponse } from "@/api/requests";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
 import { useMemo, useState } from "react";
@@ -28,15 +23,8 @@ const chartConfig: ChartConfig = {
   },
 };
 
-const ExpensesTrendCard = ({
-  data,
-  isInitialLoading,
-  isRefreshing,
-  isError,
-  onRetry,
-}: ExpensesTrendCardProps) => {
-  const [activeMetric, setActiveMetric] =
-    useState<keyof typeof chartConfig>("total");
+const ExpensesTrendCard = ({ data, isInitialLoading, isRefreshing, isError, onRetry }: ExpensesTrendCardProps) => {
+  const [activeMetric, setActiveMetric] = useState<keyof typeof chartConfig>("total");
 
   const chartPoints = useMemo(() => {
     if (!data?.points) return [];
@@ -44,9 +32,7 @@ const ExpensesTrendCard = ({
     return data.points.map((point, index, arr) => {
       const start = Math.max(0, index - (MOVING_AVERAGE_WINDOW - 1));
       const slice = arr.slice(start, index + 1);
-      const average =
-        slice.reduce((total, current) => total + current.total, 0) /
-        slice.length;
+      const average = slice.reduce((total, current) => total + current.total, 0) / slice.length;
 
       return {
         ...point,
@@ -111,19 +97,17 @@ const ExpensesTrendCard = ({
       }
       actions={
         <div className="bg-muted inline-flex gap-1 rounded-md p-1">
-          {(Object.keys(chartConfig) as Array<keyof typeof chartConfig>).map(
-            (metricKey) => (
-              <button
-                key={metricKey}
-                type="button"
-                onClick={() => setActiveMetric(metricKey)}
-                data-active={activeMetric === metricKey}
-                className="data-[active=true]:bg-background data-[active=true]:text-foreground text-muted-foreground rounded px-2.5 py-1 text-xs font-semibold transition-colors"
-              >
-                {chartConfig[metricKey].label}
-              </button>
-            ),
-          )}
+          {(Object.keys(chartConfig) as Array<keyof typeof chartConfig>).map((metricKey) => (
+            <button
+              key={metricKey}
+              type="button"
+              onClick={() => setActiveMetric(metricKey)}
+              data-active={activeMetric === metricKey}
+              className="data-[active=true]:bg-background data-[active=true]:text-foreground text-muted-foreground rounded px-2.5 py-1 text-xs font-semibold transition-colors"
+            >
+              {chartConfig[metricKey].label}
+            </button>
+          ))}
         </div>
       }
       errorContent={
@@ -146,15 +130,8 @@ const ExpensesTrendCard = ({
       contentClassName="pt-0"
     >
       <div className="h-[280px] w-full lg:h-[320px]">
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto h-full w-full"
-        >
-          <LineChart
-            accessibilityLayer
-            data={chartPoints}
-            margin={{ left: 8, right: 8 }}
-          >
+        <ChartContainer config={chartConfig} className="aspect-auto h-full w-full">
+          <LineChart accessibilityLayer data={chartPoints} margin={{ left: 8, right: 8 }}>
             <CartesianGrid vertical={false} strokeDasharray="4 4" />
             <Area
               type="monotone"
@@ -163,13 +140,7 @@ const ExpensesTrendCard = ({
               fillOpacity={0.12}
               strokeOpacity={0}
             />
-            <XAxis
-              dataKey="label"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              tick={{ fontSize: 12 }}
-            />
+            <XAxis dataKey="label" tickLine={false} axisLine={false} tickMargin={8} tick={{ fontSize: 12 }} />
             <YAxis
               tickLine={false}
               axisLine={false}
@@ -191,12 +162,8 @@ const ExpensesTrendCard = ({
                   labelFormatter={(value) => value}
                   formatter={(value) => (
                     <div className="flex w-full items-center justify-between gap-3">
-                      <span className="text-muted-foreground text-xs">
-                        {chartConfig[activeMetric].label}
-                      </span>
-                      <span className="text-xs font-medium">
-                        {Number(value).toLocaleString("ru-RU")} ₽
-                      </span>
+                      <span className="text-muted-foreground text-xs">{chartConfig[activeMetric].label}</span>
+                      <span className="text-xs font-medium">{Number(value).toLocaleString("ru-RU")} ₽</span>
                     </div>
                   )}
                 />

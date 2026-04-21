@@ -11,11 +11,7 @@ import {
   formatDashboardDateLabel,
 } from "../dashboard.formatters";
 
-const DashboardRecentActivityCard = ({
-  data,
-}: {
-  data: DashboardOverviewResponse["recentActivity"];
-}) => (
+const DashboardRecentActivityCard = ({ data }: { data: DashboardOverviewResponse["recentActivity"] }) => (
   <Card className="gap-4 py-5">
     <CardHeader className="px-5">
       <CardTitle>Последние операции</CardTitle>
@@ -32,11 +28,7 @@ const DashboardRecentActivityCard = ({
         <div className="space-y-3">
           {data.map((item, index) => {
             const Icon =
-              item.type === "expense"
-                ? item.tag
-                  ? TRANSACTION_TAGS_ICONS[item.tag]
-                  : ArrowDownIcon
-                : ArrowUpIcon;
+              item.type === "expense" ? (item.tag ? TRANSACTION_TAGS_ICONS[item.tag] : ArrowDownIcon) : ArrowUpIcon;
 
             return (
               <div key={item.id}>
@@ -54,10 +46,7 @@ const DashboardRecentActivityCard = ({
 
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <Typography
-                        tag="p"
-                        className="truncate text-sm font-medium"
-                      >
+                      <Typography tag="p" className="truncate text-sm font-medium">
                         {item.name}
                       </Typography>
                       <Badge
@@ -72,14 +61,9 @@ const DashboardRecentActivityCard = ({
                         {item.type === "income" ? "Доход" : "Расход"}
                       </Badge>
                     </div>
-                    <Typography
-                      tag="p"
-                      className="text-muted-foreground text-xs"
-                    >
+                    <Typography tag="p" className="text-muted-foreground text-xs">
                       {formatDashboardDateLabel(item.date)}
-                      {item.tag
-                        ? ` • ${formatDashboardCategoryLabel(item.tag)}`
-                        : ""}
+                      {item.tag ? ` • ${formatDashboardCategoryLabel(item.tag)}` : ""}
                     </Typography>
                   </div>
 
@@ -87,18 +71,14 @@ const DashboardRecentActivityCard = ({
                     tag="p"
                     className={cn(
                       "text-sm font-semibold",
-                      item.type === "income"
-                        ? "text-emerald-600"
-                        : "text-foreground",
+                      item.type === "income" ? "text-emerald-600" : "text-foreground",
                     )}
                   >
                     {item.type === "income" ? "+" : "-"}
                     {dashboardCurrencyFormatter.format(item.amount)}
                   </Typography>
                 </div>
-                {index < data.length - 1 ? (
-                  <Separator className="mt-3" />
-                ) : null}
+                {index < data.length - 1 ? <Separator className="mt-3" /> : null}
               </div>
             );
           })}

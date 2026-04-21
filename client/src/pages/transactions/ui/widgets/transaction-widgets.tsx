@@ -8,8 +8,7 @@ import { calculateDifferencePercent } from "./transaction-widgets.utils";
 
 const TransactionWidgets = () => {
   const { data, isLoading } = useGetTransactionsSummaryQuery();
-  const { data: incomeData, isLoading: isIncomeLoading } =
-    useGetIncomeSummaryQuery();
+  const { data: incomeData, isLoading: isIncomeLoading } = useGetIncomeSummaryQuery();
 
   if (isLoading || isIncomeLoading) {
     return (
@@ -28,14 +27,8 @@ const TransactionWidgets = () => {
   const previousIncomeAmount = incomeData.prevMonthSum ?? 0;
   const currentIncomeAmount = incomeData.currentMonthSum ?? 0;
 
-  const incomeDifferencePercent = calculateDifferencePercent(
-    currentIncomeAmount,
-    previousIncomeAmount,
-  );
-  const expenseDifferencePercent = calculateDifferencePercent(
-    currentExpenseAmount,
-    previousExpenseAmount,
-  );
+  const incomeDifferencePercent = calculateDifferencePercent(currentIncomeAmount, previousIncomeAmount);
+  const expenseDifferencePercent = calculateDifferencePercent(currentExpenseAmount, previousExpenseAmount);
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">

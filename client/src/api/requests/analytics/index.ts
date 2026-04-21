@@ -20,18 +20,12 @@ export type ExpensesByCategoryResponse = AnalyticsPeriodMetadata & {
   }[];
 };
 
-export const getExpensesByCategoryAnalytics = ({
-  params,
-  config,
-}: AnalyticsRequestConfig) =>
-  protectedInstance<ExpensesByCategoryResponse>(
-    "analytics/expenses/by-category",
-    {
-      method: "POST",
-      body: params,
-      ...config,
-    },
-  );
+export const getExpensesByCategoryAnalytics = ({ params, config }: AnalyticsRequestConfig) =>
+  protectedInstance<ExpensesByCategoryResponse>("analytics/expenses/by-category", {
+    method: "POST",
+    body: params,
+    ...config,
+  });
 
 export type ExpenseTrendResponse = {
   period: AnalyticsPeriod;
@@ -43,10 +37,7 @@ export type ExpenseTrendResponse = {
   }[];
 };
 
-export const getExpensesTrendAnalytics = ({
-  params,
-  config,
-}: AnalyticsRequestConfig) =>
+export const getExpensesTrendAnalytics = ({ params, config }: AnalyticsRequestConfig) =>
   protectedInstance<ExpenseTrendResponse>("analytics/expenses/trend", {
     method: "POST",
     body: params,
@@ -61,10 +52,7 @@ export type BalanceOverviewResponse = AnalyticsPeriodMetadata & {
   };
 };
 
-export const getBalanceOverviewAnalytics = ({
-  params,
-  config,
-}: AnalyticsRequestConfig) =>
+export const getBalanceOverviewAnalytics = ({ params, config }: AnalyticsRequestConfig) =>
   protectedInstance<BalanceOverviewResponse>("analytics/balance/overview", {
     method: "POST",
     body: params,
@@ -79,15 +67,9 @@ export type ExpensesByWeekdayResponse = AnalyticsPeriodMetadata & {
   }[];
 };
 
-export const getExpensesByWeekdayAnalytics = ({
-  params,
-  config,
-}: AnalyticsRequestConfig) =>
-  protectedInstance<ExpensesByWeekdayResponse>(
-    "analytics/expenses/by-weekday",
-    {
-      method: "POST",
-      body: params,
-      ...config,
-    },
-  );
+export const getExpensesByWeekdayAnalytics = ({ params, config }: AnalyticsRequestConfig) =>
+  protectedInstance<ExpensesByWeekdayResponse>("analytics/expenses/by-weekday", {
+    method: "POST",
+    body: params,
+    ...config,
+  });

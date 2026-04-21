@@ -21,11 +21,7 @@ export type TransactionListParams = {
   sortOrder?: SortOrder;
 };
 
-export type GetTransactionsConfig = OfetchRequestConfig<
-  TransactionListParams,
-  "json",
-  true
->;
+export type GetTransactionsConfig = OfetchRequestConfig<TransactionListParams, "json", true>;
 
 export type PaginatedTransactionResponse = {
   items: TransactionResponse[];
@@ -52,8 +48,7 @@ export type PostTransactionsParams = Omit<
 > & {
   date: string;
 };
-export type PostTransactionsConfig =
-  OfetchRequestConfig<PostTransactionsParams>;
+export type PostTransactionsConfig = OfetchRequestConfig<PostTransactionsParams>;
 
 export const postTransaction = ({ params, config }: PostTransactionsConfig) =>
   protectedInstance<TransactionResponse>("transactions", {
@@ -77,10 +72,7 @@ export const patchTransaction = ({ params, config }: PatchTransactionsConfig) =>
 
 export type DeleteTransactionConfig = OfetchRequestConfig<{ id: number }>;
 
-export const deleteTransaction = ({
-  params,
-  config,
-}: DeleteTransactionConfig) =>
+export const deleteTransaction = ({ params, config }: DeleteTransactionConfig) =>
   protectedInstance<{ success: boolean }>(`transactions/${params.id}`, {
     method: "DELETE",
     ...config,

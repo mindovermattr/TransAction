@@ -1,7 +1,4 @@
-import {
-  getDataFromLocalStorage,
-  LOCAL_STORAGE_KEYS,
-} from "@/lib/localstorage";
+import { getDataFromLocalStorage, LOCAL_STORAGE_KEYS } from "@/lib/localstorage";
 import { redirect } from "react-router";
 import { ROUTES } from "./routes";
 

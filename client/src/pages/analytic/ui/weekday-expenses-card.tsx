@@ -1,10 +1,5 @@
 import type { ExpensesByWeekdayResponse } from "@/api/requests";
-import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -30,16 +25,8 @@ const chartConfig: ChartConfig = {
   },
 };
 
-const WeekdayExpensesCard = ({
-  data,
-  isInitialLoading,
-  isRefreshing,
-  isError,
-  onRetry,
-}: WeekdayExpensesCardProps) => {
-  const chartData = [...(data?.data ?? [])].sort(
-    (a, b) => a.weekday - b.weekday,
-  );
+const WeekdayExpensesCard = ({ data, isInitialLoading, isRefreshing, isError, onRetry }: WeekdayExpensesCardProps) => {
+  const chartData = [...(data?.data ?? [])].sort((a, b) => a.weekday - b.weekday);
   const chartHeight = chartData.length * (BAR_HEIGHT + BAR_GAP);
 
   const topDay =
@@ -95,8 +82,7 @@ const WeekdayExpensesCard = ({
             </Typography>
             {data ? (
               <Typography tag="p" className="text-muted-foreground text-xs">
-                {formatRangeDate(data.range.startDate)} —{" "}
-                {formatRangeDate(data.range.endDate)}
+                {formatRangeDate(data.range.startDate)} — {formatRangeDate(data.range.endDate)}
               </Typography>
             ) : null}
           </div>
@@ -138,14 +124,7 @@ const WeekdayExpensesCard = ({
         >
           <CartesianGrid horizontal={false} strokeDasharray="4 4" />
           <XAxis type="number" hide />
-          <YAxis
-            dataKey="label"
-            type="category"
-            width={118}
-            tickLine={false}
-            axisLine={false}
-            interval={0}
-          />
+          <YAxis dataKey="label" type="category" width={118} tickLine={false} axisLine={false} interval={0} />
           <ChartTooltip
             cursor={false}
             content={
@@ -153,23 +132,14 @@ const WeekdayExpensesCard = ({
                 hideLabel
                 formatter={(value, _name, item) => (
                   <div className="flex w-full items-center justify-between gap-4">
-                    <span className="text-muted-foreground text-xs">
-                      {item?.payload.label}
-                    </span>
-                    <span className="text-xs font-medium">
-                      {Number(value).toLocaleString("ru-RU")} ₽
-                    </span>
+                    <span className="text-muted-foreground text-xs">{item?.payload.label}</span>
+                    <span className="text-xs font-medium">{Number(value).toLocaleString("ru-RU")} ₽</span>
                   </div>
                 )}
               />
             }
           />
-          <Bar
-            dataKey="total"
-            fill="var(--color-total)"
-            radius={6}
-            barSize={BAR_HEIGHT}
-          />
+          <Bar dataKey="total" fill="var(--color-total)" radius={6} barSize={BAR_HEIGHT} />
         </BarChart>
       </ChartContainer>
     </AnalyticsCardShell>

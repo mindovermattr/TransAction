@@ -2,10 +2,7 @@ import z from "zod";
 
 export const ACCOUNT_TYPES = ["cash", "debit", "savings", "credit"] as const;
 
-export const ACCOUNT_TYPE_LABELS: Record<
-  (typeof ACCOUNT_TYPES)[number],
-  string
-> = {
+export const ACCOUNT_TYPE_LABELS: Record<(typeof ACCOUNT_TYPES)[number], string> = {
   cash: "Наличные",
   debit: "Дебетовая карта",
   savings: "Накопительный",
@@ -98,20 +95,9 @@ export const transferPostSchema = transferSchema
       (val) => (val === "" || val === undefined ? undefined : Number(val)),
       z.number().positive("Сумма должна быть положительной"),
     ),
-    fromAccountId: z.preprocess(
-      (val) => Number(val),
-      z.number().int().positive("Выберите счет списания"),
-    ),
-    toAccountId: z.preprocess(
-      (val) => Number(val),
-      z.number().int().positive("Выберите счет зачисления"),
-    ),
-    note: z
-      .string()
-      .trim()
-      .max(120, "Максимум 120 символов")
-      .optional()
-      .or(z.literal("")),
+    fromAccountId: z.preprocess((val) => Number(val), z.number().int().positive("Выберите счет списания")),
+    toAccountId: z.preprocess((val) => Number(val), z.number().int().positive("Выберите счет зачисления")),
+    note: z.string().trim().max(120, "Максимум 120 символов").optional().or(z.literal("")),
   })
   .refine((value) => value.fromAccountId !== value.toAccountId, {
     message: "Счета должны отличаться",

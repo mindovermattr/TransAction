@@ -33,8 +33,5 @@ export const incomePostSchema = incomeSchema
       z.number().positive("Цена должна быть положительной"),
     ),
     name: z.string().min(4, "Минимум 4 символа"),
-    accountId: z.preprocess(
-      (val) => Number(val),
-      z.number().int().positive("Выберите счет"),
-    ),
+    accountId: z.preprocess((val) => Number(val), z.number().int().positive("Выберите счет")),
   });

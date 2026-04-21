@@ -65,9 +65,7 @@ const AnalyticsCardShell = ({
       <CardHeader className="space-y-1">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1">
-            <CardTitle className="text-base font-semibold tracking-tight">
-              {title}
-            </CardTitle>
+            <CardTitle className="text-base font-semibold tracking-tight">{title}</CardTitle>
             {subtitle ? (
               <Typography tag="p" className="text-muted-foreground text-xs">
                 {subtitle}
@@ -78,9 +76,7 @@ const AnalyticsCardShell = ({
         </div>
         {summary}
       </CardHeader>
-      <CardContent
-        className={cn("relative flex flex-1 flex-col", contentClassName)}
-      >
+      <CardContent className={cn("relative flex flex-1 flex-col", contentClassName)}>
         {isError ? errorContent : isEmpty ? emptyContent : children}
       </CardContent>
 

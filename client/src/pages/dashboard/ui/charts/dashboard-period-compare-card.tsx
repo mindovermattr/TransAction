@@ -2,9 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Typography } from "@/components/ui/typography";
-import {
-  dashboardCurrencyFormatter,
-} from "../dashboard.formatters";
+import { dashboardCurrencyFormatter } from "../dashboard.formatters";
 import { DashboardEmptyChartState } from "./dashboard-empty-chart-state";
 
 type PeriodComparePoint = {
@@ -32,13 +30,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
               Сравнение текущего месяца
             </Typography>
           </div>
-          <Badge
-            variant="outline"
-            className={cn(
-              "rounded-full px-3 py-1",
-              net === 0 && "bg-muted/70",
-            )}
-          >
+          <Badge variant="outline" className={cn("rounded-full px-3 py-1", net === 0 && "bg-muted/70")}>
             {netLabel}: {dashboardCurrencyFormatter.format(Math.abs(net))}
           </Badge>
         </div>
@@ -49,7 +41,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
         ) : (
           <div className="flex h-full flex-1 flex-col gap-5">
             <div className="grid gap-3 sm:grid-cols-2">
-              <div className="flex h-full flex-col rounded-2xl border bg-muted/25 p-4">
+              <div className="bg-muted/25 flex h-full flex-col rounded-2xl border p-4">
                 <Typography tag="p" className="text-muted-foreground text-sm">
                   Доходы
                 </Typography>
@@ -61,7 +53,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                 </Typography>
               </div>
 
-              <div className="flex h-full flex-col rounded-2xl border bg-muted/25 p-4">
+              <div className="bg-muted/25 flex h-full flex-col rounded-2xl border p-4">
                 <Typography tag="p" className="text-muted-foreground text-sm">
                   Расходы
                 </Typography>
@@ -74,7 +66,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
               </div>
             </div>
 
-            <div className="flex flex-1 flex-col rounded-2xl border bg-muted/35 p-4">
+            <div className="bg-muted/35 flex flex-1 flex-col rounded-2xl border p-4">
               <div className="flex items-center justify-between gap-3">
                 <Typography tag="p" className="text-sm font-medium">
                   Соотношение месяца
@@ -88,9 +80,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-medium">Доходы</span>
-                    <span className="text-muted-foreground">
-                      {dashboardCurrencyFormatter.format(income)}
-                    </span>
+                    <span className="text-muted-foreground">{dashboardCurrencyFormatter.format(income)}</span>
                   </div>
                   <div className="bg-background h-3 overflow-hidden rounded-full border">
                     <div
@@ -103,9 +93,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-medium">Расходы</span>
-                    <span className="text-muted-foreground">
-                      {dashboardCurrencyFormatter.format(expenses)}
-                    </span>
+                    <span className="text-muted-foreground">{dashboardCurrencyFormatter.format(expenses)}</span>
                   </div>
                   <div className="bg-background h-3 overflow-hidden rounded-full border">
                     <div

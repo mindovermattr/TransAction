@@ -20,11 +20,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  getDataFromLocalStorage,
-  LOCAL_STORAGE_KEYS,
-  removeDataFromLocalStorage,
-} from "@/lib/localstorage";
+import { getDataFromLocalStorage, LOCAL_STORAGE_KEYS, removeDataFromLocalStorage } from "@/lib/localstorage";
 import { ROUTES } from "@/router/routes";
 import { Separator } from "@radix-ui/react-separator";
 import type { ComponentProps } from "react";
@@ -75,11 +71,7 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
                   <UserIcon className="size-4" />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Typography
-                    tag="span"
-                    variant="subtitle"
-                    className="text-sm leading-none font-medium"
-                  >
+                  <Typography tag="span" variant="subtitle" className="text-sm leading-none font-medium">
                     {user?.email}
                   </Typography>
                   <Typography tag="span" className="leading-none capitalize">
@@ -95,10 +87,7 @@ const AppSidebar = ({ ...props }: ComponentProps<typeof Sidebar>) => {
               <SidebarMenuItem className="mt-2 self-center">
                 <AnimatedThemeToggler />
               </SidebarMenuItem>
-              <Separator
-                orientation="horizontal"
-                className="bg-primary h-0.25"
-              />
+              <Separator orientation="horizontal" className="bg-primary h-0.25" />
             </>
           )}
         </SidebarMenu>

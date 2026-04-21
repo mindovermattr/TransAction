@@ -7,10 +7,5 @@ export type TransactionSummaryResponse = {
   prevMonthSum: number | null;
 };
 
-export const getTransactionsSummary = (
-  requestConfig?: GetTransactionsSummaryConfig,
-) =>
-  protectedInstance<TransactionSummaryResponse>(
-    "transactions/summary",
-    requestConfig?.config,
-  );
+export const getTransactionsSummary = (requestConfig?: GetTransactionsSummaryConfig) =>
+  protectedInstance<TransactionSummaryResponse>("transactions/summary", requestConfig?.config);

@@ -1,8 +1,4 @@
-import {
-  getDataFromLocalStorage,
-  LOCAL_STORAGE_KEYS,
-  removeDataFromLocalStorage,
-} from "@/lib/localstorage";
+import { getDataFromLocalStorage, LOCAL_STORAGE_KEYS, removeDataFromLocalStorage } from "@/lib/localstorage";
 import { ROUTES } from "@/router/routes";
 import type { FetchContext } from "ofetch";
 import { ofetch } from "ofetch";

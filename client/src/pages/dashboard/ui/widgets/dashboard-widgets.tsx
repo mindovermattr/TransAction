@@ -6,18 +6,9 @@ import {
   formatDashboardDateLabel,
   formatDashboardPercentDelta,
 } from "../dashboard.formatters";
-import {
-  PiggyBankIcon,
-  TrendingDownIcon,
-  TrendingUpIcon,
-  Wallet2Icon,
-} from "lucide-react";
+import { PiggyBankIcon, TrendingDownIcon, TrendingUpIcon, Wallet2Icon } from "lucide-react";
 
-const DashboardWidgets = ({
-  data,
-}: {
-  data?: DashboardOverviewResponse;
-}) => {
+const DashboardWidgets = ({ data }: { data?: DashboardOverviewResponse }) => {
   const topCategory = data?.insights.topCategory;
   const peakSpendDay = data?.insights.peakSpendDay;
 
@@ -54,13 +45,11 @@ const DashboardWidgets = ({
         />
       </div>
 
-      <section className="rounded-xl border bg-card p-4 lg:p-5">
+      <section className="bg-card rounded-xl border p-4 lg:p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
             <h2 className="text-foreground text-lg font-semibold">Что важно сейчас</h2>
-            <p className="text-muted-foreground text-sm">
-              Краткие сигналы по текущему месяцу
-            </p>
+            <p className="text-muted-foreground text-sm">Краткие сигналы по текущему месяцу</p>
           </div>
         </div>
 
@@ -76,9 +65,7 @@ const DashboardWidgets = ({
           />
           <DashboardInsightCard
             title="Изменение трат"
-            value={formatDashboardPercentDelta(
-              data?.comparisons.expensesDeltaPercent ?? 0,
-            )}
+            value={formatDashboardPercentDelta(data?.comparisons.expensesDeltaPercent ?? 0)}
             hint={`Было ${dashboardCurrencyFormatter.format(data?.comparisons.previousExpenses ?? 0)} в прошлом месяце`}
           />
           <DashboardInsightCard

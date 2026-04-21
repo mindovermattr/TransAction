@@ -1,11 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Props {
   form: React.ReactNode;
@@ -24,9 +17,7 @@ export const AuthLayout = ({ form, title, description, footerText }: Props) => {
         </CardHeader>
         <CardContent>{form}</CardContent>
         <CardFooter className="flex-col gap-2">
-          <p className="text-muted-foreground [&_a]:text-primary text-sm [&_a]:underline">
-            {footerText}
-          </p>
+          <p className="text-muted-foreground [&_a]:text-primary text-sm [&_a]:underline">{footerText}</p>
         </CardFooter>
       </Card>
     </main>

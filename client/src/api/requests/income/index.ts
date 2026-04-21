@@ -23,11 +23,7 @@ export type PaginatedIncomeResponse = {
   pagination: PaginationMeta;
 };
 
-export type GetIncomeConfig = OfetchRequestConfig<
-  IncomeListParams,
-  "json",
-  true
->;
+export type GetIncomeConfig = OfetchRequestConfig<IncomeListParams, "json", true>;
 
 export const getIncome = (requestConfig?: GetIncomeConfig) =>
   protectedInstance<PaginatedIncomeResponse>("income", {
@@ -43,15 +39,9 @@ export type IncomeSummaryResponse = {
 export type GetIncomeSummaryConfig = OfetchRequestConfig;
 
 export const getIncomeSummary = (requestConfig?: GetIncomeSummaryConfig) =>
-  protectedInstance<IncomeSummaryResponse>(
-    "income/summary",
-    requestConfig?.config,
-  );
+  protectedInstance<IncomeSummaryResponse>("income/summary", requestConfig?.config);
 
-export type PostIncomeParams = Omit<
-  Income,
-  "userId" | "createdAt" | "updatedAt" | "id" | "date" | "account"
-> & {
+export type PostIncomeParams = Omit<Income, "userId" | "createdAt" | "updatedAt" | "id" | "date" | "account"> & {
   date: string;
 };
 

@@ -1,14 +1,7 @@
 import z from "zod";
 import { accountReferenceSchema } from "./account.schema";
 
-export const TRANSACTION_TAGS = [
-  "JOY",
-  "TRANSPORT",
-  "FOOD",
-  "EDUCATION",
-  "HOUSING",
-  "OTHER",
-] as const;
+export const TRANSACTION_TAGS = ["JOY", "TRANSPORT", "FOOD", "EDUCATION", "HOUSING", "OTHER"] as const;
 
 export const transactionSchema = z.object({
   id: z.number(),
@@ -43,8 +36,5 @@ export const transactionPostSchema = transactionSchema
       z.number().positive("Цена должна быть положительной"),
     ),
     name: z.string().min(4, "Минимум 4 символа"),
-    accountId: z.preprocess(
-      (val) => Number(val),
-      z.number().int().positive("Выберите счет"),
-    ),
+    accountId: z.preprocess((val) => Number(val), z.number().int().positive("Выберите счет")),
   });

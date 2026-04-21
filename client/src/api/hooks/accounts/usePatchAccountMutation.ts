@@ -1,9 +1,7 @@
 import { patchAccount, type PatchAccountConfig } from "@/api/requests/accounts";
 import { useMutation } from "@tanstack/react-query";
 
-export const usePatchAccountMutation = (
-  settings?: MutationSettings<PatchAccountConfig, typeof patchAccount>,
-) =>
+export const usePatchAccountMutation = (settings?: MutationSettings<PatchAccountConfig, typeof patchAccount>) =>
   useMutation({
     mutationKey: ["accounts"],
     mutationFn: ({ params, config }) =>

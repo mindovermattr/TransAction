@@ -11,11 +11,9 @@ const dashboardCompactFormatter = new Intl.NumberFormat("ru-RU", {
   maximumFractionDigits: 1,
 });
 
-const formatDashboardPercentDelta = (value: number) =>
-  `${value > 0 ? "+" : ""}${value.toLocaleString("ru-RU")}%`;
+const formatDashboardPercentDelta = (value: number) => `${value > 0 ? "+" : ""}${value.toLocaleString("ru-RU")}%`;
 
-const formatDashboardCategoryLabel = (tag: TransactionTags) =>
-  DASHBOARD_CATEGORY_LABELS[tag] ?? tag;
+const formatDashboardCategoryLabel = (tag: TransactionTags) => DASHBOARD_CATEGORY_LABELS[tag] ?? tag;
 
 const formatDashboardDateLabel = (value: string) =>
   new Intl.DateTimeFormat("ru-RU", {

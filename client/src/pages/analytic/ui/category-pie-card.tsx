@@ -37,13 +37,7 @@ const COLORS = [
 type CategoryPieCardProps = ChartProps<ExpensesByCategoryResponse>;
 type CategoryDatum = ExpensesByCategoryResponse["data"][number];
 
-const CategoryPieCard = ({
-  data,
-  isInitialLoading,
-  isRefreshing,
-  isError,
-  onRetry,
-}: CategoryPieCardProps) => {
+const CategoryPieCard = ({ data, isInitialLoading, isRefreshing, isError, onRetry }: CategoryPieCardProps) => {
   const categoryData = data?.data ?? [];
   const isMobile = useIsMobile();
 
@@ -59,16 +53,13 @@ const CategoryPieCard = ({
     return { innerRadius: 56, outerRadius: 114 };
   }, [isMobile]);
 
-  const chartConfig: ChartConfig = Object.entries(CATEGORY_LABELS).reduce(
-    (acc, [key, label], index) => {
-      acc[key] = {
-        label,
-        color: COLORS[index % COLORS.length],
-      };
-      return acc;
-    },
-    {} as ChartConfig,
-  );
+  const chartConfig: ChartConfig = Object.entries(CATEGORY_LABELS).reduce((acc, [key, label], index) => {
+    acc[key] = {
+      label,
+      color: COLORS[index % COLORS.length],
+    };
+    return acc;
+  }, {} as ChartConfig);
 
   const totalAmount = categoryData.reduce((sum, item) => sum + item.total, 0);
   const topCategory = categoryData.reduce<CategoryDatum | null>((acc, item) => {
@@ -77,10 +68,7 @@ const CategoryPieCard = ({
     }
     return acc;
   }, null);
-  const topCategoryShare =
-    topCategory && totalAmount > 0
-      ? Math.round((topCategory.total / totalAmount) * 100)
-      : 0;
+  const topCategoryShare = topCategory && totalAmount > 0 ? Math.round((topCategory.total / totalAmount) * 100) : 0;
 
   return (
     <AnalyticsCardShell
@@ -154,12 +142,8 @@ const CategoryPieCard = ({
                 hideLabel
                 formatter={(value, name) => (
                   <div className="flex w-full items-center justify-between gap-4">
-                    <span className="text-muted-foreground text-xs">
-                      {getCategoryLabel(name)}
-                    </span>
-                    <span className="text-xs font-medium">
-                      {Number(value).toLocaleString("ru-RU")} ₽
-                    </span>
+                    <span className="text-muted-foreground text-xs">{getCategoryLabel(name)}</span>
+                    <span className="text-xs font-medium">{Number(value).toLocaleString("ru-RU")} ₽</span>
                   </div>
                 )}
               />

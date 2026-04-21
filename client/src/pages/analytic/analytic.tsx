@@ -25,10 +25,7 @@ const PERIOD_DESCRIPTION_MAP: Record<AnalyticsPeriod, string> = {
   year: "последний год",
 };
 
-const formatPeakDateLabel = (
-  value: string | undefined,
-  granularity: "day" | "week" | "month" | undefined,
-) => {
+const formatPeakDateLabel = (value: string | undefined, granularity: "day" | "week" | "month" | undefined) => {
   if (!value) return "—";
 
   const date = new Date(value);
@@ -104,11 +101,7 @@ const Analytic = () => {
   const isCategoryRefreshing = isCategoryFetching && !!categoryData;
   const isWeekdayRefreshing = isWeekdayFetching && !!weekdayData;
 
-  const isPageRefreshing =
-    isTrendRefreshing ||
-    isBalanceRefreshing ||
-    isCategoryRefreshing ||
-    isWeekdayRefreshing;
+  const isPageRefreshing = isTrendRefreshing || isBalanceRefreshing || isCategoryRefreshing || isWeekdayRefreshing;
 
   const heroMetrics = useMemo(() => {
     const points = trendData?.points ?? [];
@@ -158,14 +151,10 @@ const Analytic = () => {
             <div className="border-border/60 text-muted-foreground inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium">
               <Circle
                 className={`h-2.5 w-2.5 ${
-                  isPageRefreshing
-                    ? "fill-amber-500 text-amber-500"
-                    : "fill-emerald-500 text-emerald-500"
+                  isPageRefreshing ? "fill-amber-500 text-amber-500" : "fill-emerald-500 text-emerald-500"
                 }`}
               />
-              <span className="w-[78px] text-left">
-                {isPageRefreshing ? "Обновление" : "Актуально"}
-              </span>
+              <span className="w-[78px] text-left">{isPageRefreshing ? "Обновление" : "Актуально"}</span>
             </div>
 
             <div className="bg-muted inline-flex w-full gap-1 rounded-lg p-1 sm:w-auto">
@@ -261,8 +250,7 @@ const Analytic = () => {
                   Расходы за период
                 </Typography>
                 <Typography tag="p" className="text-2xl font-semibold">
-                  {(balanceData?.totals.expenses ?? 0).toLocaleString("ru-RU")}{" "}
-                  ₽
+                  {(balanceData?.totals.expenses ?? 0).toLocaleString("ru-RU")} ₽
                 </Typography>
               </div>
               <div className="bg-muted/45 rounded-lg p-3.5">
@@ -272,9 +260,7 @@ const Analytic = () => {
                 <Typography
                   tag="p"
                   className={`text-2xl font-semibold ${
-                    (balanceData?.totals.balance ?? 0) >= 0
-                      ? "text-emerald-500"
-                      : "text-rose-500"
+                    (balanceData?.totals.balance ?? 0) >= 0 ? "text-emerald-500" : "text-rose-500"
                   }`}
                 >
                   {(balanceData?.totals.balance ?? 0).toLocaleString("ru-RU")} ₽

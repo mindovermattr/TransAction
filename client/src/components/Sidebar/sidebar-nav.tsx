@@ -25,10 +25,7 @@ const SidebarNav = ({
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton
-              isActive={location.pathname === item.url}
-              asChild
-            >
+            <SidebarMenuButton isActive={location.pathname === item.url} asChild>
               <Link to={item.url}>
                 <item.icon />
                 <span>{item.name}</span>

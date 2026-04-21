@@ -1,13 +1,6 @@
 import { login } from "@/api/requests";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { LOCAL_STORAGE_KEYS, setDataLocalStorage } from "@/lib/localstorage";
 import { isOfetchError } from "@/lib/typeguards";
@@ -38,10 +31,7 @@ export const LoginForm = () => {
   };
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-6"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <FormField
           control={form.control}
           name="email"
@@ -50,11 +40,7 @@ export const LoginForm = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input
-                    type="email"
-                    placeholder="admin@gmail.com"
-                    {...field}
-                  />
+                  <Input type="email" placeholder="admin@gmail.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -78,10 +64,7 @@ export const LoginForm = () => {
         />
         <Button>Отправить</Button>
         {form.formState.errors.root && (
-          <p
-            data-slot="form-message"
-            className="text-destructive text-center text-sm"
-          >
+          <p data-slot="form-message" className="text-destructive text-center text-sm">
             {form.formState.errors.root.message}
           </p>
         )}

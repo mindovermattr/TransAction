@@ -1,17 +1,7 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
-import {
-  CircleDollarSignIcon,
-  TrendingDownIcon,
-  TrendingUpIcon,
-  type LucideIcon,
-} from "lucide-react";
+import { CircleDollarSignIcon, TrendingDownIcon, TrendingUpIcon, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 type SummaryCardVariant = "income" | "expense";
@@ -39,8 +29,7 @@ const currencyFormatter = new Intl.NumberFormat("ru-RU", {
   maximumFractionDigits: 0,
 });
 
-const formatDeltaText = (value: number) =>
-  `${Math.abs(value)}% ${value >= 0 ? "выше" : "ниже"}`;
+const formatDeltaText = (value: number) => `${Math.abs(value)}% ${value >= 0 ? "выше" : "ниже"}`;
 
 const CARD_STYLES: Record<SummaryCardVariant, SummaryCardStyle> = {
   income: {
@@ -80,23 +69,14 @@ const TransactionSummaryCard = ({
     <Card className={cn("gap-4 py-5.5", styles.container)}>
       <CardHeader className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2">
-          <div
-            className={cn("rounded-lg p-2.5", styles.iconBox, styles.iconColor)}
-          >
+          <div className={cn("rounded-lg p-2.5", styles.iconBox, styles.iconColor)}>
             <Icon size={18} />
           </div>
           <div className="space-y-0.5">
-            <Typography
-              tag="p"
-              className="text-muted-foreground text-xs font-medium tracking-wide uppercase"
-            >
+            <Typography tag="p" className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               {sectionLabel}
             </Typography>
-            <Typography
-              tag="h3"
-              variant="title"
-              className="text-xl leading-tight font-semibold"
-            >
+            <Typography tag="h3" variant="title" className="text-xl leading-tight font-semibold">
               {title}
             </Typography>
           </div>
@@ -110,9 +90,7 @@ const TransactionSummaryCard = ({
         </Typography>
         <div className="text-muted-foreground flex items-center gap-2 text-sm">
           <CircleDollarSignIcon className="h-4 w-4" />
-          <span>
-            За прошлый месяц: {currencyFormatter.format(previousAmount)}
-          </span>
+          <span>За прошлый месяц: {currencyFormatter.format(previousAmount)}</span>
         </div>
       </CardContent>
 

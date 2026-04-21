@@ -36,10 +36,7 @@ const Typography = <Tag extends AllowedTags>({
 }: TypographyProps<Tag>) => {
   const Component = tag as AllowedTags;
   return (
-    <Component
-      className={cn(typographyVariants({ variant, className }))}
-      {...props}
-    >
+    <Component className={cn(typographyVariants({ variant, className }))} {...props}>
       {children}
     </Component>
   );

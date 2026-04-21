@@ -7,36 +7,17 @@ import { ArrowDownCircleIcon, BadgePlusIcon, Circle } from "lucide-react";
 import { useMemo } from "react";
 import { TransactionAddIncomeModal } from "../transactions/ui/modals/transaction-add-income-modal";
 import { TransactionAddModal } from "../transactions/ui/modals/transaction-add-modal";
-import {
-  DashboardCharts,
-  DashboardLoadingState,
-  DashboardRecentActivityCard,
-  DashboardWidgets,
-} from "./ui";
-import {
-  getDashboardCashflowPoints,
-  getDashboardCategoryPoints,
-  getDashboardPeriodCompare,
-} from "./dashboard.utils";
+import { DashboardCharts, DashboardLoadingState, DashboardRecentActivityCard, DashboardWidgets } from "./ui";
+import { getDashboardCashflowPoints, getDashboardCategoryPoints, getDashboardPeriodCompare } from "./dashboard.utils";
 
 export const Dashboard = () => {
-  const { data, isLoading, isFetching, isError, refetch } =
-    useGetDashboardOverviewQuery();
+  const { data, isLoading, isFetching, isError, refetch } = useGetDashboardOverviewQuery();
 
-  const cashflowPoints = useMemo(
-    () => getDashboardCashflowPoints(data?.cashflow.months),
-    [data?.cashflow.months],
-  );
+  const cashflowPoints = useMemo(() => getDashboardCashflowPoints(data?.cashflow.months), [data?.cashflow.months]);
 
-  const categoryPoints = useMemo(
-    () => getDashboardCategoryPoints(data?.topCategories),
-    [data?.topCategories],
-  );
+  const categoryPoints = useMemo(() => getDashboardCategoryPoints(data?.topCategories), [data?.topCategories]);
 
-  const periodCompare = useMemo(
-    () => getDashboardPeriodCompare(data?.totals),
-    [data?.totals],
-  );
+  const periodCompare = useMemo(() => getDashboardPeriodCompare(data?.totals), [data?.totals]);
 
   if (isLoading && !data) {
     return <DashboardLoadingState />;
@@ -45,7 +26,7 @@ export const Dashboard = () => {
   if (isError && !data) {
     return (
       <div className="space-y-4 lg:space-y-5">
-        <section className="rounded-xl border bg-card p-6">
+        <section className="bg-card rounded-xl border p-6">
           <Typography tag="h1" variant="title" className="text-2xl">
             Дашборд
           </Typography>
@@ -75,22 +56,17 @@ export const Dashboard = () => {
           </div>
         </div>
 
-        <Badge
-          variant="outline"
-          className="gap-1.5 self-start rounded-full px-3 py-1"
-        >
+        <Badge variant="outline" className="gap-1.5 self-start rounded-full px-3 py-1">
           <Circle
             className={
-              isFetching
-                ? "h-2.5 w-2.5 fill-amber-500 text-amber-500"
-                : "h-2.5 w-2.5 fill-emerald-500 text-emerald-500"
+              isFetching ? "h-2.5 w-2.5 fill-amber-500 text-amber-500" : "h-2.5 w-2.5 fill-emerald-500 text-emerald-500"
             }
           />
           {isFetching ? "Обновление" : "Актуально"}
         </Badge>
       </header>
 
-      <section className="rounded-xl border bg-card p-4 lg:p-5">
+      <section className="bg-card rounded-xl border p-4 lg:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-xl space-y-1">
             <div className="space-y-1">

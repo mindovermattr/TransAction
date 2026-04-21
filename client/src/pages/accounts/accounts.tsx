@@ -7,12 +7,7 @@ import {
 } from "@/api/hooks";
 import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -22,22 +17,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Typography } from "@/components/ui/typography";
 import {
@@ -48,13 +30,7 @@ import {
   transferPostSchema,
 } from "@/schemas/account.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ArrowRightLeftIcon,
-  CirclePlusIcon,
-  PiggyBankIcon,
-  Trash2Icon,
-  WalletCardsIcon,
-} from "lucide-react";
+import { ArrowRightLeftIcon, CirclePlusIcon, PiggyBankIcon, Trash2Icon, WalletCardsIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -80,30 +56,18 @@ const Accounts = () => {
   const postTransferMutation = usePostTransferMutation();
 
   const [createOpen, setCreateOpen] = useState(false);
-  const [editingAccount, setEditingAccount] = useState<z.infer<
-    typeof accountGetSchema
-  > | null>(null);
-  const [archivingAccount, setArchivingAccount] = useState<z.infer<
-    typeof accountGetSchema
-  > | null>(null);
+  const [editingAccount, setEditingAccount] = useState<z.infer<typeof accountGetSchema> | null>(null);
+  const [archivingAccount, setArchivingAccount] = useState<z.infer<typeof accountGetSchema> | null>(null);
 
-  const accounts = useMemo(
-    () => (data ?? []).map((account) => accountGetSchema.parse(account)),
-    [data],
-  );
+  const accounts = useMemo(() => (data ?? []).map((account) => accountGetSchema.parse(account)), [data]);
   const activeAccounts = accounts.filter((account) => !account.isArchived);
 
   const summary = useMemo(() => {
-    const totalBalance = activeAccounts.reduce(
-      (sum, account) => sum + account.currentBalance,
-      0,
-    );
+    const totalBalance = activeAccounts.reduce((sum, account) => sum + account.currentBalance, 0);
     const savingsBalance = activeAccounts
       .filter((account) => account.type === "savings")
       .reduce((sum, account) => sum + account.currentBalance, 0);
-    const archivedCount = accounts.filter(
-      (account) => account.isArchived,
-    ).length;
+    const archivedCount = accounts.filter((account) => account.isArchived).length;
 
     return {
       totalBalance,
@@ -133,11 +97,7 @@ const Accounts = () => {
     },
   });
 
-  const transferForm = useForm<
-    TransferFormInput,
-    undefined,
-    TransferFormValues
-  >({
+  const transferForm = useForm<TransferFormInput, undefined, TransferFormValues>({
     resolver: zodResolver(transferPostSchema),
     defaultValues: {
       fromAccountId: 0,
@@ -177,12 +137,24 @@ const Accounts = () => {
 
   const invalidateAccountsRelatedQueries = async () =>
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["accounts"] }),
-      queryClient.invalidateQueries({ queryKey: ["transactions"] }),
-      queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
-      queryClient.invalidateQueries({ queryKey: ["income"] }),
-      queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
-      queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+      queryClient.invalidateQueries({
+        queryKey: ["accounts"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["transactions"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["transactions/summary"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["income"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["income", "summary"],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ["analytics"],
+      }),
     ]);
 
   const onCreateAccount = async (values: AccountFormValues) => {
@@ -270,10 +242,7 @@ const Accounts = () => {
                   <DialogTitle>Новый счет</DialogTitle>
                 </DialogHeader>
                 <Form {...createForm}>
-                  <form
-                    onSubmit={createForm.handleSubmit(onCreateAccount)}
-                    className="flex flex-col gap-4"
-                  >
+                  <form onSubmit={createForm.handleSubmit(onCreateAccount)} className="flex flex-col gap-4">
                     <FormField
                       control={createForm.control}
                       name="name"
@@ -294,10 +263,7 @@ const Accounts = () => {
                         <FormItem>
                           <FormLabel>Тип</FormLabel>
                           <FormControl>
-                            <Select
-                              value={field.value}
-                              onValueChange={field.onChange}
-                            >
+                            <Select value={field.value} onValueChange={field.onChange}>
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Выберите тип" />
                               </SelectTrigger>
@@ -336,10 +302,7 @@ const Accounts = () => {
                       <DialogClose asChild>
                         <Button variant="outline">Отмена</Button>
                       </DialogClose>
-                      <Button
-                        type="submit"
-                        disabled={postAccountMutation.isPending}
-                      >
+                      <Button type="submit" disabled={postAccountMutation.isPending}>
                         Сохранить
                       </Button>
                     </DialogFooter>
@@ -389,11 +352,7 @@ const Accounts = () => {
           <Card className="py-5.5">
             <CardHeader className="flex flex-row items-start justify-between gap-3">
               <div className="space-y-1">
-                <Typography
-                  tag="h3"
-                  variant="title"
-                  className="text-xl font-medium"
-                >
+                <Typography tag="h3" variant="title" className="text-xl font-medium">
                   Портфель счетов
                 </Typography>
                 <Typography tag="p" className="text-muted-foreground text-sm">
@@ -418,26 +377,17 @@ const Accounts = () => {
                             {account.name}
                           </Typography>
                           {account.isArchived ? (
-                            <span className="rounded-full border px-2 py-0.5 text-xs">
-                              Архив
-                            </span>
+                            <span className="rounded-full border px-2 py-0.5 text-xs">Архив</span>
                           ) : null}
                         </div>
-                        <Typography
-                          tag="p"
-                          className="text-muted-foreground text-sm"
-                        >
-                          {ACCOUNT_TYPE_LABELS[account.type]} • старт{" "}
-                          {currencyFormatter.format(account.openingBalance)}
+                        <Typography tag="p" className="text-muted-foreground text-sm">
+                          {ACCOUNT_TYPE_LABELS[account.type]} • старт {currencyFormatter.format(account.openingBalance)}
                         </Typography>
                       </div>
 
                       <div className="grid gap-3 sm:grid-cols-4 sm:items-center">
                         <div>
-                          <Typography
-                            tag="p"
-                            className="text-muted-foreground text-xs"
-                          >
+                          <Typography tag="p" className="text-muted-foreground text-xs">
                             Текущий баланс
                           </Typography>
                           <Typography tag="p" className="font-semibold">
@@ -445,39 +395,23 @@ const Accounts = () => {
                           </Typography>
                         </div>
                         <div>
-                          <Typography
-                            tag="p"
-                            className="text-muted-foreground text-xs"
-                          >
+                          <Typography tag="p" className="text-muted-foreground text-xs">
                             Доходы
                           </Typography>
-                          <Typography
-                            tag="p"
-                            className="font-semibold text-emerald-600"
-                          >
+                          <Typography tag="p" className="font-semibold text-emerald-600">
                             +{currencyFormatter.format(account.incomeTotal)}
                           </Typography>
                         </div>
                         <div>
-                          <Typography
-                            tag="p"
-                            className="text-muted-foreground text-xs"
-                          >
+                          <Typography tag="p" className="text-muted-foreground text-xs">
                             Расходы
                           </Typography>
-                          <Typography
-                            tag="p"
-                            className="font-semibold text-rose-600"
-                          >
+                          <Typography tag="p" className="font-semibold text-rose-600">
                             -{currencyFormatter.format(account.expenseTotal)}
                           </Typography>
                         </div>
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditingAccount(account)}
-                          >
+                          <Button variant="outline" size="sm" onClick={() => setEditingAccount(account)}>
                             Изменить
                           </Button>
                           <Button
@@ -498,21 +432,15 @@ const Accounts = () => {
                   <Typography tag="p" className="font-medium">
                     Пока нет счетов
                   </Typography>
-                  <Typography
-                    tag="p"
-                    className="text-muted-foreground mt-1 text-sm"
-                  >
-                    Создайте первый счет, чтобы привязать к нему доходы и
-                    расходы.
+                  <Typography tag="p" className="text-muted-foreground mt-1 text-sm">
+                    Создайте первый счет, чтобы привязать к нему доходы и расходы.
                   </Typography>
                 </div>
               )}
             </CardContent>
             <CardFooter className="justify-between">
               <Typography tag="p" className="text-muted-foreground text-sm">
-                {isFetching
-                  ? "Обновляем балансы..."
-                  : "Баланс считается на сервере"}
+                {isFetching ? "Обновляем балансы..." : "Баланс считается на сервере"}
               </Typography>
               <div className="flex items-center gap-2 text-sm">
                 <PiggyBankIcon className="h-4 w-4" />
@@ -524,11 +452,7 @@ const Accounts = () => {
           <Card className="py-5.5">
             <CardHeader className="flex flex-row items-start justify-between gap-3">
               <div className="space-y-1">
-                <Typography
-                  tag="h3"
-                  variant="title"
-                  className="text-xl font-medium"
-                >
+                <Typography tag="h3" variant="title" className="text-xl font-medium">
                   Перевод между счетами
                 </Typography>
                 <Typography tag="p" className="text-muted-foreground text-sm">
@@ -543,19 +467,13 @@ const Accounts = () => {
                   <Typography tag="p" className="font-medium">
                     Нужны минимум два активных счета
                   </Typography>
-                  <Typography
-                    tag="p"
-                    className="text-muted-foreground mt-1 text-sm"
-                  >
+                  <Typography tag="p" className="text-muted-foreground mt-1 text-sm">
                     Добавьте второй счет, чтобы делать переводы.
                   </Typography>
                 </div>
               ) : (
                 <Form {...transferForm}>
-                  <form
-                    onSubmit={transferForm.handleSubmit(onTransfer)}
-                    className="flex flex-col gap-4"
-                  >
+                  <form onSubmit={transferForm.handleSubmit(onTransfer)} className="flex flex-col gap-4">
                     <FormField
                       control={transferForm.control}
                       name="fromAccountId"
@@ -564,22 +482,15 @@ const Accounts = () => {
                           <FormLabel>Со счета</FormLabel>
                           <FormControl>
                             <Select
-                              value={
-                                field.value ? String(field.value) : undefined
-                              }
-                              onValueChange={(value) =>
-                                field.onChange(Number(value))
-                              }
+                              value={field.value ? String(field.value) : undefined}
+                              onValueChange={(value) => field.onChange(Number(value))}
                             >
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Выберите счет" />
                               </SelectTrigger>
                               <SelectContent>
                                 {activeAccounts.map((account) => (
-                                  <SelectItem
-                                    key={account.id}
-                                    value={String(account.id)}
-                                  >
+                                  <SelectItem key={account.id} value={String(account.id)}>
                                     {account.name}
                                   </SelectItem>
                                 ))}
@@ -598,22 +509,15 @@ const Accounts = () => {
                           <FormLabel>На счет</FormLabel>
                           <FormControl>
                             <Select
-                              value={
-                                field.value ? String(field.value) : undefined
-                              }
-                              onValueChange={(value) =>
-                                field.onChange(Number(value))
-                              }
+                              value={field.value ? String(field.value) : undefined}
+                              onValueChange={(value) => field.onChange(Number(value))}
                             >
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Выберите счет" />
                               </SelectTrigger>
                               <SelectContent>
                                 {activeAccounts.map((account) => (
-                                  <SelectItem
-                                    key={account.id}
-                                    value={String(account.id)}
-                                  >
+                                  <SelectItem key={account.id} value={String(account.id)}>
                                     {account.name}
                                   </SelectItem>
                                 ))}
@@ -662,20 +566,13 @@ const Accounts = () => {
                         <FormItem>
                           <FormLabel>Комментарий</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Например, пополнение подушки"
-                              {...field}
-                              value={field.value ?? ""}
-                            />
+                            <Input placeholder="Например, пополнение подушки" {...field} value={field.value ?? ""} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <Button
-                      type="submit"
-                      disabled={postTransferMutation.isPending}
-                    >
+                    <Button type="submit" disabled={postTransferMutation.isPending}>
                       Выполнить перевод
                     </Button>
                   </form>
@@ -697,10 +594,7 @@ const Accounts = () => {
             <DialogTitle>Редактировать счет</DialogTitle>
           </DialogHeader>
           <Form {...editForm}>
-            <form
-              onSubmit={editForm.handleSubmit(onEditAccount)}
-              className="flex flex-col gap-4"
-            >
+            <form onSubmit={editForm.handleSubmit(onEditAccount)} className="flex flex-col gap-4">
               <FormField
                 control={editForm.control}
                 name="name"
@@ -721,10 +615,7 @@ const Accounts = () => {
                   <FormItem>
                     <FormLabel>Тип</FormLabel>
                     <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
+                      <Select value={field.value} onValueChange={field.onChange}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Выберите тип" />
                         </SelectTrigger>
@@ -789,11 +680,7 @@ const Accounts = () => {
             <DialogClose asChild>
               <Button variant="outline">Отмена</Button>
             </DialogClose>
-            <Button
-              variant="destructive"
-              onClick={onArchiveAccount}
-              disabled={deleteAccountMutation.isPending}
-            >
+            <Button variant="destructive" onClick={onArchiveAccount} disabled={deleteAccountMutation.isPending}>
               Архивировать
             </Button>
           </DialogFooter>

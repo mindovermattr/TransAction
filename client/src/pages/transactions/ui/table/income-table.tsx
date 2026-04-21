@@ -1,49 +1,13 @@
-import {
-  useDeleteIncomeMutation,
-  useGetIncomeQuery,
-  usePatchIncomeMutation,
-} from "@/api/hooks/income";
+import { useDeleteIncomeMutation, useGetIncomeQuery, usePatchIncomeMutation } from "@/api/hooks/income";
 import { useGetAccountsQuery } from "@/api/hooks";
 import { queryClient } from "@/api/query-client";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { incomeGetSchema, incomePostSchema } from "@/schemas/income.schema";
@@ -95,10 +59,7 @@ const currencyFormatter = new Intl.NumberFormat("ru-RU", {
 const TABLE_MAX_HEIGHT = 560;
 const TABLE_HEAD_HEIGHT = 36;
 const TABLE_ROW_HEIGHT = 44;
-const PAGE_SIZE = Math.max(
-  1,
-  Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT),
-);
+const PAGE_SIZE = Math.max(1, Math.floor((TABLE_MAX_HEIGHT - TABLE_HEAD_HEIGHT) / TABLE_ROW_HEIGHT));
 
 const IncomeTable = () => {
   const [page, setPage] = useState(1);
@@ -110,19 +71,14 @@ const IncomeTable = () => {
     sortBy: "date",
     sortOrder: "desc",
   });
-  const [editingIncome, setEditingIncome] = useState<z.infer<
-    typeof incomeGetSchema
-  > | null>(null);
-  const [deletingIncome, setDeletingIncome] = useState<z.infer<
-    typeof incomeGetSchema
-  > | null>(null);
+  const [editingIncome, setEditingIncome] = useState<z.infer<typeof incomeGetSchema> | null>(null);
+  const [deletingIncome, setDeletingIncome] = useState<z.infer<typeof incomeGetSchema> | null>(null);
   const { data: accountsData } = useGetAccountsQuery();
 
   const patchIncomeMutation = usePatchIncomeMutation();
   const deleteIncomeMutation = useDeleteIncomeMutation();
   const accounts = useMemo(
-    () =>
-      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    () => (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
     [accountsData],
   );
 
@@ -132,13 +88,7 @@ const IncomeTable = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [
-    filters.dateFrom,
-    filters.dateTo,
-    filters.search,
-    sorting.sortBy,
-    sorting.sortOrder,
-  ]);
+  }, [filters.dateFrom, filters.dateTo, filters.search, sorting.sortBy, sorting.sortOrder]);
 
   useEffect(() => {
     if (!editingIncome) return;
@@ -158,26 +108,15 @@ const IncomeTable = () => {
 
     return {
       search: filters.search.trim() || undefined,
-      accountId:
-        filters.accountId === "ALL" ? undefined : Number(filters.accountId),
-      dateFrom: filters.dateFrom
-        ? new Date(filters.dateFrom).toISOString()
-        : undefined,
+      accountId: filters.accountId === "ALL" ? undefined : Number(filters.accountId),
+      dateFrom: filters.dateFrom ? new Date(filters.dateFrom).toISOString() : undefined,
       dateTo: dateTo?.toISOString(),
       page,
       limit: PAGE_SIZE,
       sortBy: sorting.sortBy,
       sortOrder: sorting.sortOrder,
     };
-  }, [
-    filters.accountId,
-    filters.dateFrom,
-    filters.dateTo,
-    filters.search,
-    page,
-    sorting.sortBy,
-    sorting.sortOrder,
-  ]);
+  }, [filters.accountId, filters.dateFrom, filters.dateTo, filters.search, page, sorting.sortBy, sorting.sortOrder]);
 
   const { data, isFetching } = useGetIncomeQuery(queryParams);
 
@@ -210,11 +149,7 @@ const IncomeTable = () => {
 
   const sortIcon = (sortBy: SortBy) => {
     if (sorting.sortBy !== sortBy) return null;
-    return sorting.sortOrder === "asc" ? (
-      <ArrowUpIcon className="h-4 w-4" />
-    ) : (
-      <ArrowDownIcon className="h-4 w-4" />
-    );
+    return sorting.sortOrder === "asc" ? <ArrowUpIcon className="h-4 w-4" /> : <ArrowDownIcon className="h-4 w-4" />;
   };
 
   const onEditSubmit = async (values: z.infer<typeof incomePostSchema>) => {
@@ -262,11 +197,7 @@ const IncomeTable = () => {
         <CardHeader className="flex flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
-              <Typography
-                tag="h3"
-                variant="title"
-                className="text-xl font-medium"
-              >
+              <Typography tag="h3" variant="title" className="text-xl font-medium">
                 Лента доходов
               </Typography>
               <Typography tag="p" className="text-muted-foreground text-sm">
@@ -295,9 +226,7 @@ const IncomeTable = () => {
             </div>
             <Select
               value={filters.accountId}
-              onValueChange={(value) =>
-                setFilters((prev) => ({ ...prev, accountId: value }))
-              }
+              onValueChange={(value) => setFilters((prev) => ({ ...prev, accountId: value }))}
             >
               <SelectTrigger className="bg-background w-full">
                 <SelectValue placeholder="Счет" />
@@ -325,9 +254,7 @@ const IncomeTable = () => {
             <Input
               type="date"
               value={filters.dateTo}
-              onChange={(event) =>
-                setFilters((prev) => ({ ...prev, dateTo: event.target.value }))
-              }
+              onChange={(event) => setFilters((prev) => ({ ...prev, dateTo: event.target.value }))}
               className="bg-background"
             />
           </div>
@@ -345,11 +272,7 @@ const IncomeTable = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1"
-                      onClick={() => toggleSort("name")}
-                    >
+                    <button type="button" className="inline-flex items-center gap-1" onClick={() => toggleSort("name")}>
                       Имя
                       {sortIcon("name")}
                     </button>
@@ -365,19 +288,13 @@ const IncomeTable = () => {
                     </button>
                   </TableHead>
                   <TableHead>
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1"
-                      onClick={() => toggleSort("date")}
-                    >
+                    <button type="button" className="inline-flex items-center gap-1" onClick={() => toggleSort("date")}>
                       Дата
                       {sortIcon("date")}
                     </button>
                   </TableHead>
                   <TableHead>Счет</TableHead>
-                  <TableHead className="w-[120px] text-right">
-                    Действия
-                  </TableHead>
+                  <TableHead className="w-[120px] text-right">Действия</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -385,27 +302,15 @@ const IncomeTable = () => {
                   incomes.map((income) => (
                     <TableRow key={income.id}>
                       <TableCell>{income.name}</TableCell>
-                      <TableCell>
-                        {currencyFormatter.format(income.price)}
-                      </TableCell>
-                      <TableCell>
-                        {income.date.toLocaleDateString("ru-RU")}
-                      </TableCell>
+                      <TableCell>{currencyFormatter.format(income.price)}</TableCell>
+                      <TableCell>{income.date.toLocaleDateString("ru-RU")}</TableCell>
                       <TableCell>{income.account.name}</TableCell>
                       <TableCell>
                         <div className="flex justify-end gap-1">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setEditingIncome(income)}
-                          >
+                          <Button variant="outline" size="icon" onClick={() => setEditingIncome(income)}>
                             <PencilIcon className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => setDeletingIncome(income)}
-                          >
+                          <Button variant="outline" size="icon" onClick={() => setDeletingIncome(income)}>
                             <Trash2Icon className="h-4 w-4 text-rose-500" />
                           </Button>
                         </div>
@@ -437,19 +342,10 @@ const IncomeTable = () => {
             >
               <ArrowLeftIcon />
             </Button>
-            <Typography
-              tag="p"
-              variant="default"
-              className="min-w-14 text-center"
-            >
+            <Typography tag="p" variant="default" className="min-w-14 text-center">
               {currentPage} / {Math.max(totalPages, 1)}
             </Typography>
-            <Button
-              onClick={() => setPage((prev) => prev + 1)}
-              disabled={!hasNext}
-              size="sm"
-              variant="outline"
-            >
+            <Button onClick={() => setPage((prev) => prev + 1)} disabled={!hasNext} size="sm" variant="outline">
               <ArrowRightIcon />
             </Button>
           </div>
@@ -467,10 +363,7 @@ const IncomeTable = () => {
             <DialogTitle>Редактировать доход</DialogTitle>
           </DialogHeader>
           <Form {...editForm}>
-            <form
-              onSubmit={editForm.handleSubmit(onEditSubmit)}
-              className="flex flex-col gap-4"
-            >
+            <form onSubmit={editForm.handleSubmit(onEditSubmit)} className="flex flex-col gap-4">
               <FormField
                 control={editForm.control}
                 name="name"
@@ -513,10 +406,7 @@ const IncomeTable = () => {
                         </SelectTrigger>
                         <SelectContent>
                           {accounts.map((account) => (
-                            <SelectItem
-                              key={account.id}
-                              value={String(account.id)}
-                            >
+                            <SelectItem key={account.id} value={String(account.id)}>
                               {account.name}
                             </SelectItem>
                           ))}
@@ -575,11 +465,7 @@ const IncomeTable = () => {
             <DialogClose asChild>
               <Button variant="outline">Отмена</Button>
             </DialogClose>
-            <Button
-              variant="destructive"
-              onClick={onDelete}
-              disabled={deleteIncomeMutation.isPending}
-            >
+            <Button variant="destructive" onClick={onDelete} disabled={deleteIncomeMutation.isPending}>
               Удалить
             </Button>
           </DialogFooter>

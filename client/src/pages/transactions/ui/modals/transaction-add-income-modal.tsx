@@ -11,22 +11,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { incomePostSchema } from "@/schemas/income.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,8 +41,7 @@ const TransactionAddIncomeModal = ({
   const [open, setIsOpen] = useState(false);
   const { data: accountsData } = useGetAccountsQuery();
   const accounts = useMemo(
-    () =>
-      (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
+    () => (accountsData ?? []).map((account) => accountGetSchema.parse(account)),
     [accountsData],
   );
 
@@ -92,21 +78,14 @@ const TransactionAddIncomeModal = ({
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant={triggerVariant}
-          size={triggerSize}
-          className={triggerClassName}
-        >
+        <Button variant={triggerVariant} size={triggerSize} className={triggerClassName}>
           <TriggerIcon />
           {triggerLabel ? <span>{triggerLabel}</span> : null}
         </Button>
       </DialogTrigger>
       <DialogContent showCloseButton={false}>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(submitHandler)}
-            className="flex flex-col gap-4"
-          >
+          <form onSubmit={form.handleSubmit(submitHandler)} className="flex flex-col gap-4">
             <DialogHeader>
               <DialogTitle>Добавить доход</DialogTitle>
             </DialogHeader>
@@ -170,10 +149,7 @@ const TransactionAddIncomeModal = ({
                       </SelectTrigger>
                       <SelectContent>
                         {accounts.map((account) => (
-                          <SelectItem
-                            key={account.id}
-                            value={String(account.id)}
-                          >
+                          <SelectItem key={account.id} value={String(account.id)}>
                             {account.name}
                           </SelectItem>
                         ))}
