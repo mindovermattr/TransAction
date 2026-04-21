@@ -3,6 +3,7 @@ import {
   DoorOpenIcon,
   LandmarkIcon,
   LayoutDashboardIcon,
+  RepeatIcon,
   TrendingUpIcon,
   UserIcon,
 } from "lucide-react";
@@ -49,6 +50,11 @@ const data = {
       name: "Счета",
       url: ROUTES.ACCOUNTS,
       icon: LandmarkIcon,
+    },
+    {
+      name: "Подписки",
+      url: ROUTES.SUBSCRIPTIONS,
+      icon: RepeatIcon,
     },
   ],
 };
