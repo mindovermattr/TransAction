@@ -69,10 +69,16 @@ const router = createBrowserRouter([
             }),
           },
           {
+            path: ROUTES.SUBSCRIPTIONS,
+            lazy: async () => ({
+              Component: (await import("@/pages/subscriptions/subscriptions")).Subscriptions,
+          },
+          {
             path: ROUTES.BUDGETS,
             lazy: async () => ({
               Component: (await import("@/pages/budgets/budgets")).Budgets,
             }),
+           }
           },
         ],
       },

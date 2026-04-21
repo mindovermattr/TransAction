@@ -3,6 +3,7 @@ import {
   DoorOpenIcon,
   LandmarkIcon,
   LayoutDashboardIcon,
+  RepeatIcon,
   PiggyBankIcon,
   TrendingUpIcon,
   UserIcon,
@@ -50,6 +51,11 @@ const data = {
       name: "Счета",
       url: ROUTES.ACCOUNTS,
       icon: LandmarkIcon,
+    },
+    {
+      name: "Подписки",
+      url: ROUTES.SUBSCRIPTIONS,
+      icon: RepeatIcon,
     },
     {
       name: "Бюджеты",
