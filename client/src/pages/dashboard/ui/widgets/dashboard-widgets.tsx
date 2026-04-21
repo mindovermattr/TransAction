@@ -6,19 +6,32 @@ import {
   formatDashboardDateLabel,
   formatDashboardPercentDelta,
 } from "../dashboard.formatters";
-import { PiggyBankIcon, TrendingDownIcon, TrendingUpIcon, Wallet2Icon } from "lucide-react";
+import { TrendingDownIcon, TrendingUpIcon, Wallet2Icon } from "lucide-react";
+
+const getBalanceDetail = (balance: number) => {
+  if (balance > 0) {
+    return `${dashboardCurrencyFormatter.format(balance)} осталось после трат в этом месяце`;
+  }
+
+  if (balance < 0) {
+    return `${dashboardCurrencyFormatter.format(Math.abs(balance))} перерасхода в этом месяце`;
+  }
+
+  return "В этом месяце вышли в ноль после всех трат";
+};
 
 const DashboardWidgets = ({ data }: { data?: DashboardOverviewResponse }) => {
   const topCategory = data?.insights.topCategory;
   const peakSpendDay = data?.insights.peakSpendDay;
+  const balance = data?.totals.balance ?? 0;
 
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <DashboardKpiCard
           title="Баланс месяца"
-          value={dashboardCurrencyFormatter.format(data?.totals.balance ?? 0)}
-          detail={`${data?.totals.savingsRate ?? 0}% сбережений от дохода`}
+          value={dashboardCurrencyFormatter.format(balance)}
+          detail={getBalanceDetail(balance)}
           icon={Wallet2Icon}
           tone="balance"
         />
@@ -35,13 +48,6 @@ const DashboardWidgets = ({ data }: { data?: DashboardOverviewResponse }) => {
           detail={`${formatDashboardPercentDelta(data?.comparisons.expensesDeltaPercent ?? 0)} к прошлому месяцу`}
           icon={TrendingDownIcon}
           tone="expense"
-        />
-        <DashboardKpiCard
-          title="Savings rate"
-          value={`${data?.totals.savingsRate ?? 0}%`}
-          detail="Часть дохода, которая осталась после расходов"
-          icon={PiggyBankIcon}
-          tone="savings"
         />
       </div>
 

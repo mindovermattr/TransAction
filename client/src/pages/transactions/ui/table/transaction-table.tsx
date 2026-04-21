@@ -273,6 +273,7 @@ const TransactionTable = () => {
       queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
       queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
     ]);
 
     setEditingTransaction(null);
@@ -292,6 +293,7 @@ const TransactionTable = () => {
       queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
       queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
     ]);
 
     setDeletingTransaction(null);

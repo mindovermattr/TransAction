@@ -248,6 +248,7 @@ const createAccount = async (
   user: Omit<User, "password">,
   payload: CreateAccountDTO,
 ) => {
+  console.log(user);
   const account = await prisma.account.create({
     data: {
       name: payload.name,

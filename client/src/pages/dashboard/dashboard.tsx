@@ -104,6 +104,7 @@ export const Dashboard = () => {
         cashflowPoints={cashflowPoints}
         categoryPoints={categoryPoints}
         periodCompare={periodCompare}
+        totalExpenses={data?.totals.expenses ?? 0}
         weekdayTotals={data?.weekdayTotals ?? []}
       />
 

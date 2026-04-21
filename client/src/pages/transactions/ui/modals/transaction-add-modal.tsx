@@ -64,6 +64,7 @@ const TransactionAddModal = ({
           queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
           queryClient.invalidateQueries({ queryKey: ["accounts"] }),
           queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+          queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
         ]);
         setIsOpen(false);
         form.reset();

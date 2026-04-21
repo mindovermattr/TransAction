@@ -42,6 +42,7 @@ router.post(
       const account = await createAccount(user, body);
       res.json(account);
     } catch (error: unknown) {
+      console.log(error);
       next(error);
     }
   },

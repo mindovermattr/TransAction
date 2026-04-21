@@ -19,11 +19,6 @@ const KPI_TONE_STYLES = {
     iconWrap: "border-border bg-muted/35 shadow-sm",
     icon: "text-rose-600 ",
   },
-  savings: {
-    card: "border-border bg-card shadow-sm",
-    iconWrap: "border-border bg-muted/35 shadow-sm",
-    icon: "text-sky-600 ",
-  },
 } as const;
 
 const DashboardKpiCard = ({

@@ -167,6 +167,7 @@ const IncomeTable = () => {
       queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
       queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
     ]);
 
     setEditingIncome(null);
@@ -186,6 +187,7 @@ const IncomeTable = () => {
       queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
       queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
     ]);
 
     setDeletingIncome(null);

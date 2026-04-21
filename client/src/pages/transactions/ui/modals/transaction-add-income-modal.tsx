@@ -63,6 +63,7 @@ const TransactionAddIncomeModal = ({
           queryClient.invalidateQueries({ queryKey: ["income", "summary"] }),
           queryClient.invalidateQueries({ queryKey: ["accounts"] }),
           queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+          queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
         ]);
         setIsOpen(false);
         form.reset();
