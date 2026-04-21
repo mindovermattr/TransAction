@@ -48,3 +48,7 @@ export const subscriptionFormSchema = subscriptionSchema
     accountId: z.preprocess((value) => Number(value), z.number().int().positive("Выберите счёт")),
     isActive: z.preprocess((value) => value === true || value === "true", z.boolean()),
   });
+
+export type SubscriptionRecord = z.infer<typeof subscriptionSchema>;
+export type SubscriptionFormInput = z.input<typeof subscriptionFormSchema>;
+export type SubscriptionFormValues = z.output<typeof subscriptionFormSchema>;

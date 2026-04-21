@@ -3,7 +3,7 @@ import { accountReferenceSchema } from "@/schemas/account.schema";
 import {
   SUBSCRIPTION_BILLING_CYCLE_LABELS,
   SUBSCRIPTION_CATEGORY_LABELS,
-  subscriptionSchema,
+  type SubscriptionRecord,
 } from "@/schemas/subscription.schema";
 import z from "zod";
 
@@ -26,7 +26,6 @@ const SUBSCRIPTION_CATEGORY_COLORS = [
   "var(--color-chart-1)",
 ];
 
-type SubscriptionRecord = z.infer<typeof subscriptionSchema>;
 type SubscriptionAccountOption = z.infer<typeof accountReferenceSchema>;
 
 type DueStatus = {
@@ -451,4 +450,21 @@ export {
   subscriptionCurrencyFormatter,
   toDateInputValue,
 };
-export type { DueStatus, SubscriptionAccountOption, SubscriptionRecord };
+type UpcomingSubscription = ReturnType<typeof getUpcomingSubscriptions>[number];
+type UpcomingSubscriptionGroup = ReturnType<typeof groupUpcomingSubscriptions>[number];
+type CategoryDistributionItem = ReturnType<typeof getCategoryDistribution>[number];
+type RecurringLoadItem = ReturnType<typeof getRecurringLoadByAccount>[number];
+type StatusDistribution = ReturnType<typeof getStatusDistribution>;
+type SubscriptionsSummary = ReturnType<typeof getSubscriptionsSummary>;
+
+export type {
+  CategoryDistributionItem,
+  DueStatus,
+  RecurringLoadItem,
+  StatusDistribution,
+  SubscriptionAccountOption,
+  SubscriptionRecord,
+  SubscriptionsSummary,
+  UpcomingSubscription,
+  UpcomingSubscriptionGroup,
+};
