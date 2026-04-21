@@ -6,6 +6,7 @@ import passport from "passport";
 import accountsRouter from "./controllers/accounts.controller";
 import analyticsRouter from "./controllers/analytics.controller";
 import authRouter from "./controllers/auth.controller";
+import budgetsRouter from "./controllers/budgets.controller";
 import dashboardRouter from "./controllers/dashboard.controller";
 import incomeRouter from "./controllers/income.controller";
 import transfersRouter from "./controllers/transfers.controller";
@@ -59,6 +60,7 @@ app.get("/health", (_req, res) => {
 app.use("/auth", authRateLimiter, authRouter);
 app.use("/users", jwtMiddleware, userRouter);
 app.use("/accounts", jwtMiddleware, accountsRouter);
+app.use("/budgets", jwtMiddleware, budgetsRouter);
 app.use("/transfers", jwtMiddleware, transfersRouter);
 app.use("/transactions", jwtMiddleware, transactionRouter);
 app.use("/income", jwtMiddleware, incomeRouter);

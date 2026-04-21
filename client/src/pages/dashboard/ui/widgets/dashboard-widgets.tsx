@@ -20,10 +20,50 @@ const getBalanceDetail = (balance: number) => {
   return "В этом месяце вышли в ноль после всех трат";
 };
 
+const getBudgetInsight = (data?: DashboardOverviewResponse["budgetAlerts"]) => {
+  if (!data) {
+    return {
+      value: "—",
+      hint: "Добавьте бюджеты, чтобы видеть перерасход заранее",
+    };
+  }
+
+  if (data.activeCount === 0) {
+    return {
+      value: "Не настроены",
+      hint: "Добавьте бюджеты, чтобы видеть перерасход заранее",
+    };
+  }
+
+  if (data.overCount > 0) {
+    return {
+      value: `${data.overCount} сверх лимита`,
+      hint: data.topOverBudgetTag
+        ? `${formatDashboardCategoryLabel(data.topOverBudgetTag)} • перерасход ${dashboardCurrencyFormatter.format(
+            data.topOverBudgetAmount,
+          )}`
+        : "Нужно пересмотреть лимиты и траты",
+    };
+  }
+
+  if (data.warningCount > 0) {
+    return {
+      value: `${data.warningCount} близко к лимиту`,
+      hint: "Самое время проверить категории риска до конца месяца",
+    };
+  }
+
+  return {
+    value: "Под контролем",
+    hint: "В этом месяце бюджеты пока держатся в рамках лимитов",
+  };
+};
+
 const DashboardWidgets = ({ data }: { data?: DashboardOverviewResponse }) => {
   const topCategory = data?.insights.topCategory;
   const peakSpendDay = data?.insights.peakSpendDay;
   const balance = data?.totals.balance ?? 0;
+  const budgetInsight = getBudgetInsight(data?.budgetAlerts);
 
   return (
     <>
@@ -70,9 +110,9 @@ const DashboardWidgets = ({ data }: { data?: DashboardOverviewResponse }) => {
             }
           />
           <DashboardInsightCard
-            title="Изменение трат"
-            value={formatDashboardPercentDelta(data?.comparisons.expensesDeltaPercent ?? 0)}
-            hint={`Было ${dashboardCurrencyFormatter.format(data?.comparisons.previousExpenses ?? 0)} в прошлом месяце`}
+            title="Бюджеты"
+            value={budgetInsight.value}
+            hint={budgetInsight.hint}
           />
           <DashboardInsightCard
             title="Пиковый день"

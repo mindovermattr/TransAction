@@ -68,6 +68,12 @@ const router = createBrowserRouter([
               Component: (await import("@/pages/accounts/accounts")).Accounts,
             }),
           },
+          {
+            path: ROUTES.BUDGETS,
+            lazy: async () => ({
+              Component: (await import("@/pages/budgets/budgets")).Budgets,
+            }),
+          },
         ],
       },
       //other routes

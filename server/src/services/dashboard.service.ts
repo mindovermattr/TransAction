@@ -2,6 +2,7 @@ import { $Enums } from "@prisma/client";
 import { getDateRange } from "../helpers/getDateRange";
 import type { User } from "../models/user/user.entity";
 import { prisma } from "../prisma";
+import { getBudgetAlerts } from "./budget.service";
 
 const WEEKDAY_LABELS = [
   "Понедельник",
@@ -54,6 +55,7 @@ const getDashboardOverview = async (user: Omit<User, "password">) => {
     currentMonthTransactions,
     recentTransactions,
     recentIncome,
+    budgetAlerts,
   ] = await Promise.all([
     prisma.transaction.aggregate({
       where: {
@@ -160,6 +162,7 @@ const getDashboardOverview = async (user: Omit<User, "password">) => {
         date: true,
       },
     }),
+    getBudgetAlerts(user.id),
   ]);
 
   const incomeTotal = currentIncome._sum.price ?? 0;
@@ -287,6 +290,7 @@ const getDashboardOverview = async (user: Omit<User, "password">) => {
       incomeDeltaPercent: calculateDeltaPercent(incomeTotal, previousIncomeTotal),
       expensesDeltaPercent: calculateDeltaPercent(expensesTotal, previousExpensesTotal),
     },
+    budgetAlerts,
     insights: {
       topCategory: topCategory
         ? {
