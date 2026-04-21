@@ -1,1 +1,1 @@
-export { BudgetPageHeaderActions } from "./budget-page-header-actions";
+export { BudgetPageHeaderActions, BudgetPageStatusBadge } from "./budget-page-header-actions";

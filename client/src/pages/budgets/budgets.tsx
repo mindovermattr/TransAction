@@ -31,6 +31,7 @@ import {
   BudgetEmptyState,
   BudgetMobileList,
   BudgetPageHeaderActions,
+  BudgetPageStatusBadge,
   BudgetSummaryCards,
   BudgetTable,
   BudgetVsActualChartCard,
@@ -195,9 +196,9 @@ const Budgets = () => {
         <AppPageHeader
           title="Бюджеты"
           description="Лимиты по категориям на выбранный месяц"
+          titleSlot={<BudgetPageStatusBadge loadingError />}
           rightSlot={
             <BudgetPageHeaderActions
-              loadingError
               selectedMonth={selectedMonth}
               onMonthChange={setSelectedMonth}
               onCreateClick={() => setCreateOpen(true)}
@@ -228,9 +229,9 @@ const Budgets = () => {
         <AppPageHeader
           title="Бюджеты"
           description="Лимиты по категориям на выбранный месяц"
+          titleSlot={<BudgetPageStatusBadge isFetching={isFetching} />}
           rightSlot={
             <BudgetPageHeaderActions
-              isFetching={isFetching}
               selectedMonth={selectedMonth}
               onMonthChange={setSelectedMonth}
               onCreateClick={() => setCreateOpen(true)}
