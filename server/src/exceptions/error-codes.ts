@@ -16,6 +16,10 @@ const ERROR_CODE_DICTIONARY = {
   ACCOUNT_NOT_FOUND: "account.not_found",
   ACCOUNT_ARCHIVED: "account.archived",
   LAST_ACTIVE_ACCOUNT: "account.last_active",
+  INVALID_BUDGET_ID: "budget.invalid_id",
+  INVALID_BUDGET_MONTH: "budget.invalid_month",
+  BUDGET_ALREADY_EXISTS: "budget.already_exists",
+  BUDGET_NOT_FOUND: "budget.not_found",
   INVALID_TRANSFER_ACCOUNTS: "transfer.invalid_accounts",
   INTERNAL_ERROR: "system.internal_error",
 } as const;

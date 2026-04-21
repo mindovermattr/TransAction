@@ -4,6 +4,7 @@ import {
   LandmarkIcon,
   LayoutDashboardIcon,
   RepeatIcon,
+  PiggyBankIcon,
   TrendingUpIcon,
   UserIcon,
 } from "lucide-react";
@@ -55,6 +56,11 @@ const data = {
       name: "Подписки",
       url: ROUTES.SUBSCRIPTIONS,
       icon: RepeatIcon,
+    },
+    {
+      name: "Бюджеты",
+      url: ROUTES.BUDGETS,
+      icon: PiggyBankIcon,
     },
   ],
 };

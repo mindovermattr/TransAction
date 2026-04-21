@@ -1,9 +1,9 @@
 import { useGetDashboardOverviewQuery } from "@/api/hooks/dashboard";
 import { AppPageHeader } from "@/components/ui/app-page-header";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PageActivityBadge } from "@/components/ui/page-activity-badge";
 import { Typography } from "@/components/ui/typography";
-import { ArrowDownCircleIcon, BadgePlusIcon, Circle } from "lucide-react";
+import { ArrowDownCircleIcon, BadgePlusIcon } from "lucide-react";
 import { useMemo } from "react";
 import { TransactionAddIncomeModal } from "../transactions/ui/modals/transaction-add-income-modal";
 import { TransactionAddModal } from "../transactions/ui/modals/transaction-add-modal";
@@ -46,18 +46,7 @@ export const Dashboard = () => {
       <AppPageHeader
         title="Дашборд"
         description="Главная сводка по доходам, расходам и динамике месяца"
-        rightSlot={
-          <Badge variant="outline" className="gap-1.5 self-start rounded-full px-3 py-1">
-            <Circle
-              className={
-                isFetching
-                  ? "h-2.5 w-2.5 fill-amber-500 text-amber-500"
-                  : "h-2.5 w-2.5 fill-emerald-500 text-emerald-500"
-              }
-            />
-            {isFetching ? "Обновление" : "Актуально"}
-          </Badge>
-        }
+        rightSlot={<PageActivityBadge state={isFetching ? "fetching" : "idle"} />}
       />
 
       <section className="bg-card rounded-xl border p-4 lg:p-5">

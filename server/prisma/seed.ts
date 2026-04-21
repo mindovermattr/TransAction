@@ -78,16 +78,16 @@ function randomInt(min: number, max: number): number {
 }
 
 function startOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1, 0, 0, 0, 0));
 }
 
 function endOfMonth(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0, 23, 59, 59, 999);
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0, 23, 59, 59, 999));
 }
 
 function addDays(date: Date, days: number): Date {
   const d = new Date(date);
-  d.setDate(d.getDate() + days);
+  d.setUTCDate(d.getUTCDate() + days);
   return d;
 }
 
@@ -97,7 +97,7 @@ function generateMonthTransactions(
   userId: number,
   accountIds: number[],
 ): Prisma.TransactionCreateManyInput[] {
-  const daysInMonth = endDate.getDate();
+  const daysInMonth = endDate.getUTCDate();
   const count = randomInt(24, 40);
 
   return Array.from({ length: count }, (_, i) => {
@@ -159,7 +159,7 @@ async function main() {
   const now = new Date();
   const currentMonthStart = startOfMonth(now);
   const previousMonthStart = startOfMonth(
-    new Date(now.getFullYear(), now.getMonth() - 1, 1),
+    new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 1)),
   );
   const currentMonthEnd = endOfMonth(now);
 
@@ -184,6 +184,12 @@ async function main() {
   });
 
   await prisma.transfer.deleteMany({
+    where: {
+      userId: seededUser.id,
+    },
+  });
+
+  await prisma.budget.deleteMany({
     where: {
       userId: seededUser.id,
     },
@@ -257,8 +263,70 @@ async function main() {
     ],
   });
 
+  const currentMonthSpendByTag = (await prisma.transaction.groupBy({
+    by: ["tag"],
+    where: {
+      userId: seededUser.id,
+      date: {
+        gte: currentMonthStart,
+        lte: currentMonthEnd,
+      },
+    },
+    _sum: {
+      price: true,
+    },
+  })) as Array<{
+    tag: TransactionTag;
+    _sum: {
+      price: number | null;
+    };
+  }>;
+
+  const spendByTag = new Map(
+    currentMonthSpendByTag.map((entry) => [
+      entry.tag,
+      entry._sum.price ?? 0,
+    ]),
+  );
+
+  const budgetPlan: Array<{ tag: TransactionTag; multiplier: number }> = [
+    { tag: TransactionTag.FOOD, multiplier: 1.5 },
+    { tag: TransactionTag.HOUSING, multiplier: 0.75 },
+    { tag: TransactionTag.TRANSPORT, multiplier: 1.05 },
+    { tag: TransactionTag.JOY, multiplier: 1.3 },
+    { tag: TransactionTag.OTHER, multiplier: 0.9 },
+  ];
+
+  const minimumSpendByTag = new Map<TransactionTag, number>([
+    [TransactionTag.FOOD, 18_000],
+    [TransactionTag.HOUSING, 24_000],
+    [TransactionTag.TRANSPORT, 12_000],
+    [TransactionTag.JOY, 9_000],
+    [TransactionTag.OTHER, 8_000],
+  ]);
+
+  await prisma.budget.createMany({
+    data: budgetPlan.map((plan) => {
+      const baseSpent = Math.max(
+        spendByTag.get(plan.tag) ?? 0,
+        minimumSpendByTag.get(plan.tag) ?? 10_000,
+      );
+
+      return {
+        userId: seededUser.id,
+        monthStart: currentMonthStart,
+        tag: plan.tag,
+        limit: Math.max(
+          1_000,
+          Math.round((baseSpent * plan.multiplier) / 100) * 100,
+        ),
+        isArchived: false,
+      };
+    }),
+  });
+
   console.log(
-    `Created ${accounts.length} accounts, ${transactionData.length} transactions and ${incomeData.length} incomes for ${seededUser.email}`,
+    `Created ${accounts.length} accounts, ${transactionData.length} transactions, ${incomeData.length} incomes and budgets for ${seededUser.email}`,
   );
   console.log(`Seeding finished.`);
 }

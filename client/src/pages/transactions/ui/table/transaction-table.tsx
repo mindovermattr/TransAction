@@ -273,6 +273,7 @@ const TransactionTable = () => {
       queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
       queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+      queryClient.invalidateQueries({ queryKey: ["budgets"] }),
       queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
     ]);
 
@@ -293,6 +294,7 @@ const TransactionTable = () => {
       queryClient.invalidateQueries({ queryKey: ["transactions/summary"] }),
       queryClient.invalidateQueries({ queryKey: ["accounts"] }),
       queryClient.invalidateQueries({ queryKey: ["analytics"] }),
+      queryClient.invalidateQueries({ queryKey: ["budgets"] }),
       queryClient.invalidateQueries({ queryKey: ["dashboard", "overview"] }),
     ]);
 

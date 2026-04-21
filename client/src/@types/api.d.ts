@@ -8,6 +8,8 @@ type AccountType = "cash" | "debit" | "savings" | "credit";
 
 type TransactionTags = "JOY" | "TRANSPORT" | "FOOD" | "EDUCATION" | "HOUSING" | "OTHER";
 
+type BudgetStatus = "ok" | "warning" | "over";
+
 interface AccountReference {
   id: number;
   name: string;
@@ -74,6 +76,34 @@ interface Transfer {
   toAccount: AccountReference;
 }
 
+interface Budget {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  month: string;
+  tag: TransactionTags;
+  limit: number;
+  isArchived: boolean;
+  userId: number;
+  spent: number;
+  remaining: number;
+  progressPercent: number;
+  status: BudgetStatus;
+}
+
+interface BudgetsResponse {
+  month: string;
+  summary: {
+    totalLimit: number;
+    totalSpent: number;
+    totalRemaining: number;
+    overCount: number;
+    warningCount: number;
+    activeCount: number;
+  };
+  items: Budget[];
+}
+
 interface DashboardOverviewResponse {
   period: "month";
   totals: {
@@ -87,6 +117,13 @@ interface DashboardOverviewResponse {
     previousExpenses: number;
     incomeDeltaPercent: number;
     expensesDeltaPercent: number;
+  };
+  budgetAlerts: {
+    activeCount: number;
+    overCount: number;
+    warningCount: number;
+    topOverBudgetTag: TransactionTags | null;
+    topOverBudgetAmount: number;
   };
   insights: {
     topCategory: {

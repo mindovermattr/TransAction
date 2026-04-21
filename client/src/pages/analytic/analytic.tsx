@@ -3,10 +3,9 @@ import { useGetBalanceOverviewQuery } from "@/api/hooks/expenses/useGetBalanceOv
 import { useGetExpensesByCategoryQuery } from "@/api/hooks/expenses/useGetExpensesByCategoryQuery";
 import { useGetExpensesTrendQuery } from "@/api/hooks/expenses/useGetExpensesTrendQuery";
 import { AppPageHeader } from "@/components/ui/app-page-header";
-import { Badge } from "@/components/ui/badge";
+import { PageActivityBadge } from "@/components/ui/page-activity-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
-import { Circle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CategoryPieCard } from "./ui/category-pie-card";
 import { ExpensesTrendCard } from "./ui/expenses-trend-card";
@@ -139,14 +138,7 @@ const Analytic = () => {
         description={`Обзор расходов за ${PERIOD_DESCRIPTION_MAP[period]}`}
         rightSlot={
           <>
-            <Badge variant="outline" className="gap-1.5 self-start rounded-full px-3 py-1">
-              <Circle
-                className={`h-2.5 w-2.5 ${
-                  isPageRefreshing ? "fill-amber-500 text-amber-500" : "fill-emerald-500 text-emerald-500"
-                }`}
-              />
-              {isPageRefreshing ? "Обновление" : "Актуально"}
-            </Badge>
+            <PageActivityBadge state={isPageRefreshing ? "fetching" : "idle"} />
 
             <div className="bg-muted inline-flex w-full gap-1 rounded-lg p-1 sm:w-auto">
               {PERIOD_OPTIONS.map((option) => (

@@ -29,6 +29,7 @@ model User {
   name         String
   password     String
   accounts     Account[]
+  budgets      Budget[]
   transactions Transaction[]
   incomes      Income[]
   transfers    Transfer[]
@@ -53,6 +54,24 @@ model Account {
   incomingTransfers Transfer[] @relation("TransferToAccount")
 
   @@index([userId])
+}
+
+model Budget {
+  id         Int            @id @default(autoincrement())
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  monthStart DateTime       @map("month_start")
+  tag        TransactionTag
+  limit      Int
+  isArchived Boolean        @default(false) @map("is_archived")
+
+  user       User           @relation(fields: [userId], references: [id])
+  userId     Int            @map("user_id")
+
+  @@index([userId])
+  @@index([userId, monthStart])
+  @@index([userId, tag, monthStart, isArchived])
 }
 
 model Transaction {
