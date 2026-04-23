@@ -1,11 +1,5 @@
 export { BUDGET_TAG_LABELS } from "./budget.constants";
-export {
-  currentMonthValue,
-  formatMonthLabel,
-  getBudgetMonthOptions,
-  getMonthDate,
-  shiftMonthValue,
-} from "./budget-month";
+export { getBudgetMonthOptions } from "./budget-month";
 export type { BudgetFormInput, BudgetFormValues, BudgetMonthOption } from "./budget.types";
 export {
   getApiErrorMessage,

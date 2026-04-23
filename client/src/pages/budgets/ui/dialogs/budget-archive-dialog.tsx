@@ -9,8 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Typography } from "@/components/ui/typography";
+import { formatMonthLabel } from "@/lib/date";
 import { rubCurrencyFormatter } from "@/lib/formatters";
-import { BUDGET_TAG_LABELS, formatMonthLabel } from "../../lib";
+import { BUDGET_TAG_LABELS } from "../../lib";
 
 const BudgetArchiveDialog = ({
   budget,

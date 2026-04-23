@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
-import { toDateInputValue } from "@/lib/date";
+import { endOfDay, toDateInputValue } from "@/lib/date";
 import { rubCurrencyFormatter } from "@/lib/formatters";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { TRANSACTION_TAGS, transactionGetSchema, transactionPostSchema } from "@/schemas/transaction.schema";
@@ -116,10 +116,7 @@ const normalizeFilters = (filters: TransactionFiltersState) => {
 
   if (filters.datePreset === "custom") {
     const from = filters.dateFrom ? new Date(filters.dateFrom) : undefined;
-    const to = filters.dateTo ? new Date(filters.dateTo) : undefined;
-    if (to) {
-      to.setHours(23, 59, 59, 999);
-    }
+    const to = filters.dateTo ? endOfDay(new Date(filters.dateTo)) : undefined;
 
     return {
       search: filters.search.trim(),

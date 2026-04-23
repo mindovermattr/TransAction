@@ -10,12 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
+import { currentMonthValue } from "@/lib/date";
 import { budgetsResponseSchema, budgetPostSchema } from "@/schemas/budget.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  currentMonthValue,
   getApiErrorMessage,
   getBudgetAlertCard,
   getBudgetMonthOptions,

@@ -5,16 +5,11 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Typography } from "@/components/ui/typography";
+import { formatMonthLabel } from "@/lib/date";
 import { rubCurrencyFormatter } from "@/lib/formatters";
 import { TRANSACTION_TAGS } from "@/schemas/transaction.schema";
 import type { UseFormReturn } from "react-hook-form";
-import {
-  BUDGET_TAG_LABELS,
-  formatMonthLabel,
-  type BudgetFormInput,
-  type BudgetFormValues,
-  type BudgetMonthOption,
-} from "../../lib";
+import { BUDGET_TAG_LABELS, type BudgetFormInput, type BudgetFormValues, type BudgetMonthOption } from "../../lib";
 
 const BudgetEditorDialogForm = ({
   form,

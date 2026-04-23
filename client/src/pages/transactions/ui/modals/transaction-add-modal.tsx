@@ -14,6 +14,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toDateInputValue } from "@/lib/date";
 import { TRANSACTION_TAGS, transactionPostSchema } from "@/schemas/transaction.schema";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,7 +50,7 @@ const TransactionAddModal = ({
     resolver: zodResolver(transactionPostSchema),
     defaultValues: {
       name: "",
-      date: new Date().toISOString().slice(0, 10),
+      date: toDateInputValue(new Date()),
       price: undefined,
       tag: "OTHER",
       accountId: accounts[0]?.id ?? 0,

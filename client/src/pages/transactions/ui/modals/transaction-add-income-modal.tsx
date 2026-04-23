@@ -14,6 +14,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toDateInputValue } from "@/lib/date";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { incomePostSchema } from "@/schemas/income.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,7 +50,7 @@ const TransactionAddIncomeModal = ({
     resolver: zodResolver(incomePostSchema),
     defaultValues: {
       name: "",
-      date: new Date().toISOString().slice(0, 10),
+      date: toDateInputValue(new Date()),
       price: undefined,
       accountId: accounts[0]?.id ?? 0,
     },

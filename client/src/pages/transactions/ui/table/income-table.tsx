@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
-import { toDateInputValue } from "@/lib/date";
+import { endOfDay, toDateInputValue } from "@/lib/date";
 import { rubCurrencyFormatter } from "@/lib/formatters";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { incomeGetSchema, incomePostSchema } from "@/schemas/income.schema";
@@ -92,10 +92,7 @@ const IncomeTable = () => {
   }, [editForm, editingIncome]);
 
   const queryParams = useMemo(() => {
-    const dateTo = filters.dateTo ? new Date(filters.dateTo) : undefined;
-    if (dateTo) {
-      dateTo.setHours(23, 59, 59, 999);
-    }
+    const dateTo = filters.dateTo ? endOfDay(new Date(filters.dateTo)) : undefined;
 
     return {
       search: filters.search.trim() || undefined,

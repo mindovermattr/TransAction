@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
+import { currentMonthValue, formatMonthLabel, shiftMonthValue } from "@/lib/date";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { currentMonthValue, formatMonthLabel, shiftMonthValue } from "../../lib";
 
 const BudgetMonthSelector = ({ value, onChange }: { value: string; onChange: (value: string) => void }) => {
   const isCurrentMonth = value === currentMonthValue;
