@@ -1,12 +1,6 @@
 import { getBudgetProgressBarClassName } from "../../lib";
 
-const BudgetProgressBar = ({
-  progressPercent,
-  status,
-}: {
-  progressPercent: number;
-  status: BudgetStatus;
-}) => (
+const BudgetProgressBar = ({ progressPercent, status }: { progressPercent: number; status: BudgetStatus }) => (
   <div className="space-y-1.5">
     <div className="bg-muted h-2.5 overflow-hidden rounded-full">
       <div

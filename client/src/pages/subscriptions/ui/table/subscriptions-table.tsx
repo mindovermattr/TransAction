@@ -4,6 +4,7 @@ import { SemanticStatusBadge } from "@/components/ui/semantic-status-badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
+import { formatRubCurrency } from "@/lib/formatters";
 import { ACCOUNT_TYPE_LABELS } from "@/schemas/account.schema";
 import {
   SUBSCRIPTION_BILLING_CYCLE_LABELS,
@@ -13,8 +14,14 @@ import {
   type SubscriptionRecord,
 } from "@/schemas/subscription.schema";
 import { SearchIcon, PauseIcon, PencilIcon, PlayIcon, Trash2Icon } from "lucide-react";
-import type { SubscriptionsTableFilters } from "../../subscriptions.types";
-import { formatNextChargeDate, formatSubscriptionCurrency, getDueStatus, getRelativeDueLabel, normalizeMonthlyAmount, type SubscriptionAccountOption } from "../../subscriptions.utils";
+import {
+  formatNextChargeDate,
+  getDueStatus,
+  getRelativeDueLabel,
+  normalizeMonthlyAmount,
+  type SubscriptionAccountOption,
+  type SubscriptionsTableFilters,
+} from "../../lib";
 
 const SubscriptionsTable = ({
   accountOptions,
@@ -44,7 +51,10 @@ const SubscriptionsTable = ({
           placeholder="Поиск по названию"
         />
       </div>
-      <Select value={filters.statusFilter} onValueChange={(value) => updateFilters({ statusFilter: value as SubscriptionsTableFilters["statusFilter"] })}>
+      <Select
+        value={filters.statusFilter}
+        onValueChange={(value) => updateFilters({ statusFilter: value as SubscriptionsTableFilters["statusFilter"] })}
+      >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Статус" />
         </SelectTrigger>
@@ -94,7 +104,10 @@ const SubscriptionsTable = ({
           ))}
         </SelectContent>
       </Select>
-      <Button variant={filters.activeOnly ? "default" : "outline"} onClick={() => updateFilters({ activeOnly: !filters.activeOnly })}>
+      <Button
+        variant={filters.activeOnly ? "default" : "outline"}
+        onClick={() => updateFilters({ activeOnly: !filters.activeOnly })}
+      >
         Только активные
       </Button>
     </div>
@@ -137,12 +150,12 @@ const SubscriptionsTable = ({
                     </Typography>
                     <Typography tag="p" className="text-muted-foreground text-xs">
                       {subscription.billingCycle === "yearly"
-                        ? `Годовая подписка, учтена как ${formatSubscriptionCurrency(normalizeMonthlyAmount(subscription))}/мес`
+                        ? `Годовая подписка, учтена как ${formatRubCurrency(normalizeMonthlyAmount(subscription))}/мес`
                         : "Ежемесячное списание"}
                     </Typography>
                   </div>
                 </TableCell>
-                <TableCell>{formatSubscriptionCurrency(subscription.amount)}</TableCell>
+                <TableCell>{formatRubCurrency(subscription.amount)}</TableCell>
                 <TableCell>{SUBSCRIPTION_BILLING_CYCLE_LABELS[subscription.billingCycle]}</TableCell>
                 <TableCell>
                   <div className="min-w-[128px]">

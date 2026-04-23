@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
+import { toDateInputValue } from "@/lib/date";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { TRANSACTION_TAGS, transactionGetSchema, transactionPostSchema } from "@/schemas/transaction.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -105,13 +107,6 @@ const getPresetRange = (preset: DatePreset) => {
   };
 };
 
-const toInputDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
 const normalizeFilters = (filters: TransactionFiltersState) => {
   const minAmount = filters.minAmount === "" ? undefined : Number.parseFloat(filters.minAmount);
   const maxAmount = filters.maxAmount === "" ? undefined : Number.parseFloat(filters.maxAmount);
@@ -150,11 +145,7 @@ const normalizeFilters = (filters: TransactionFiltersState) => {
   };
 };
 
-const currencyFormatter = new Intl.NumberFormat("ru-RU", {
-  style: "currency",
-  currency: "RUB",
-  maximumFractionDigits: 0,
-});
+const currencyFormatter = rubCurrencyFormatter;
 
 const TABLE_MAX_HEIGHT = 560;
 const TABLE_HEAD_HEIGHT = 36;
@@ -221,7 +212,7 @@ const TransactionTable = () => {
       name: editingTransaction.name,
       tag: editingTransaction.tag,
       price: editingTransaction.price,
-      date: toInputDate(editingTransaction.date),
+      date: toDateInputValue(editingTransaction.date),
       accountId: editingTransaction.accountId,
     });
   }, [editForm, editingTransaction]);

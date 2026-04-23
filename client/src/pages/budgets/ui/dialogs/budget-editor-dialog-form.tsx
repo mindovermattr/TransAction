@@ -5,9 +5,16 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { Typography } from "@/components/ui/typography";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { TRANSACTION_TAGS } from "@/schemas/transaction.schema";
 import type { UseFormReturn } from "react-hook-form";
-import { BUDGET_TAG_LABELS, budgetCurrencyFormatter, formatMonthLabel, type BudgetFormInput, type BudgetFormValues, type BudgetMonthOption } from "../../lib";
+import {
+  BUDGET_TAG_LABELS,
+  formatMonthLabel,
+  type BudgetFormInput,
+  type BudgetFormValues,
+  type BudgetMonthOption,
+} from "../../lib";
 
 const BudgetEditorDialogForm = ({
   form,
@@ -35,7 +42,7 @@ const BudgetEditorDialogForm = ({
 
   return (
     <>
-      <div className="border-b bg-muted/35 px-6 py-5">
+      <div className="bg-muted/35 border-b px-6 py-5">
         <DialogHeader className="gap-1 text-left">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
@@ -54,9 +61,9 @@ const BudgetEditorDialogForm = ({
                     <FormLabel>Период</FormLabel>
                     <FormControl>
                       <Select value={field.value} onValueChange={field.onChange}>
-                        <SelectTrigger className="h-auto w-full rounded-xl border-border/70 px-3 py-3">
+                        <SelectTrigger className="border-border/70 h-auto w-full rounded-xl px-3 py-3">
                           <div className="min-w-0 text-left">
-                            <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Месяц</p>
+                            <p className="text-muted-foreground text-[11px] tracking-[0.14em] uppercase">Месяц</p>
                             <p className="truncate text-sm font-medium">{formatMonthLabel(field.value)}</p>
                           </div>
                         </SelectTrigger>
@@ -66,7 +73,7 @@ const BudgetEditorDialogForm = ({
                               <span className="flex w-full items-center justify-between gap-3">
                                 <span>{option.label}</span>
                                 {option.isCurrent ? (
-                                  <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                                  <span className="text-muted-foreground text-[11px] tracking-[0.14em] uppercase">
                                     Текущий
                                   </span>
                                 ) : null}
@@ -93,13 +100,13 @@ const BudgetEditorDialogForm = ({
                       <FormLabel>Категория</FormLabel>
                       <FormControl>
                         <Select value={field.value} onValueChange={field.onChange}>
-                          <SelectTrigger className="h-auto w-full rounded-xl border-border/70 px-3 py-3">
+                          <SelectTrigger className="border-border/70 h-auto w-full rounded-xl px-3 py-3">
                             <div className="flex min-w-0 items-center gap-3">
-                              <div className="bg-muted flex size-9 shrink-0 items-center justify-center rounded-lg border border-border/70">
+                              <div className="bg-muted border-border/70 flex size-9 shrink-0 items-center justify-center rounded-lg border">
                                 <CurrentTagIcon className="size-4" />
                               </div>
                               <div className="min-w-0 text-left">
-                                <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                                <p className="text-muted-foreground text-[11px] tracking-[0.14em] uppercase">
                                   Категория
                                 </p>
                                 <p className="truncate text-sm font-medium">{BUDGET_TAG_LABELS[field.value]}</p>
@@ -129,9 +136,9 @@ const BudgetEditorDialogForm = ({
               />
             </div>
 
-            <div className="rounded-2xl border border-border/70 bg-muted/25 p-4">
+            <div className="border-border/70 bg-muted/25 rounded-2xl border p-4">
               <div className="mb-4 flex items-start gap-3">
-                <div className="bg-background flex size-10 shrink-0 items-center justify-center rounded-xl border border-border/70">
+                <div className="bg-background border-border/70 flex size-10 shrink-0 items-center justify-center rounded-xl border">
                   <SelectedTagIcon className="size-4" />
                 </div>
                 <div>
@@ -152,7 +159,7 @@ const BudgetEditorDialogForm = ({
                     <FormLabel>Лимит на месяц</FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-lg font-semibold text-muted-foreground">
+                        <span className="text-muted-foreground pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-lg font-semibold">
                           ₽
                         </span>
                         <Input
@@ -160,7 +167,7 @@ const BudgetEditorDialogForm = ({
                           placeholder="15000"
                           {...field}
                           value={field.value as string | number | undefined}
-                          className="h-14 rounded-xl border-border/70 pr-4 pl-10 text-lg font-semibold"
+                          className="border-border/70 h-14 rounded-xl pr-4 pl-10 text-lg font-semibold"
                         />
                       </div>
                     </FormControl>
@@ -171,20 +178,20 @@ const BudgetEditorDialogForm = ({
               />
 
               <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                <div className="rounded-xl border border-border/70 bg-background/80 p-3">
-                  <Typography tag="p" className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                <div className="border-border/70 bg-background/80 rounded-xl border p-3">
+                  <Typography tag="p" className="text-muted-foreground text-[11px] tracking-[0.14em] uppercase">
                     Период
                   </Typography>
                   <Typography tag="p" className="mt-1 text-sm font-medium">
                     {selectedMonth ? formatMonthLabel(selectedMonth) : "Не выбран"}
                   </Typography>
                 </div>
-                <div className="rounded-xl border border-border/70 bg-background/80 p-3">
-                  <Typography tag="p" className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                <div className="border-border/70 bg-background/80 rounded-xl border p-3">
+                  <Typography tag="p" className="text-muted-foreground text-[11px] tracking-[0.14em] uppercase">
                     Плановый лимит
                   </Typography>
                   <Typography tag="p" className="mt-1 text-sm font-medium">
-                    {typeof selectedLimit === "number" ? budgetCurrencyFormatter.format(selectedLimit) : "Введите сумму"}
+                    {typeof selectedLimit === "number" ? rubCurrencyFormatter.format(selectedLimit) : "Введите сумму"}
                   </Typography>
                 </div>
               </div>
@@ -193,7 +200,7 @@ const BudgetEditorDialogForm = ({
             {errorMessage ? <p className="text-destructive text-sm">{errorMessage}</p> : null}
           </div>
 
-          <DialogFooter className="border-t bg-muted/20 px-6 py-4">
+          <DialogFooter className="bg-muted/20 border-t px-6 py-4">
             <DialogClose asChild>
               <Button variant="outline">Закрыть</Button>
             </DialogClose>

@@ -2,6 +2,7 @@ import type { ExpensesByWeekdayResponse } from "@/api/requests";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
+import { shortDayMonthFormatter } from "@/lib/formatters";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { AnalyticsCardShell } from "./analytics-card-shell";
 import { EmptyState } from "./empty-state-placeholder";
@@ -9,11 +10,7 @@ import type { ChartProps } from "./types";
 
 type WeekdayExpensesCardProps = ChartProps<ExpensesByWeekdayResponse>;
 
-const formatRangeDate = (value: string) =>
-  new Intl.DateTimeFormat("ru-RU", {
-    day: "2-digit",
-    month: "short",
-  }).format(new Date(value));
+const formatRangeDate = (value: string) => shortDayMonthFormatter.format(new Date(value));
 
 const BAR_HEIGHT = 16;
 const BAR_GAP = 10;

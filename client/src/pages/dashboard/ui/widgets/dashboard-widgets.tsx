@@ -1,7 +1,7 @@
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { DashboardInsightCard } from "./dashboard-insight-card";
 import { DashboardKpiCard } from "./dashboard-kpi-card";
 import {
-  dashboardCurrencyFormatter,
   formatDashboardCategoryLabel,
   formatDashboardDateLabel,
   formatDashboardPercentDelta,
@@ -10,11 +10,11 @@ import { TrendingDownIcon, TrendingUpIcon, Wallet2Icon } from "lucide-react";
 
 const getBalanceDetail = (balance: number) => {
   if (balance > 0) {
-    return `${dashboardCurrencyFormatter.format(balance)} осталось после трат в этом месяце`;
+    return `${rubCurrencyFormatter.format(balance)} осталось после трат в этом месяце`;
   }
 
   if (balance < 0) {
-    return `${dashboardCurrencyFormatter.format(Math.abs(balance))} перерасхода в этом месяце`;
+    return `${rubCurrencyFormatter.format(Math.abs(balance))} перерасхода в этом месяце`;
   }
 
   return "В этом месяце вышли в ноль после всех трат";
@@ -39,7 +39,7 @@ const getBudgetInsight = (data?: DashboardOverviewResponse["budgetAlerts"]) => {
     return {
       value: `${data.overCount} сверх лимита`,
       hint: data.topOverBudgetTag
-        ? `${formatDashboardCategoryLabel(data.topOverBudgetTag)} • перерасход ${dashboardCurrencyFormatter.format(
+        ? `${formatDashboardCategoryLabel(data.topOverBudgetTag)} • перерасход ${rubCurrencyFormatter.format(
             data.topOverBudgetAmount,
           )}`
         : "Нужно пересмотреть лимиты и траты",
@@ -70,21 +70,21 @@ const DashboardWidgets = ({ data }: { data?: DashboardOverviewResponse }) => {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <DashboardKpiCard
           title="Баланс месяца"
-          value={dashboardCurrencyFormatter.format(balance)}
+          value={rubCurrencyFormatter.format(balance)}
           detail={getBalanceDetail(balance)}
           icon={Wallet2Icon}
           tone="balance"
         />
         <DashboardKpiCard
           title="Доходы месяца"
-          value={dashboardCurrencyFormatter.format(data?.totals.income ?? 0)}
+          value={rubCurrencyFormatter.format(data?.totals.income ?? 0)}
           detail={`${formatDashboardPercentDelta(data?.comparisons.incomeDeltaPercent ?? 0)} к прошлому месяцу`}
           icon={TrendingUpIcon}
           tone="income"
         />
         <DashboardKpiCard
           title="Расходы месяца"
-          value={dashboardCurrencyFormatter.format(data?.totals.expenses ?? 0)}
+          value={rubCurrencyFormatter.format(data?.totals.expenses ?? 0)}
           detail={`${formatDashboardPercentDelta(data?.comparisons.expensesDeltaPercent ?? 0)} к прошлому месяцу`}
           icon={TrendingDownIcon}
           tone="expense"
@@ -105,22 +105,16 @@ const DashboardWidgets = ({ data }: { data?: DashboardOverviewResponse }) => {
             value={topCategory ? formatDashboardCategoryLabel(topCategory.tag) : "—"}
             hint={
               topCategory
-                ? `${dashboardCurrencyFormatter.format(topCategory.total)} • ${topCategory.sharePercent}% всех расходов`
+                ? `${rubCurrencyFormatter.format(topCategory.total)} • ${topCategory.sharePercent}% всех расходов`
                 : "Добавьте расходы, чтобы увидеть лидера"
             }
           />
-          <DashboardInsightCard
-            title="Бюджеты"
-            value={budgetInsight.value}
-            hint={budgetInsight.hint}
-          />
+          <DashboardInsightCard title="Бюджеты" value={budgetInsight.value} hint={budgetInsight.hint} />
           <DashboardInsightCard
             title="Пиковый день"
             value={peakSpendDay ? formatDashboardDateLabel(peakSpendDay.date) : "—"}
             hint={
-              peakSpendDay
-                ? `${dashboardCurrencyFormatter.format(peakSpendDay.total)} за день`
-                : "Пока нет данных по тратам"
+              peakSpendDay ? `${rubCurrencyFormatter.format(peakSpendDay.total)} за день` : "Пока нет данных по тратам"
             }
           />
         </div>

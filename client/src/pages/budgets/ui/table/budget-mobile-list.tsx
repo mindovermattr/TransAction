@@ -2,8 +2,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
+import { compactNumberFormatter, rubCurrencyFormatter } from "@/lib/formatters";
 import { PencilIcon, Trash2Icon } from "lucide-react";
-import { BUDGET_TAG_LABELS, budgetCompactCurrencyFormatter, budgetCurrencyFormatter, getBudgetStatusBadgeProps } from "../../lib";
+import { BUDGET_TAG_LABELS, getBudgetStatusBadgeProps } from "../../lib";
 import { BudgetProgressBar } from "./budget-progress-bar";
 
 const BudgetMobileList = ({
@@ -25,7 +26,7 @@ const BudgetMobileList = ({
               <div>
                 <CardTitle className="text-base">{BUDGET_TAG_LABELS[budget.tag]}</CardTitle>
                 <Typography tag="p" className="text-muted-foreground mt-1 text-sm">
-                  {budgetCurrencyFormatter.format(budget.spent)} из {budgetCurrencyFormatter.format(budget.limit)}
+                  {rubCurrencyFormatter.format(budget.spent)} из {rubCurrencyFormatter.format(budget.limit)}
                 </Typography>
               </div>
               <Badge variant="outline" className={badge.className}>
@@ -48,7 +49,7 @@ const BudgetMobileList = ({
                       : "text-destructive text-sm font-semibold"
                   }
                 >
-                  {budgetCurrencyFormatter.format(budget.remaining)}
+                  {rubCurrencyFormatter.format(budget.remaining)}
                 </Typography>
               </div>
               <div className="bg-muted/50 rounded-md p-2.5">
@@ -56,7 +57,7 @@ const BudgetMobileList = ({
                   Факт
                 </Typography>
                 <Typography tag="p" className="text-sm font-semibold">
-                  {budgetCompactCurrencyFormatter.format(budget.spent)}
+                  {compactNumberFormatter.format(budget.spent)}
                 </Typography>
               </div>
             </div>

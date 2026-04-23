@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Typography } from "@/components/ui/typography";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { Cell, Pie, PieChart } from "recharts";
 import { DASHBOARD_CHART_CONFIG } from "../dashboard.constants";
-import { dashboardCurrencyFormatter, formatDashboardCategoryLabel } from "../dashboard.formatters";
+import { formatDashboardCategoryLabel } from "../dashboard.formatters";
 import { DashboardEmptyChartState } from "./dashboard-empty-chart-state";
 
 type CategoryPoint = DashboardOverviewResponse["topCategories"][number] & {
@@ -11,13 +12,7 @@ type CategoryPoint = DashboardOverviewResponse["topCategories"][number] & {
   fill: string;
 };
 
-const DashboardTopCategoriesCard = ({
-  data,
-  totalExpenses,
-}: {
-  data: CategoryPoint[];
-  totalExpenses: number;
-}) => {
+const DashboardTopCategoriesCard = ({ data, totalExpenses }: { data: CategoryPoint[]; totalExpenses: number }) => {
   const topCategory = data.reduce<CategoryPoint | null>((currentTop, item) => {
     if (!currentTop || item.total > currentTop.total) {
       return item;
@@ -52,9 +47,7 @@ const DashboardTopCategoriesCard = ({
                               <span className="text-muted-foreground text-xs">
                                 {formatDashboardCategoryLabel(name as TransactionTags)}
                               </span>
-                              <span className="text-xs font-medium">
-                                {dashboardCurrencyFormatter.format(Number(value))}
-                              </span>
+                              <span className="text-xs font-medium">{rubCurrencyFormatter.format(Number(value))}</span>
                             </div>
                           )}
                         />
@@ -84,11 +77,11 @@ const DashboardTopCategoriesCard = ({
 
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                   <div className="bg-background/88 ring-border/70 flex w-[132px] flex-col items-center rounded-full px-4 py-5 text-center shadow-sm ring-1 backdrop-blur-[2px]">
-                    <Typography tag="p" className="text-muted-foreground text-[11px] uppercase tracking-[0.18em]">
+                    <Typography tag="p" className="text-muted-foreground text-[11px] tracking-[0.18em] uppercase">
                       Расходы
                     </Typography>
-                    <Typography tag="p" className="mt-2 text-lg font-semibold leading-none">
-                      {dashboardCurrencyFormatter.format(totalExpenses)}
+                    <Typography tag="p" className="mt-2 text-lg leading-none font-semibold">
+                      {rubCurrencyFormatter.format(totalExpenses)}
                     </Typography>
                     <Typography tag="p" className="text-muted-foreground mt-1 text-xs">
                       всего за месяц
@@ -126,7 +119,10 @@ const DashboardTopCategoriesCard = ({
                       className="bg-muted/35 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 rounded-lg border px-3 py-2.5"
                     >
                       <div className="flex min-w-0 items-center gap-2">
-                        <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: item.fill }} />
+                        <div
+                          className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: item.fill }}
+                        />
                         <div className="min-w-0">
                           <Typography tag="p" className="min-w-0 truncate text-sm font-medium">
                             {item.label}
@@ -138,7 +134,7 @@ const DashboardTopCategoriesCard = ({
                       </div>
                       <div className="text-right">
                         <Typography tag="p" className="text-sm font-semibold whitespace-nowrap">
-                          {dashboardCurrencyFormatter.format(item.total)}
+                          {rubCurrencyFormatter.format(item.total)}
                         </Typography>
                       </div>
                     </div>

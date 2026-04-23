@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
+import { toDateInputValue } from "@/lib/date";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { accountGetSchema } from "@/schemas/account.schema";
 import { incomeGetSchema, incomePostSchema } from "@/schemas/income.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,18 +45,7 @@ const DEFAULT_FILTERS: IncomeFiltersState = {
   dateTo: "",
 };
 
-const toInputDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const currencyFormatter = new Intl.NumberFormat("ru-RU", {
-  style: "currency",
-  currency: "RUB",
-  maximumFractionDigits: 0,
-});
+const currencyFormatter = rubCurrencyFormatter;
 
 const TABLE_MAX_HEIGHT = 560;
 const TABLE_HEAD_HEIGHT = 36;
@@ -95,7 +86,7 @@ const IncomeTable = () => {
     editForm.reset({
       name: editingIncome.name,
       price: editingIncome.price,
-      date: toInputDate(editingIncome.date),
+      date: toDateInputValue(editingIncome.date),
       accountId: editingIncome.accountId,
     });
   }, [editForm, editingIncome]);

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { CircleDollarSignIcon, TrendingDownIcon, TrendingUpIcon, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
@@ -23,11 +24,7 @@ type SummaryCardStyle = {
   iconColor: string;
 };
 
-const currencyFormatter = new Intl.NumberFormat("ru-RU", {
-  style: "currency",
-  currency: "RUB",
-  maximumFractionDigits: 0,
-});
+const currencyFormatter = rubCurrencyFormatter;
 
 const formatDeltaText = (value: number) => `${Math.abs(value)}% ${value >= 0 ? "выше" : "ниже"}`;
 

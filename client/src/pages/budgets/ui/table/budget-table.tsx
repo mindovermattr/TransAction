@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Typography } from "@/components/ui/typography";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { PencilIcon, Trash2Icon } from "lucide-react";
-import { BUDGET_TAG_LABELS, budgetCurrencyFormatter, getBudgetStatusBadgeProps } from "../../lib";
+import { BUDGET_TAG_LABELS, getBudgetStatusBadgeProps } from "../../lib";
 import { BudgetProgressBar } from "./budget-progress-bar";
 
 const BudgetTable = ({
@@ -48,17 +49,17 @@ const BudgetTable = ({
                     </Typography>
                     <Typography tag="p" className="text-muted-foreground text-xs">
                       {budget.remaining >= 0
-                        ? `Осталось ${budgetCurrencyFormatter.format(budget.remaining)}`
-                        : `Перерасход ${budgetCurrencyFormatter.format(Math.abs(budget.remaining))}`}
+                        ? `Осталось ${rubCurrencyFormatter.format(budget.remaining)}`
+                        : `Перерасход ${rubCurrencyFormatter.format(Math.abs(budget.remaining))}`}
                     </Typography>
                   </div>
                 </TableCell>
-                <TableCell>{budgetCurrencyFormatter.format(budget.limit)}</TableCell>
-                <TableCell>{budgetCurrencyFormatter.format(budget.spent)}</TableCell>
+                <TableCell>{rubCurrencyFormatter.format(budget.limit)}</TableCell>
+                <TableCell>{rubCurrencyFormatter.format(budget.spent)}</TableCell>
                 <TableCell
                   className={budget.remaining >= 0 ? "text-emerald-600 dark:text-emerald-300" : "text-destructive"}
                 >
-                  {budgetCurrencyFormatter.format(budget.remaining)}
+                  {rubCurrencyFormatter.format(budget.remaining)}
                 </TableCell>
                 <TableCell>
                   <BudgetProgressBar progressPercent={budget.progressPercent} status={budget.status} />

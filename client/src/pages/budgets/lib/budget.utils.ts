@@ -1,5 +1,5 @@
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { BUDGET_TAG_LABELS } from "./budget.constants";
-import { budgetCurrencyFormatter } from "./budget.formatters";
 
 const BUDGET_STATUS_SEVERITY: Record<BudgetStatus, number> = {
   over: 0,
@@ -83,7 +83,7 @@ const getBudgetAlertCard = ({
       title: `${summary.overCount} бюджет${summary.overCount === 1 ? "" : summary.overCount < 5 ? "а" : "ов"} сверх лимита`,
       hint:
         primaryBudget?.status === "over"
-          ? `${BUDGET_TAG_LABELS[primaryBudget.tag]} • перерасход ${budgetCurrencyFormatter.format(overspend)}`
+          ? `${BUDGET_TAG_LABELS[primaryBudget.tag]} • перерасход ${rubCurrencyFormatter.format(overspend)}`
           : "Нужно поднять лимит или сократить траты",
       className: "border-destructive/20 bg-destructive/10",
       valueClassName: "text-destructive",
@@ -105,7 +105,7 @@ const getBudgetAlertCard = ({
   if (summary.activeCount > 0) {
     return {
       title: "Бюджеты под контролем",
-      hint: `Активных бюджетов: ${summary.activeCount}. Остаток ${budgetCurrencyFormatter.format(summary.totalRemaining)}.`,
+      hint: `Активных бюджетов: ${summary.activeCount}. Остаток ${rubCurrencyFormatter.format(summary.totalRemaining)}.`,
       className: "border-emerald-500/25 bg-emerald-500/10",
       valueClassName: "text-emerald-700 dark:text-emerald-300",
     };
@@ -119,4 +119,10 @@ const getBudgetAlertCard = ({
   };
 };
 
-export { getApiErrorMessage, getBudgetAlertCard, getBudgetProgressBarClassName, getBudgetStatusBadgeProps, sortBudgets };
+export {
+  getApiErrorMessage,
+  getBudgetAlertCard,
+  getBudgetProgressBarClassName,
+  getBudgetStatusBadgeProps,
+  sortBudgets,
+};

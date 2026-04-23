@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { Typography } from "@/components/ui/typography";
-import { dashboardCurrencyFormatter } from "../dashboard.formatters";
 import { DashboardEmptyChartState } from "./dashboard-empty-chart-state";
 
 type PeriodComparePoint = {
@@ -31,7 +31,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
             </Typography>
           </div>
           <Badge variant="outline" className={cn("rounded-full px-3 py-1", net === 0 && "bg-muted/70")}>
-            {netLabel}: {dashboardCurrencyFormatter.format(Math.abs(net))}
+            {netLabel}: {rubCurrencyFormatter.format(Math.abs(net))}
           </Badge>
         </div>
       </CardHeader>
@@ -46,7 +46,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                   Доходы
                 </Typography>
                 <Typography tag="p" className="mt-2 text-2xl font-semibold tracking-tight">
-                  {dashboardCurrencyFormatter.format(income)}
+                  {rubCurrencyFormatter.format(income)}
                 </Typography>
                 <Typography tag="p" className="text-muted-foreground mt-auto pt-3 text-xs font-medium">
                   {incomeWidth.toFixed(0)}% от ведущего показателя
@@ -58,7 +58,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                   Расходы
                 </Typography>
                 <Typography tag="p" className="mt-2 text-2xl font-semibold tracking-tight">
-                  {dashboardCurrencyFormatter.format(expenses)}
+                  {rubCurrencyFormatter.format(expenses)}
                 </Typography>
                 <Typography tag="p" className="text-muted-foreground mt-auto pt-3 text-xs font-medium">
                   {expensesWidth.toFixed(0)}% от ведущего показателя
@@ -80,7 +80,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-medium">Доходы</span>
-                    <span className="text-muted-foreground">{dashboardCurrencyFormatter.format(income)}</span>
+                    <span className="text-muted-foreground">{rubCurrencyFormatter.format(income)}</span>
                   </div>
                   <div className="bg-background h-3 overflow-hidden rounded-full border">
                     <div
@@ -93,7 +93,7 @@ const DashboardPeriodCompareCard = ({ data }: { data: PeriodComparePoint[] }) =>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-medium">Расходы</span>
-                    <span className="text-muted-foreground">{dashboardCurrencyFormatter.format(expenses)}</span>
+                    <span className="text-muted-foreground">{rubCurrencyFormatter.format(expenses)}</span>
                   </div>
                   <div className="bg-background h-3 overflow-hidden rounded-full border">
                     <div

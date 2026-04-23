@@ -1,8 +1,8 @@
 import { useGetAccountsQuery } from "@/api/hooks";
+import { getDaysUntil } from "@/lib/date";
 import { accountGetSchema } from "@/schemas/account.schema";
 import type { SubscriptionFormValues, SubscriptionRecord } from "@/schemas/subscription.schema";
 import { useEffect, useMemo, useState } from "react";
-import type { SubscriptionsTableFilters, TimelineWindow } from "./subscriptions.types";
 import {
   FALLBACK_ACCOUNTS,
   createSeedSubscriptions,
@@ -13,9 +13,10 @@ import {
   getSubscriptionsSummary,
   getUpcomingSubscriptions,
   groupUpcomingSubscriptions,
-  startOfDay,
   type SubscriptionAccountOption,
-} from "./subscriptions.utils";
+  type SubscriptionsTableFilters,
+  type TimelineWindow,
+} from "./lib";
 
 const defaultFilters: SubscriptionsTableFilters = {
   search: "",
@@ -84,15 +85,15 @@ const useSubscriptionsState = () => {
     return subscriptions
       .filter((subscription) => {
         const matchesSearch =
-          filters.search.trim().length === 0 || subscription.name.toLowerCase().includes(filters.search.trim().toLowerCase());
-        const matchesAccount = filters.accountFilter === "ALL" || String(subscription.accountId) === filters.accountFilter;
+          filters.search.trim().length === 0 ||
+          subscription.name.toLowerCase().includes(filters.search.trim().toLowerCase());
+        const matchesAccount =
+          filters.accountFilter === "ALL" || String(subscription.accountId) === filters.accountFilter;
         const matchesCategory = filters.categoryFilter === "ALL" || subscription.categoryTag === filters.categoryFilter;
         const matchesCycle = filters.cycleFilter === "ALL" || subscription.billingCycle === filters.cycleFilter;
         const matchesActiveOnly = !filters.activeOnly || subscription.isActive;
 
-        const daysUntil = Math.round(
-          (startOfDay(new Date(`${subscription.nextChargeDate}T00:00:00`)).getTime() - startOfDay(new Date()).getTime()) / 86_400_000,
-        );
+        const daysUntil = getDaysUntil(subscription.nextChargeDate);
 
         const matchesStatus =
           filters.statusFilter === "all"
@@ -107,8 +108,6 @@ const useSubscriptionsState = () => {
       })
       .sort((left, right) => new Date(left.nextChargeDate).getTime() - new Date(right.nextChargeDate).getTime());
   }, [filters, subscriptions]);
-
-  const tableAccounts = useMemo(() => new Map(accountOptions.map((account) => [account.id, account])), [accountOptions]);
 
   const upsertSubscription = (values: SubscriptionFormValues) => {
     if (editingSubscription) {
@@ -184,7 +183,6 @@ const useSubscriptionsState = () => {
     subscriptions,
     summary,
     syncBadge,
-    tableAccounts,
     timelineWindow,
     upcomingGroups,
     disableSubscription,

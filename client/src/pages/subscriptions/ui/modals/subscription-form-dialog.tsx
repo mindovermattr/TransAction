@@ -11,6 +11,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { startOfDay, toDateInputValue } from "@/lib/date";
 import { ACCOUNT_TYPE_LABELS } from "@/schemas/account.schema";
 import {
   SUBSCRIPTION_BILLING_CYCLE_LABELS,
@@ -25,7 +26,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { startOfDay, toDateInputValue, type SubscriptionAccountOption } from "../../subscriptions.utils";
+import type { SubscriptionAccountOption } from "../../lib";
 
 const SubscriptionFormDialog = ({
   open,

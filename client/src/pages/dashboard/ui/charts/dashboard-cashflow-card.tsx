@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Typography } from "@/components/ui/typography";
+import { compactNumberFormatter, rubCurrencyFormatter } from "@/lib/formatters";
 import { CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import { DASHBOARD_CHART_CONFIG } from "../dashboard.constants";
-import { dashboardCompactFormatter, dashboardCurrencyFormatter } from "../dashboard.formatters";
 import { DashboardEmptyChartState } from "./dashboard-empty-chart-state";
 
 type CashflowPoint = DashboardOverviewResponse["cashflow"]["months"][number] & {
@@ -21,15 +21,15 @@ const CashflowSparseState = ({ data }: { data: CashflowPoint[] }) => (
         <div className="mt-2 space-y-1.5">
           <div className="flex items-center justify-between gap-3">
             <span className="text-muted-foreground text-xs">Доходы</span>
-            <span className="text-xs font-medium">{dashboardCurrencyFormatter.format(item.income)}</span>
+            <span className="text-xs font-medium">{rubCurrencyFormatter.format(item.income)}</span>
           </div>
           <div className="flex items-center justify-between gap-3">
             <span className="text-muted-foreground text-xs">Расходы</span>
-            <span className="text-xs font-medium">{dashboardCurrencyFormatter.format(item.expenses)}</span>
+            <span className="text-xs font-medium">{rubCurrencyFormatter.format(item.expenses)}</span>
           </div>
           <div className="flex items-center justify-between gap-3 border-t pt-1.5">
             <span className="text-muted-foreground text-xs">Баланс</span>
-            <span className="text-xs font-semibold">{dashboardCurrencyFormatter.format(item.balance)}</span>
+            <span className="text-xs font-semibold">{rubCurrencyFormatter.format(item.balance)}</span>
           </div>
         </div>
       </div>
@@ -65,7 +65,7 @@ const DashboardCashflowCard = ({ data }: { data: CashflowPoint[] }) => {
                   tickLine={false}
                   axisLine={false}
                   width={64}
-                  tickFormatter={(value) => dashboardCompactFormatter.format(value)}
+                  tickFormatter={(value) => compactNumberFormatter.format(value)}
                 />
                 <ChartTooltip
                   content={
@@ -77,7 +77,7 @@ const DashboardCashflowCard = ({ data }: { data: CashflowPoint[] }) => {
                             {DASHBOARD_CHART_CONFIG[String(name)]?.label ?? name}
                           </span>
                           <span className="text-xs font-medium">
-                            {dashboardCurrencyFormatter.format(
+                            {rubCurrencyFormatter.format(
                               String(name) === "signedExpenses" ? Math.abs(Number(value)) : Number(value),
                             )}
                           </span>

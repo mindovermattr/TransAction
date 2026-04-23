@@ -1,8 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SemanticStatusBadge } from "@/components/ui/semantic-status-badge";
 import { Typography } from "@/components/ui/typography";
-import type { StatusDistribution, SubscriptionsSummary } from "../../subscriptions.utils";
-import { formatNextChargeDate, formatSubscriptionCurrency } from "../../subscriptions.utils";
+import { formatRubCurrency } from "@/lib/formatters";
+import { formatNextChargeDate, type StatusDistribution, type SubscriptionsSummary } from "../../lib";
 import { BellRingIcon, CalendarIcon, CircleDollarSignIcon, RepeatIcon, Wallet2Icon } from "lucide-react";
 
 const SubscriptionMetricCard = ({
@@ -64,9 +64,11 @@ const SubscriptionInsightCard = ({
       <Typography tag="p" className="text-muted-foreground text-sm">
         {title}
       </Typography>
-      <SemanticStatusBadge tone={tone}>{tone === "danger" ? "Риск" : tone === "warning" ? "Скоро" : "Ок"}</SemanticStatusBadge>
+      <SemanticStatusBadge tone={tone}>
+        {tone === "danger" ? "Риск" : tone === "warning" ? "Скоро" : "Ок"}
+      </SemanticStatusBadge>
     </div>
-    <Typography tag="p" className="mt-3 text-lg font-semibold leading-tight">
+    <Typography tag="p" className="mt-3 text-lg leading-tight font-semibold">
       {value}
     </Typography>
     <Typography tag="p" className="text-muted-foreground mt-1.5 text-sm">
@@ -86,16 +88,18 @@ const SubscriptionsOverview = ({
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
       <SubscriptionMetricCard
         title="Recurring в месяц"
-        value={formatSubscriptionCurrency(summary.monthlyRecurringTotal)}
+        value={formatRubCurrency(summary.monthlyRecurringTotal)}
         hint={
-          summary.riskCount > 0 ? `${summary.riskCount} риска: крупная сумма или близкая дата` : "Нагрузка нормализована в месячный эквивалент"
+          summary.riskCount > 0
+            ? `${summary.riskCount} риска: крупная сумма или близкая дата`
+            : "Нагрузка нормализована в месячный эквивалент"
         }
         tone="info"
         icon={CircleDollarSignIcon}
       />
       <SubscriptionMetricCard
         title="Ближайшие 7 дней"
-        value={formatSubscriptionCurrency(summary.dueSoonAmount)}
+        value={formatRubCurrency(summary.dueSoonAmount)}
         hint={`${summary.dueSoonCount} списаний до конца недели`}
         tone={summary.dueSoonCount > 0 ? "warning" : "ok"}
         icon={BellRingIcon}
@@ -127,7 +131,7 @@ const SubscriptionsOverview = ({
           value={summary.nearestCharge ? summary.nearestCharge.name : "Нет активных подписок"}
           hint={
             summary.nearestCharge
-              ? `${formatNextChargeDate(summary.nearestCharge.nextChargeDate)} • ${formatSubscriptionCurrency(summary.nearestCharge.amount)}`
+              ? `${formatNextChargeDate(summary.nearestCharge.nextChargeDate)} • ${formatRubCurrency(summary.nearestCharge.amount)}`
               : "Добавьте первую регулярную трату"
           }
           tone={summary.nearestCharge ? (summary.dueSoonCount > 0 ? "warning" : "ok") : "info"}
@@ -137,7 +141,7 @@ const SubscriptionsOverview = ({
           value={summary.biggestUpcoming ? summary.biggestUpcoming.name : "Нет крупных платежей"}
           hint={
             summary.biggestUpcoming
-              ? `${formatSubscriptionCurrency(summary.biggestUpcoming.amount)} • ${formatNextChargeDate(summary.biggestUpcoming.nextChargeDate)}`
+              ? `${formatRubCurrency(summary.biggestUpcoming.amount)} • ${formatNextChargeDate(summary.biggestUpcoming.nextChargeDate)}`
               : "В ближайшие 30 дней критичных списаний нет"
           }
           tone={summary.biggestUpcoming ? "danger" : "ok"}
@@ -147,7 +151,7 @@ const SubscriptionsOverview = ({
           value={summary.overloadedCategory ? summary.overloadedCategory.label : "Нет данных"}
           hint={
             summary.overloadedCategory
-              ? `${formatSubscriptionCurrency(summary.overloadedCategory.total)} в месяц • ${summary.overloadedCategory.count} подписки`
+              ? `${formatRubCurrency(summary.overloadedCategory.total)} в месяц • ${summary.overloadedCategory.count} подписки`
               : "В ближайшие 7 дней критичных списаний нет"
           }
           tone={summary.overloadedCategory ? "warning" : "ok"}

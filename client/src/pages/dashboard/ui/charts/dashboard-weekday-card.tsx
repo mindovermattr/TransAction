@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Typography } from "@/components/ui/typography";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { DASHBOARD_CHART_CONFIG } from "../dashboard.constants";
-import { dashboardCurrencyFormatter } from "../dashboard.formatters";
 import { DashboardEmptyChartState } from "./dashboard-empty-chart-state";
 
 const DashboardWeekdayCard = ({ data }: { data: DashboardOverviewResponse["weekdayTotals"] }) => (
@@ -32,7 +32,7 @@ const DashboardWeekdayCard = ({ data }: { data: DashboardOverviewResponse["weekd
                     formatter={(value, _name, item) => (
                       <div className="flex w-full items-center justify-between gap-3">
                         <span className="text-muted-foreground text-xs">{item?.payload.label}</span>
-                        <span className="text-xs font-medium">{dashboardCurrencyFormatter.format(Number(value))}</span>
+                        <span className="text-xs font-medium">{rubCurrencyFormatter.format(Number(value))}</span>
                       </div>
                     )}
                   />

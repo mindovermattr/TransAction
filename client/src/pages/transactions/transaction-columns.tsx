@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { TRANSACTION_TAGS_ICONS } from "@/constants/transaction-tags-icons";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import type { transactionGetSchema } from "@/schemas/transaction.schema";
 import type { ColumnDef } from "@tanstack/react-table";
 import type z from "zod";
@@ -19,11 +20,7 @@ export const columns: ColumnDef<TransactionColumnView>[] = [
     header: "Сумма",
     cell: ({ getValue }) => {
       const amount = parseFloat(getValue() as string);
-      const formatted = new Intl.NumberFormat("ru-RU", {
-        style: "currency",
-        currency: "RUB",
-        maximumFractionDigits: 0,
-      }).format(amount);
+      const formatted = rubCurrencyFormatter.format(amount);
       return <div>{formatted}</div>;
     },
     sortingFn: "basic",

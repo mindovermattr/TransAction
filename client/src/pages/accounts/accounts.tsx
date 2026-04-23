@@ -22,6 +22,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Typography } from "@/components/ui/typography";
+import { toDateInputValue } from "@/lib/date";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import {
   ACCOUNT_TYPE_LABELS,
   ACCOUNT_TYPES,
@@ -40,13 +42,9 @@ type AccountFormValues = z.output<typeof accountPostSchema>;
 type TransferFormInput = z.input<typeof transferPostSchema>;
 type TransferFormValues = z.output<typeof transferPostSchema>;
 
-const currencyFormatter = new Intl.NumberFormat("ru-RU", {
-  style: "currency",
-  currency: "RUB",
-  maximumFractionDigits: 0,
-});
+const currencyFormatter = rubCurrencyFormatter;
 
-const todayInputValue = new Date().toISOString().slice(0, 10);
+const todayInputValue = toDateInputValue(new Date());
 
 const Accounts = () => {
   const { data, isLoading, isFetching } = useGetAccountsQuery();

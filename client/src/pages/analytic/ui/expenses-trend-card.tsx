@@ -2,6 +2,7 @@ import type { ExpenseTrendResponse } from "@/api/requests";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
+import { compactNumberFormatter } from "@/lib/formatters";
 import { useMemo, useState } from "react";
 import { Area, CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { AnalyticsCardShell } from "./analytics-card-shell";
@@ -146,12 +147,7 @@ const ExpensesTrendCard = ({ data, isInitialLoading, isRefreshing, isError, onRe
               axisLine={false}
               width={64}
               tick={{ fontSize: 11 }}
-              tickFormatter={(value) =>
-                Intl.NumberFormat("ru-RU", {
-                  notation: "compact",
-                  maximumFractionDigits: 1,
-                }).format(value)
-              }
+              tickFormatter={(value) => compactNumberFormatter.format(value)}
             />
             <ChartTooltip
               cursor={{ strokeDasharray: "4 4" }}

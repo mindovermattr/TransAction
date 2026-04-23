@@ -9,9 +9,7 @@ const BudgetPageStatusBadge = ({
 }: {
   isFetching?: boolean;
   loadingError?: boolean;
-}) => (
-  <PageActivityBadge state={loadingError ? "error" : isFetching ? "fetching" : "idle"} />
-);
+}) => <PageActivityBadge state={loadingError ? "error" : isFetching ? "fetching" : "idle"} />;
 
 const BudgetPageHeaderActions = ({
   selectedMonth,

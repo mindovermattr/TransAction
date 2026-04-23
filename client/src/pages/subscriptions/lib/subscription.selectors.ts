@@ -1,104 +1,24 @@
 import { TRANSACTION_TAGS_ICONS } from "@/constants/transaction-tags-icons";
-import { accountReferenceSchema } from "@/schemas/account.schema";
 import {
   SUBSCRIPTION_BILLING_CYCLE_LABELS,
   SUBSCRIPTION_CATEGORY_LABELS,
   type SubscriptionRecord,
 } from "@/schemas/subscription.schema";
-import z from "zod";
-
-const subscriptionDateFormatter = new Intl.DateTimeFormat("ru-RU", {
-  day: "numeric",
-  month: "short",
-});
-
-const subscriptionCurrencyFormatter = new Intl.NumberFormat("ru-RU", {
-  style: "currency",
-  currency: "RUB",
-  maximumFractionDigits: 0,
-});
-
-const SUBSCRIPTION_CATEGORY_COLORS = [
-  "var(--color-chart-2)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
-  "var(--color-chart-5)",
-  "var(--color-chart-1)",
-];
-
-type SubscriptionAccountOption = z.infer<typeof accountReferenceSchema>;
+import { getDaysUntil } from "@/lib/date";
+import {
+  FALLBACK_ACCOUNTS,
+  SUBSCRIPTION_CATEGORY_COLORS,
+  type SubscriptionAccountOption,
+} from "./subscription.constants";
+import { getRelativeDueLabel, subscriptionDateFormatter } from "./subscription.formatters";
 
 type DueStatus = {
   label: string;
   tone: "ok" | "warning" | "danger" | "info";
 };
 
-const FALLBACK_ACCOUNTS: SubscriptionAccountOption[] = [
-  {
-    id: 9001,
-    name: "Основная карта",
-    type: "debit",
-    isArchived: false,
-  },
-  {
-    id: 9002,
-    name: "Накопительный",
-    type: "savings",
-    isArchived: false,
-  },
-  {
-    id: 9003,
-    name: "Наличные",
-    type: "cash",
-    isArchived: false,
-  },
-];
-
-const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-const toDateInputValue = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const addDays = (date: Date, days: number) => {
-  const nextDate = new Date(date);
-  nextDate.setDate(nextDate.getDate() + days);
-  return nextDate;
-};
-
-const getDaysUntil = (dateValue: string) => {
-  const today = startOfDay(new Date());
-  const target = startOfDay(new Date(`${dateValue}T00:00:00`));
-  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
-};
-
 const normalizeMonthlyAmount = (subscription: Pick<SubscriptionRecord, "amount" | "billingCycle">) =>
   subscription.billingCycle === "yearly" ? Math.round(subscription.amount / 12) : subscription.amount;
-
-const getRelativeDueLabel = (dateValue: string) => {
-  const daysUntil = getDaysUntil(dateValue);
-
-  if (daysUntil < 0) {
-    return `Просрочено на ${Math.abs(daysUntil)} дн.`;
-  }
-
-  if (daysUntil === 0) {
-    return "Спишется сегодня";
-  }
-
-  if (daysUntil === 1) {
-    return "Спишется завтра";
-  }
-
-  if (daysUntil <= 7) {
-    return `Через ${daysUntil} дн.`;
-  }
-
-  return subscriptionDateFormatter.format(new Date(`${dateValue}T00:00:00`));
-};
 
 const getDueStatus = (subscription: SubscriptionRecord): DueStatus => {
   if (!subscription.isActive) {
@@ -135,76 +55,6 @@ const getDueStatus = (subscription: SubscriptionRecord): DueStatus => {
     label: "Позже",
     tone: "ok",
   };
-};
-
-const createSeedSubscriptions = (accounts: SubscriptionAccountOption[]) => {
-  const primaryAccount = accounts[0]?.id ?? FALLBACK_ACCOUNTS[0].id;
-  const savingsAccount = accounts[1]?.id ?? primaryAccount;
-  const cashAccount = accounts[2]?.id ?? primaryAccount;
-  const today = startOfDay(new Date());
-
-  return [
-    {
-      id: 1,
-      name: "Netflix",
-      amount: 1299,
-      billingCycle: "monthly",
-      nextChargeDate: toDateInputValue(addDays(today, 1)),
-      categoryTag: "JOY",
-      accountId: primaryAccount,
-      isActive: true,
-    },
-    {
-      id: 2,
-      name: "Яндекс Плюс",
-      amount: 399,
-      billingCycle: "monthly",
-      nextChargeDate: toDateInputValue(addDays(today, 3)),
-      categoryTag: "OTHER",
-      accountId: primaryAccount,
-      isActive: true,
-    },
-    {
-      id: 3,
-      name: "Аренда квартиры",
-      amount: 32000,
-      billingCycle: "monthly",
-      nextChargeDate: toDateInputValue(addDays(today, 5)),
-      categoryTag: "HOUSING",
-      accountId: savingsAccount,
-      isActive: true,
-    },
-    {
-      id: 4,
-      name: "Спортзал",
-      amount: 2200,
-      billingCycle: "monthly",
-      nextChargeDate: toDateInputValue(addDays(today, 11)),
-      categoryTag: "JOY",
-      accountId: cashAccount,
-      isActive: true,
-    },
-    {
-      id: 5,
-      name: "iCloud+",
-      amount: 8990,
-      billingCycle: "yearly",
-      nextChargeDate: toDateInputValue(addDays(today, 24)),
-      categoryTag: "OTHER",
-      accountId: primaryAccount,
-      isActive: true,
-    },
-    {
-      id: 6,
-      name: "Coursera",
-      amount: 6490,
-      billingCycle: "yearly",
-      nextChargeDate: toDateInputValue(addDays(today, 52)),
-      categoryTag: "EDUCATION",
-      accountId: primaryAccount,
-      isActive: false,
-    },
-  ] satisfies SubscriptionRecord[];
 };
 
 const getTimelineGroupLabel = (dateValue: string) => {
@@ -255,9 +105,7 @@ const getUpcomingSubscriptions = (
     });
 };
 
-const groupUpcomingSubscriptions = (
-  subscriptions: ReturnType<typeof getUpcomingSubscriptions>,
-) => {
+const groupUpcomingSubscriptions = (subscriptions: ReturnType<typeof getUpcomingSubscriptions>) => {
   const groups = new Map<string, typeof subscriptions>();
 
   subscriptions.forEach((subscription) => {
@@ -341,7 +189,10 @@ const getRecurringLoadByAccount = (subscriptions: SubscriptionRecord[], accounts
   subscriptions
     .filter((subscription) => subscription.isActive)
     .forEach((subscription) => {
-      accountTotals.set(subscription.accountId, (accountTotals.get(subscription.accountId) ?? 0) + normalizeMonthlyAmount(subscription));
+      accountTotals.set(
+        subscription.accountId,
+        (accountTotals.get(subscription.accountId) ?? 0) + normalizeMonthlyAmount(subscription),
+      );
     });
 
   return accounts
@@ -375,7 +226,10 @@ const getSubscriptionsSummary = (subscriptions: SubscriptionRecord[]) => {
   const dueSoon = activeSubscriptions.filter((subscription) => getDaysUntil(subscription.nextChargeDate) <= 7);
   const upcomingThirty = activeSubscriptions.filter((subscription) => getDaysUntil(subscription.nextChargeDate) <= 30);
 
-  const monthlyRecurringTotal = activeSubscriptions.reduce((sum, subscription) => sum + normalizeMonthlyAmount(subscription), 0);
+  const monthlyRecurringTotal = activeSubscriptions.reduce(
+    (sum, subscription) => sum + normalizeMonthlyAmount(subscription),
+    0,
+  );
   const yearlyNormalizedTotal = activeSubscriptions
     .filter((subscription) => subscription.billingCycle === "yearly")
     .reduce((sum, subscription) => sum + normalizeMonthlyAmount(subscription), 0);
@@ -387,23 +241,19 @@ const getSubscriptionsSummary = (subscriptions: SubscriptionRecord[]) => {
     dueSoonCount: dueSoon.length,
     dueSoonAmount: dueSoon.reduce((sum, subscription) => sum + subscription.amount, 0),
     activeCount: activeSubscriptions.length,
-    yearlyNormalizedShare: monthlyRecurringTotal > 0 ? Math.round((yearlyNormalizedTotal / monthlyRecurringTotal) * 100) : 0,
-    riskCount: dueSoon.filter((subscription) => getDaysUntil(subscription.nextChargeDate) <= 1 || subscription.amount >= 5000).length,
+    yearlyNormalizedShare:
+      monthlyRecurringTotal > 0 ? Math.round((yearlyNormalizedTotal / monthlyRecurringTotal) * 100) : 0,
+    riskCount: dueSoon.filter(
+      (subscription) => getDaysUntil(subscription.nextChargeDate) <= 1 || subscription.amount >= 5000,
+    ).length,
     nearestCharge:
-      upcomingThirty.sort((left, right) => new Date(left.nextChargeDate).getTime() - new Date(right.nextChargeDate).getTime())[0] ?? null,
-    biggestUpcoming:
-      upcomingThirty.sort((left, right) => right.amount - left.amount)[0] ?? null,
+      upcomingThirty.sort(
+        (left, right) => new Date(left.nextChargeDate).getTime() - new Date(right.nextChargeDate).getTime(),
+      )[0] ?? null,
+    biggestUpcoming: upcomingThirty.sort((left, right) => right.amount - left.amount)[0] ?? null,
     overloadedCategory: categoryDistribution[0] ?? null,
   };
 };
-
-const formatSubscriptionCurrency = (value: number) => subscriptionCurrencyFormatter.format(value);
-
-const formatNextChargeDate = (dateValue: string) =>
-  new Intl.DateTimeFormat("ru-RU", {
-    day: "numeric",
-    month: "long",
-  }).format(new Date(`${dateValue}T00:00:00`));
 
 const getHeaderSyncLabel = (
   summary: ReturnType<typeof getSubscriptionsSummary>,
@@ -431,25 +281,6 @@ const getHeaderSyncLabel = (
   };
 };
 
-export {
-  FALLBACK_ACCOUNTS,
-  createSeedSubscriptions,
-  formatNextChargeDate,
-  formatSubscriptionCurrency,
-  getCategoryDistribution,
-  getDueStatus,
-  getHeaderSyncLabel,
-  getRecurringLoadByAccount,
-  getRelativeDueLabel,
-  getStatusDistribution,
-  getSubscriptionsSummary,
-  getUpcomingSubscriptions,
-  groupUpcomingSubscriptions,
-  normalizeMonthlyAmount,
-  startOfDay,
-  subscriptionCurrencyFormatter,
-  toDateInputValue,
-};
 type UpcomingSubscription = ReturnType<typeof getUpcomingSubscriptions>[number];
 type UpcomingSubscriptionGroup = ReturnType<typeof groupUpcomingSubscriptions>[number];
 type CategoryDistributionItem = ReturnType<typeof getCategoryDistribution>[number];
@@ -457,13 +288,22 @@ type RecurringLoadItem = ReturnType<typeof getRecurringLoadByAccount>[number];
 type StatusDistribution = ReturnType<typeof getStatusDistribution>;
 type SubscriptionsSummary = ReturnType<typeof getSubscriptionsSummary>;
 
+export {
+  getCategoryDistribution,
+  getDueStatus,
+  getHeaderSyncLabel,
+  getRecurringLoadByAccount,
+  getStatusDistribution,
+  getSubscriptionsSummary,
+  getUpcomingSubscriptions,
+  groupUpcomingSubscriptions,
+  normalizeMonthlyAmount,
+};
 export type {
   CategoryDistributionItem,
   DueStatus,
   RecurringLoadItem,
   StatusDistribution,
-  SubscriptionAccountOption,
-  SubscriptionRecord,
   SubscriptionsSummary,
   UpcomingSubscription,
   UpcomingSubscriptionGroup,

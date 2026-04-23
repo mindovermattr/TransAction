@@ -13,8 +13,8 @@ const EmptySubscriptionsState = ({ onCreate }: { onCreate: () => void }) => (
         <div>
           <CardTitle>Регулярные списания пока не настроены</CardTitle>
           <CardDescription className="mt-2 max-w-2xl">
-            Добавьте Netflix, связь, аренду или другой повторяющийся расход. Страница покажет ближайшую нагрузку, риски и
-            monthly recurring total без лишней аналитической перегрузки.
+            Добавьте Netflix, связь, аренду или другой повторяющийся расход. Страница покажет ближайшую нагрузку, риски
+            и monthly recurring total без лишней аналитической перегрузки.
           </CardDescription>
         </div>
       </div>

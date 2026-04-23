@@ -3,13 +3,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Typography } from "@/components/ui/typography";
+import { rubCurrencyFormatter } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
-import {
-  dashboardCurrencyFormatter,
-  formatDashboardCategoryLabel,
-  formatDashboardDateLabel,
-} from "../dashboard.formatters";
+import { formatDashboardCategoryLabel, formatDashboardDateLabel } from "../dashboard.formatters";
 
 const DashboardRecentActivityCard = ({ data }: { data: DashboardOverviewResponse["recentActivity"] }) => (
   <Card className="gap-4 py-5">
@@ -75,7 +72,7 @@ const DashboardRecentActivityCard = ({ data }: { data: DashboardOverviewResponse
                     )}
                   >
                     {item.type === "income" ? "+" : "-"}
-                    {dashboardCurrencyFormatter.format(item.amount)}
+                    {rubCurrencyFormatter.format(item.amount)}
                   </Typography>
                 </div>
                 {index < data.length - 1 ? <Separator className="mt-3" /> : null}

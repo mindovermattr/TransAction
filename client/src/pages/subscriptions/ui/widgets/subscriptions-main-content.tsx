@@ -2,16 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { SemanticStatusBadge } from "@/components/ui/semantic-status-badge";
 import { Typography } from "@/components/ui/typography";
+import { formatRubCurrency } from "@/lib/formatters";
+import type { SubscriptionRecord } from "@/schemas/subscription.schema";
 import type {
   CategoryDistributionItem,
   RecurringLoadItem,
   StatusDistribution,
-  SubscriptionRecord,
   SubscriptionsSummary,
   UpcomingSubscriptionGroup,
-} from "../../subscriptions.utils";
-import { formatSubscriptionCurrency } from "../../subscriptions.utils";
-import type { TimelineWindow } from "../../subscriptions.types";
+} from "../../lib";
+import type { TimelineWindow } from "../../lib";
 import { CalendarIcon } from "lucide-react";
 
 const SubscriptionsMainContent = ({
@@ -44,10 +44,18 @@ const SubscriptionsMainContent = ({
             <CardDescription>Следующие {timelineWindow} дней</CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant={timelineWindow === 7 ? "default" : "outline"} size="sm" onClick={() => onTimelineWindowChange(7)}>
+            <Button
+              variant={timelineWindow === 7 ? "default" : "outline"}
+              size="sm"
+              onClick={() => onTimelineWindowChange(7)}
+            >
               7 дней
             </Button>
-            <Button variant={timelineWindow === 30 ? "default" : "outline"} size="sm" onClick={() => onTimelineWindowChange(30)}>
+            <Button
+              variant={timelineWindow === 30 ? "default" : "outline"}
+              size="sm"
+              onClick={() => onTimelineWindowChange(30)}
+            >
               30 дней
             </Button>
           </div>
@@ -72,11 +80,14 @@ const SubscriptionsMainContent = ({
             {upcomingGroups.map((group) => (
               <div key={group.label} className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <SemanticStatusBadge tone={group.label === "Просрочено" ? "danger" : group.label === "Сегодня" ? "warning" : "info"}>
+                  <SemanticStatusBadge
+                    tone={group.label === "Просрочено" ? "danger" : group.label === "Сегодня" ? "warning" : "info"}
+                  >
                     {group.label}
                   </SemanticStatusBadge>
                   <Typography tag="p" className="text-muted-foreground text-xs">
-                    {group.items.length} {group.items.length === 1 ? "запись" : group.items.length < 5 ? "записи" : "записей"}
+                    {group.items.length}{" "}
+                    {group.items.length === 1 ? "запись" : group.items.length < 5 ? "записи" : "записей"}
                   </Typography>
                 </div>
                 <div className="space-y-2">
@@ -104,11 +115,13 @@ const SubscriptionsMainContent = ({
                               </Typography>
                             </div>
                             <Typography tag="p" className="text-base font-semibold whitespace-nowrap">
-                              {formatSubscriptionCurrency(subscription.amount)}
+                              {formatRubCurrency(subscription.amount)}
                             </Typography>
                           </div>
                           <div className="mt-3 flex flex-wrap items-center gap-2">
-                            <SemanticStatusBadge tone={subscription.dueStatus.tone}>{subscription.dueStatus.label}</SemanticStatusBadge>
+                            <SemanticStatusBadge tone={subscription.dueStatus.tone}>
+                              {subscription.dueStatus.label}
+                            </SemanticStatusBadge>
                             <SemanticStatusBadge tone="info">{subscription.account.name}</SemanticStatusBadge>
                             <SemanticStatusBadge tone="ok">{subscription.categoryLabel}</SemanticStatusBadge>
                           </div>
@@ -143,7 +156,7 @@ const SubscriptionsMainContent = ({
                     {item.label}
                   </Typography>
                   <Typography tag="p" className="text-muted-foreground text-sm">
-                    {formatSubscriptionCurrency(item.total)}
+                    {formatRubCurrency(item.total)}
                   </Typography>
                 </div>
                 <div className="bg-muted h-2 rounded-full">
@@ -179,7 +192,7 @@ const SubscriptionsMainContent = ({
                     {item.label}
                   </Typography>
                   <Typography tag="p" className="text-muted-foreground text-sm">
-                    {formatSubscriptionCurrency(item.total)} • {item.percent}%
+                    {formatRubCurrency(item.total)} • {item.percent}%
                   </Typography>
                 </div>
                 <div className="bg-muted h-2 rounded-full">
