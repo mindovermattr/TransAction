@@ -1,100 +1,112 @@
-# 💰 Transaction Tracker - Backend API
+# TransAction Server
 
-Backend API для приложения учета финансовых транзакций и доходов. RESTful API на Express.js с аутентификацией через JWT и базой данных PostgreSQL.
+Backend API для приложения `TransAction`: авторизация, счета, переводы, расходы, доходы, бюджеты, аналитика и данные для дашборда.
 
-## 🚀 Технологии
+<p>
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white" />
+  <img alt="Express" src="https://img.shields.io/badge/Express-5.1-000000?style=flat-square&logo=express&logoColor=white" />
+  <img alt="Prisma" src="https://img.shields.io/badge/Prisma-6.9-2D3748?style=flat-square&logo=prisma&logoColor=white" />
+  <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-13+-4169E1?style=flat-square&logo=postgresql&logoColor=white" />
+</p>
 
-### Основной стек:
+## Возможности
 
-- **Node.js** - серверная среда выполнения
-- **Express.js 5.1.0** - веб-фреймворк
-- **TypeScript 5.8.2** - типизированный JavaScript
-- **PostgreSQL** - реляционная база данных
-- **Prisma 6.9.0** - современный ORM для работы с базой данных
+- JWT-аутентификация через Passport.
+- Хеширование паролей через Argon2.
+- CRUD для счетов, расходов, доходов и бюджетов.
+- Переводы между счетами с учетом входящих и исходящих сумм.
+- Агрегации для дашборда и аналитики.
+- Валидация входных данных через DTO.
+- Централизованный формат ошибок.
+- Prisma migrations и seed-данные для локальной разработки.
 
-### Аутентификация и безопасность:
+## Стек
 
-- **Passport.js** - middleware для аутентификации
-- **passport-jwt** - стратегия JWT для Passport
-- **jsonwebtoken** - генерация и верификация JWT токенов
-- **argon2** - хеширование паролей
+| Зона | Технологии |
+| --- | --- |
+| Runtime | Node.js, TypeScript |
+| API | Express 5, Passport, passport-jwt |
+| Database | PostgreSQL, Prisma ORM, Prisma Accelerate extension |
+| Validation | class-validator, class-transformer |
+| Security | Argon2, JWT, Helmet, CORS, express-rate-limit |
+| Tooling | nodemon, ts-node, Prisma CLI |
 
-### Валидация и трансформация данных:
+## Архитектура
 
-- **class-validator** - валидация DTO классов
-- **class-transformer** - преобразование объектов
+- API разбит по доменам: `auth`, `users`, `accounts`, `transfers`, `transactions`, `income`, `analytics`, `dashboard`, `budgets`.
+- Каждый домен имеет controller для HTTP-слоя и service для бизнес-логики. Контроллеры не работают с Prisma напрямую.
+- DTO находятся в `models/**` и валидируются middleware `dtoValidation`. После успешной проверки данные доступны как `req.validatedBody`.
+- Общие правила валидации запроса вынесены в middleware: проверка пустого body и преобразование plain object в DTO-класс через `class-transformer`.
+- Ошибки проходят через `HttpException` и единый `errorHandler`, который возвращает стабильный JSON-формат: `code`, `message`, `details`.
+- Все приватные роуты подключаются через `jwtAuthMiddleware`; публичным остается только `/auth` и `/health`.
+- JWT strategy достает пользователя из базы и убирает `password` перед записью в `req.user`.
+- Prisma-клиент создается в одном месте (`src/prisma.ts`) и расширяется через `withAccelerate`.
+- Prisma schema описывает основные сущности финансового домена: `User`, `Account`, `Transfer`, `Transaction`, `Income`, `Budget`.
+- Seed создает тестового пользователя, счета, транзакции, доходы, переводы и бюджеты для текущего и предыдущего месяца.
 
-### Дополнительные инструменты:
+## API-модули
 
-- **CORS** - обработка CORS запросов
-- **nodemon** - автоматическая перезагрузка при разработке
+```text
+GET  /health
 
-## 🚀 Быстрый старт
+/auth
+/users
+/accounts
+/transfers
+/transactions
+/income
+/analytics
+/dashboard
+/budgets
+```
 
-### Предварительные требования
+`/auth` защищен rate limiter: 100 запросов за 15 минут. Остальные доменные роуты требуют `Authorization: Bearer <token>`.
 
-- Node.js (v18 или выше)
-- PostgreSQL
-- pnpm (менеджер пакетов)
+## Быстрый старт
 
-### Шаги установки
-
-1. **Установите зависимости:**
+### 1. Установить зависимости
 
 ```bash
 pnpm install
 ```
 
-2. **Настройте переменные окружения:**
-   Создайте файл `.env` в корне папки `server/`:
+### 2. Создать `.env`
 
 ```env
-DATABASE_URL="postgresql://YOUR_LINK"
-PORT=YOUR_PORT
-JWT_SECRET="your-secret-key-here"
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/transaction"
+JWT_SECRET="change-me"
+PORT=3000
+JWT_EXPIRES_IN="7d"
+CORS_ORIGIN="http://localhost:5173"
 ```
 
-3. **Настройте базу данных:**
+`PORT`, `JWT_EXPIRES_IN` и `CORS_ORIGIN` можно не задавать: для них есть значения по умолчанию.
+
+### 3. Подготовить базу
 
 ```bash
-# Примените миграции
 pnpm dlx prisma migrate dev
-
-# (Опционально) Заполните базу тестовыми данными
 pnpm seed
 ```
 
-4. **Запустите сервер:**
+После `seed` доступен тестовый пользователь:
 
-```bash
-# Режим разработки (с автоперезагрузкой)
-pnpm dev
-# Сервер будет доступен на http://localhost:3000
+```text
+email: test@test.com
+password: 123456
 ```
 
-## 📝 Скрипты
+### 4. Запустить API
 
-- `pnpm dev` - запуск в режиме разработки с nodemon
-- `pnpm seed` - заполнение базы данных тестовыми данными
+```bash
+pnpm dev
+```
 
-## 🎯 Особенности
+API будет доступно на `http://localhost:3000`, healthcheck — на `http://localhost:3000/health`.
 
-- ✅ RESTful API архитектура
-- ✅ Полная типизация с TypeScript
-- ✅ Валидация входных данных через DTO
-- ✅ Защита паролей с помощью Argon2
-- ✅ JWT аутентификация
-- ✅ Обработка ошибок через централизованный middleware
-- ✅ Пагинация для списков транзакций
-- ✅ Миграции базы данных через Prisma
-- ✅ CORS поддержка для фронтенда
+## Скрипты
 
-## 🔄 Архитектура
-
-Приложение следует принципам многослойной архитектуры:
-
-- **Controllers** - обработка HTTP запросов и ответов
-- **Services** - бизнес-логика приложения
-- **Models** - DTO (Data Transfer Objects) и Entity модели
-- **Middleware** - промежуточная обработка запросов
-- **Database** - Prisma ORM для работы с PostgreSQL
+| Команда | Назначение |
+| --- | --- |
+| `pnpm dev` | запуск API через nodemon |
+| `pnpm seed` | заполнение базы демо-данными |
